@@ -1,0 +1,848 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+
+// **************************************************************************
+// StackedNavigatorGenerator
+// **************************************************************************
+
+// ignore_for_file: no_leading_underscores_for_library_prefixes
+import 'package:flutter/material.dart' as _i20;
+import 'package:flutter/material.dart';
+import 'package:food_ai_thesis/ui/views/check_auth/check_auth_view.dart'
+    as _i11;
+import 'package:food_ai_thesis/ui/views/dashboard_recipes/dashboard_recipes_view.dart'
+    as _i10;
+import 'package:food_ai_thesis/ui/views/display_single_recipe/display_single_recipe_view.dart'
+    as _i16;
+import 'package:food_ai_thesis/ui/views/edit_profile/edit_profile_view.dart'
+    as _i18;
+import 'package:food_ai_thesis/ui/views/home/home_view.dart' as _i2;
+import 'package:food_ai_thesis/ui/views/image_classification/image_classification_view.dart'
+    as _i19;
+import 'package:food_ai_thesis/ui/views/image_processing/image_processing_view.dart'
+    as _i9;
+import 'package:food_ai_thesis/ui/views/login/login_view.dart' as _i4;
+import 'package:food_ai_thesis/ui/views/mainpage/mainpage_view.dart' as _i6;
+import 'package:food_ai_thesis/ui/views/my_profile/my_profile_view.dart' as _i8;
+import 'package:food_ai_thesis/ui/views/post_recipe/post_recipe_view.dart'
+    as _i7;
+import 'package:food_ai_thesis/ui/views/register/register_view.dart' as _i5;
+import 'package:food_ai_thesis/ui/views/seeall_featured_recipes/seeall_featured_recipes_view.dart'
+    as _i14;
+import 'package:food_ai_thesis/ui/views/seeall_filipino_recipes/seeall_filipino_recipes_view.dart'
+    as _i13;
+import 'package:food_ai_thesis/ui/views/seeall_liked_viewed_recipes/seeall_liked_viewed_recipes_view.dart'
+    as _i15;
+import 'package:food_ai_thesis/ui/views/startup/startup_view.dart' as _i3;
+import 'package:food_ai_thesis/ui/views/user_dashboard/user_dashboard_view.dart'
+    as _i17;
+import 'package:food_ai_thesis/ui/views/widget_search_allrecipes/widget_search_allrecipes_view.dart'
+    as _i12;
+import 'package:stacked/stacked.dart' as _i1;
+import 'package:stacked_services/stacked_services.dart' as _i21;
+
+class Routes {
+  static const homeView = '/home-view';
+
+  static const startupView = '/startup-view';
+
+  static const loginView = '/login-view';
+
+  static const registerView = '/register-view';
+
+  static const mainpageView = '/mainpage-view';
+
+  static const postRecipeView = '/post-recipe-view';
+
+  static const myProfileView = '/my-profile-view';
+
+  static const imageProcessingView = '/image-processing-view';
+
+  static const dashboardRecipesView = '/dashboard-recipes-view';
+
+  static const checkAuthView = '/';
+
+  static const widgetSearchAllrecipesView = '/widget-search-allrecipes-view';
+
+  static const seeallFilipinoRecipesView = '/seeall-filipino-recipes-view';
+
+  static const seeallFeaturedRecipesView = '/seeall-featured-recipes-view';
+
+  static const seeallLikedViewedRecipesView =
+      '/seeall-liked-viewed-recipes-view';
+
+  static const displaySingleRecipeView = '/display-single-recipe-view';
+
+  static const userDashboardView = '/user-dashboard-view';
+
+  static const editProfileView = '/edit-profile-view';
+
+  static const imageClassificationView = '/image-classification-view';
+
+  static const all = <String>{
+    homeView,
+    startupView,
+    loginView,
+    registerView,
+    mainpageView,
+    postRecipeView,
+    myProfileView,
+    imageProcessingView,
+    dashboardRecipesView,
+    checkAuthView,
+    widgetSearchAllrecipesView,
+    seeallFilipinoRecipesView,
+    seeallFeaturedRecipesView,
+    seeallLikedViewedRecipesView,
+    displaySingleRecipeView,
+    userDashboardView,
+    editProfileView,
+    imageClassificationView,
+  };
+}
+
+class StackedRouter extends _i1.RouterBase {
+  final _routes = <_i1.RouteDef>[
+    _i1.RouteDef(
+      Routes.homeView,
+      page: _i2.HomeView,
+    ),
+    _i1.RouteDef(
+      Routes.startupView,
+      page: _i3.StartupView,
+    ),
+    _i1.RouteDef(
+      Routes.loginView,
+      page: _i4.LoginView,
+    ),
+    _i1.RouteDef(
+      Routes.registerView,
+      page: _i5.RegisterView,
+    ),
+    _i1.RouteDef(
+      Routes.mainpageView,
+      page: _i6.MainpageView,
+    ),
+    _i1.RouteDef(
+      Routes.postRecipeView,
+      page: _i7.PostRecipeView,
+    ),
+    _i1.RouteDef(
+      Routes.myProfileView,
+      page: _i8.MyProfileView,
+    ),
+    _i1.RouteDef(
+      Routes.imageProcessingView,
+      page: _i9.ImageProcessingView,
+    ),
+    _i1.RouteDef(
+      Routes.dashboardRecipesView,
+      page: _i10.DashboardRecipesView,
+    ),
+    _i1.RouteDef(
+      Routes.checkAuthView,
+      page: _i11.CheckAuthView,
+    ),
+    _i1.RouteDef(
+      Routes.widgetSearchAllrecipesView,
+      page: _i12.WidgetSearchAllrecipesView,
+    ),
+    _i1.RouteDef(
+      Routes.seeallFilipinoRecipesView,
+      page: _i13.SeeallFilipinoRecipesView,
+    ),
+    _i1.RouteDef(
+      Routes.seeallFeaturedRecipesView,
+      page: _i14.SeeallFeaturedRecipesView,
+    ),
+    _i1.RouteDef(
+      Routes.seeallLikedViewedRecipesView,
+      page: _i15.SeeallLikedViewedRecipesView,
+    ),
+    _i1.RouteDef(
+      Routes.displaySingleRecipeView,
+      page: _i16.DisplaySingleRecipeView,
+    ),
+    _i1.RouteDef(
+      Routes.userDashboardView,
+      page: _i17.UserDashboardView,
+    ),
+    _i1.RouteDef(
+      Routes.editProfileView,
+      page: _i18.EditProfileView,
+    ),
+    _i1.RouteDef(
+      Routes.imageClassificationView,
+      page: _i19.ImageClassificationView,
+    ),
+  ];
+
+  final _pagesMap = <Type, _i1.StackedRouteFactory>{
+    _i2.HomeView: (data) {
+      return _i20.MaterialPageRoute<dynamic>(
+        builder: (context) => const _i2.HomeView(),
+        settings: data,
+      );
+    },
+    _i3.StartupView: (data) {
+      return _i20.MaterialPageRoute<dynamic>(
+        builder: (context) => const _i3.StartupView(),
+        settings: data,
+      );
+    },
+    _i4.LoginView: (data) {
+      return _i20.PageRouteBuilder<dynamic>(
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            const _i4.LoginView(),
+        settings: data,
+        transitionsBuilder:
+            data.transition ?? _i1.TransitionsBuilders.slideLeftWithFade,
+        transitionDuration: const Duration(milliseconds: 500),
+      );
+    },
+    _i5.RegisterView: (data) {
+      return _i20.PageRouteBuilder<dynamic>(
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            const _i5.RegisterView(),
+        settings: data,
+        transitionsBuilder:
+            data.transition ?? _i1.TransitionsBuilders.slideLeftWithFade,
+        transitionDuration: const Duration(milliseconds: 500),
+      );
+    },
+    _i6.MainpageView: (data) {
+      return _i20.PageRouteBuilder<dynamic>(
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            const _i6.MainpageView(),
+        settings: data,
+        transitionsBuilder: data.transition ?? _i1.TransitionsBuilders.fadeIn,
+        transitionDuration: const Duration(milliseconds: 500),
+      );
+    },
+    _i7.PostRecipeView: (data) {
+      return _i20.MaterialPageRoute<dynamic>(
+        builder: (context) => const _i7.PostRecipeView(),
+        settings: data,
+      );
+    },
+    _i8.MyProfileView: (data) {
+      return _i20.MaterialPageRoute<dynamic>(
+        builder: (context) => const _i8.MyProfileView(),
+        settings: data,
+      );
+    },
+    _i9.ImageProcessingView: (data) {
+      return _i20.MaterialPageRoute<dynamic>(
+        builder: (context) => const _i9.ImageProcessingView(),
+        settings: data,
+      );
+    },
+    _i10.DashboardRecipesView: (data) {
+      return _i20.MaterialPageRoute<dynamic>(
+        builder: (context) => const _i10.DashboardRecipesView(),
+        settings: data,
+      );
+    },
+    _i11.CheckAuthView: (data) {
+      return _i20.MaterialPageRoute<dynamic>(
+        builder: (context) => const _i11.CheckAuthView(),
+        settings: data,
+      );
+    },
+    _i12.WidgetSearchAllrecipesView: (data) {
+      return _i20.MaterialPageRoute<dynamic>(
+        builder: (context) => const _i12.WidgetSearchAllrecipesView(),
+        settings: data,
+      );
+    },
+    _i13.SeeallFilipinoRecipesView: (data) {
+      return _i20.MaterialPageRoute<dynamic>(
+        builder: (context) => const _i13.SeeallFilipinoRecipesView(),
+        settings: data,
+      );
+    },
+    _i14.SeeallFeaturedRecipesView: (data) {
+      return _i20.MaterialPageRoute<dynamic>(
+        builder: (context) => const _i14.SeeallFeaturedRecipesView(),
+        settings: data,
+      );
+    },
+    _i15.SeeallLikedViewedRecipesView: (data) {
+      return _i20.MaterialPageRoute<dynamic>(
+        builder: (context) => const _i15.SeeallLikedViewedRecipesView(),
+        settings: data,
+      );
+    },
+    _i16.DisplaySingleRecipeView: (data) {
+      final args =
+          data.getArgs<DisplaySingleRecipeViewArguments>(nullOk: false);
+      return _i20.MaterialPageRoute<dynamic>(
+        builder: (context) =>
+            _i16.DisplaySingleRecipeView(key: args.key, foodId: args.foodId),
+        settings: data,
+      );
+    },
+    _i17.UserDashboardView: (data) {
+      return _i20.MaterialPageRoute<dynamic>(
+        builder: (context) => const _i17.UserDashboardView(),
+        settings: data,
+      );
+    },
+    _i18.EditProfileView: (data) {
+      return _i20.MaterialPageRoute<dynamic>(
+        builder: (context) => const _i18.EditProfileView(),
+        settings: data,
+      );
+    },
+    _i19.ImageClassificationView: (data) {
+      return _i20.MaterialPageRoute<dynamic>(
+        builder: (context) => const _i19.ImageClassificationView(),
+        settings: data,
+      );
+    },
+  };
+
+  @override
+  List<_i1.RouteDef> get routes => _routes;
+
+  @override
+  Map<Type, _i1.StackedRouteFactory> get pagesMap => _pagesMap;
+}
+
+class DisplaySingleRecipeViewArguments {
+  const DisplaySingleRecipeViewArguments({
+    this.key,
+    required this.foodId,
+  });
+
+  final _i20.Key? key;
+
+  final int foodId;
+
+  @override
+  String toString() {
+    return '{"key": "$key", "foodId": "$foodId"}';
+  }
+
+  @override
+  bool operator ==(covariant DisplaySingleRecipeViewArguments other) {
+    if (identical(this, other)) return true;
+    return other.key == key && other.foodId == foodId;
+  }
+
+  @override
+  int get hashCode {
+    return key.hashCode ^ foodId.hashCode;
+  }
+}
+
+extension NavigatorStateExtension on _i21.NavigationService {
+  Future<dynamic> navigateToHomeView([
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  ]) async {
+    return navigateTo<dynamic>(Routes.homeView,
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
+  Future<dynamic> navigateToStartupView([
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  ]) async {
+    return navigateTo<dynamic>(Routes.startupView,
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
+  Future<dynamic> navigateToLoginView([
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  ]) async {
+    return navigateTo<dynamic>(Routes.loginView,
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
+  Future<dynamic> navigateToRegisterView([
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  ]) async {
+    return navigateTo<dynamic>(Routes.registerView,
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
+  Future<dynamic> navigateToMainpageView([
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  ]) async {
+    return navigateTo<dynamic>(Routes.mainpageView,
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
+  Future<dynamic> navigateToPostRecipeView([
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  ]) async {
+    return navigateTo<dynamic>(Routes.postRecipeView,
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
+  Future<dynamic> navigateToMyProfileView([
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  ]) async {
+    return navigateTo<dynamic>(Routes.myProfileView,
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
+  Future<dynamic> navigateToImageProcessingView([
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  ]) async {
+    return navigateTo<dynamic>(Routes.imageProcessingView,
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
+  Future<dynamic> navigateToDashboardRecipesView([
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  ]) async {
+    return navigateTo<dynamic>(Routes.dashboardRecipesView,
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
+  Future<dynamic> navigateToCheckAuthView([
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  ]) async {
+    return navigateTo<dynamic>(Routes.checkAuthView,
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
+  Future<dynamic> navigateToWidgetSearchAllrecipesView([
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  ]) async {
+    return navigateTo<dynamic>(Routes.widgetSearchAllrecipesView,
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
+  Future<dynamic> navigateToSeeallFilipinoRecipesView([
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  ]) async {
+    return navigateTo<dynamic>(Routes.seeallFilipinoRecipesView,
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
+  Future<dynamic> navigateToSeeallFeaturedRecipesView([
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  ]) async {
+    return navigateTo<dynamic>(Routes.seeallFeaturedRecipesView,
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
+  Future<dynamic> navigateToSeeallLikedViewedRecipesView([
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  ]) async {
+    return navigateTo<dynamic>(Routes.seeallLikedViewedRecipesView,
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
+  Future<dynamic> navigateToDisplaySingleRecipeView({
+    _i20.Key? key,
+    required int foodId,
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  }) async {
+    return navigateTo<dynamic>(Routes.displaySingleRecipeView,
+        arguments: DisplaySingleRecipeViewArguments(key: key, foodId: foodId),
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
+  Future<dynamic> navigateToUserDashboardView([
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  ]) async {
+    return navigateTo<dynamic>(Routes.userDashboardView,
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
+  Future<dynamic> navigateToEditProfileView([
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  ]) async {
+    return navigateTo<dynamic>(Routes.editProfileView,
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
+  Future<dynamic> navigateToImageClassificationView([
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  ]) async {
+    return navigateTo<dynamic>(Routes.imageClassificationView,
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
+  Future<dynamic> replaceWithHomeView([
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  ]) async {
+    return replaceWith<dynamic>(Routes.homeView,
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
+  Future<dynamic> replaceWithStartupView([
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  ]) async {
+    return replaceWith<dynamic>(Routes.startupView,
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
+  Future<dynamic> replaceWithLoginView([
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  ]) async {
+    return replaceWith<dynamic>(Routes.loginView,
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
+  Future<dynamic> replaceWithRegisterView([
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  ]) async {
+    return replaceWith<dynamic>(Routes.registerView,
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
+  Future<dynamic> replaceWithMainpageView([
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  ]) async {
+    return replaceWith<dynamic>(Routes.mainpageView,
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
+  Future<dynamic> replaceWithPostRecipeView([
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  ]) async {
+    return replaceWith<dynamic>(Routes.postRecipeView,
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
+  Future<dynamic> replaceWithMyProfileView([
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  ]) async {
+    return replaceWith<dynamic>(Routes.myProfileView,
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
+  Future<dynamic> replaceWithImageProcessingView([
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  ]) async {
+    return replaceWith<dynamic>(Routes.imageProcessingView,
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
+  Future<dynamic> replaceWithDashboardRecipesView([
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  ]) async {
+    return replaceWith<dynamic>(Routes.dashboardRecipesView,
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
+  Future<dynamic> replaceWithCheckAuthView([
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  ]) async {
+    return replaceWith<dynamic>(Routes.checkAuthView,
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
+  Future<dynamic> replaceWithWidgetSearchAllrecipesView([
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  ]) async {
+    return replaceWith<dynamic>(Routes.widgetSearchAllrecipesView,
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
+  Future<dynamic> replaceWithSeeallFilipinoRecipesView([
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  ]) async {
+    return replaceWith<dynamic>(Routes.seeallFilipinoRecipesView,
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
+  Future<dynamic> replaceWithSeeallFeaturedRecipesView([
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  ]) async {
+    return replaceWith<dynamic>(Routes.seeallFeaturedRecipesView,
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
+  Future<dynamic> replaceWithSeeallLikedViewedRecipesView([
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  ]) async {
+    return replaceWith<dynamic>(Routes.seeallLikedViewedRecipesView,
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
+  Future<dynamic> replaceWithDisplaySingleRecipeView({
+    _i20.Key? key,
+    required int foodId,
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  }) async {
+    return replaceWith<dynamic>(Routes.displaySingleRecipeView,
+        arguments: DisplaySingleRecipeViewArguments(key: key, foodId: foodId),
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
+  Future<dynamic> replaceWithUserDashboardView([
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  ]) async {
+    return replaceWith<dynamic>(Routes.userDashboardView,
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
+  Future<dynamic> replaceWithEditProfileView([
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  ]) async {
+    return replaceWith<dynamic>(Routes.editProfileView,
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
+  Future<dynamic> replaceWithImageClassificationView([
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  ]) async {
+    return replaceWith<dynamic>(Routes.imageClassificationView,
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+}
