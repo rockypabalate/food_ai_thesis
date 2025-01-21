@@ -86,7 +86,8 @@ class ImageProcessingView extends StackedView<ImageProcessingViewModel> {
                                             MaterialPageRoute(
                                               builder: (context) =>
                                                   DisplaySingleRecipeView(
-                                                     foodId: food.id, ),
+                                                foodId: food.id,
+                                              ),
                                             ),
                                           );
                                         },

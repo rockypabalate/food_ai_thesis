@@ -39,7 +39,6 @@ class ImageClassificationView
             if (viewModel.result != null)
               Text(
                 'Result: ${viewModel.result!}',
-             
               )
             else
               const Text('No classification result yet.'),
