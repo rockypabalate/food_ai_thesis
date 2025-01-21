@@ -331,7 +331,7 @@ class ApiServiceImpl implements ApiServiceService {
     }
   }
 
-   @override
+  @override
   Future<List<FoodInformation>> searchRecipesByName(String foodName) async {
     try {
       final response = await _dio.get(
