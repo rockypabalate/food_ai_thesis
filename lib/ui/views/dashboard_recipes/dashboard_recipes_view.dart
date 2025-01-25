@@ -7,6 +7,7 @@ import 'package:food_ai_thesis/ui/views/dashboard_recipes/widget_liked_viewed_re
 import 'package:food_ai_thesis/ui/views/seeall_featured_recipes/seeall_featured_recipes_view.dart';
 import 'package:food_ai_thesis/ui/views/seeall_liked_viewed_recipes/seeall_liked_viewed_recipes_view.dart';
 import 'package:stacked/stacked.dart';
+
 import 'dashboard_recipes_viewmodel.dart';
 
 class DashboardRecipesView extends StackedView<DashboardRecipesViewModel> {
@@ -23,143 +24,64 @@ class DashboardRecipesView extends StackedView<DashboardRecipesViewModel> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Display the dashboard header with user info
+          // Header Section
           DashboardHeader(
             profileImage: viewModel.profileImage,
             username: viewModel.username,
           ),
-          // Category section
-          const CategoriesWidget(),
-          const SizedBox(height: 0),
-          // Scrollable content below the header
+          const SizedBox(height: 8),
+          // Main Scrollable Content
           Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Recipe list section
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text(
-                          'Filipino Recipes',
-                          style: TextStyle(
-                            fontSize: 21.0,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        GestureDetector(
-                          onTap: () {},
-                          child: const Text(
-                            'See All',
-                            style: TextStyle(
-                              fontSize: 14.0,
-                              fontWeight: FontWeight.normal,
-                              color: Colors.orange,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  FilipinoRecipeListWidget(
-                    foodInfos: viewModel.foodInfos,
-                    isLoading: viewModel.isLoading,
-                  ),
-                  // Recipe list section
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text(
-                              'Featured Recipes',
-                              style: TextStyle(
-                                fontSize: 21.0,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        const SeeallFeaturedRecipesView(),
-                                  ),
-                                );
-                              },
-                              child: const Text(
-                                'See All',
-                                style: TextStyle(
-                                  fontSize: 14.0,
-                                  fontWeight: FontWeight.normal,
-                                  color: Colors.orange,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+            child: ListView(
+              physics: const BouncingScrollPhysics(),
+              padding: const EdgeInsets.all(0),
+              children: [
+                _SectionTitle(
+                  title: 'Filipino Recipes',
+                  onSeeAllTap: () {
+                    // Add navigation logic here
+                  },
+                ),
+                FilipinoRecipeListWidget(
+                  foodInfos: viewModel.foodInfos,
+                  isLoading: viewModel.isLoading,
+                ),
+                const SizedBox(height: 12),
+                _SectionTitle(
+                  title: 'Most Liked & Viewed Recipes',
+                  onSeeAllTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            const SeeallLikedViewedRecipesView(),
                       ),
-                      FeaturedRecipeListWidget(
-                        featuredRecipes: viewModel.featuredRecipes,
-                        isLoading: viewModel.isLoading,
+                    );
+                  },
+                ),
+                MostViewedAndLikedRecipesWidget(
+                  mostViewedAndLikedRecipes:
+                      viewModel.mostViewedAndLikedRecipes,
+                  isLoading: viewModel.isLoading,
+                ),
+                const SizedBox(height: 12),
+                _SectionTitle(
+                  title: 'Featured Recipes',
+                  onSeeAllTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const SeeallFeaturedRecipesView(),
                       ),
-                    ],
-                  ),
-
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text(
-                              'Most Liked & Viewed Recipes',
-                              style: TextStyle(
-                                fontSize: 21.0,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        const SeeallLikedViewedRecipesView(),
-                                  ),
-                                );
-                              },
-                              child: const Text(
-                                'See All',
-                                style: TextStyle(
-                                  fontSize: 14.0,
-                                  fontWeight: FontWeight.normal,
-                                  color: Colors.orange,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      MostViewedAndLikedRecipesWidget(
-                        mostViewedAndLikedRecipes:
-                            viewModel.mostViewedAndLikedRecipes,
-                        isLoading: viewModel.isLoading,
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 5),
-                ],
-              ),
+                    );
+                  },
+                ),
+                FeaturedRecipeListWidget(
+                  featuredRecipes: viewModel.featuredRecipes,
+                  isLoading: viewModel.isLoading,
+                ),
+                const SizedBox(height: 12),
+              ],
             ),
           ),
         ],
@@ -175,5 +97,65 @@ class DashboardRecipesView extends StackedView<DashboardRecipesViewModel> {
   void onViewModelReady(DashboardRecipesViewModel viewModel) {
     super.onViewModelReady(viewModel);
     viewModel.getAllFoodInfo(); // Fetch food information when the view is ready
+  }
+}
+
+// Custom Widget for Section Titles with See All Button
+class _SectionTitle extends StatelessWidget {
+  final String title;
+  final VoidCallback onSeeAllTap;
+
+  const _SectionTitle({
+    Key? key,
+    required this.title,
+    required this.onSeeAllTap,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            title,
+            style: const TextStyle(
+              fontSize: 21.0,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          GestureDetector(
+            onTap: onSeeAllTap,
+            child: Stack(
+              children: [
+                const Padding(
+                  padding: EdgeInsets.only(bottom: 0), // Adjust the space
+                  child: Text(
+                    'See All',
+                    style: TextStyle(
+                      fontSize: 14.0,
+                      fontWeight: FontWeight.normal,
+                      color: Colors.orange,
+                    ),
+                  ),
+                ),
+                Positioned.fill(
+                  child: Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Container(
+                      height: 1.0, // Thickness of the underline
+                      color: Colors.orange, // Color of the underline
+                      margin:
+                          const EdgeInsets.only(top: 0.0), // Adjust the spacing
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

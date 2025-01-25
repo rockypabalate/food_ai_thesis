@@ -54,7 +54,7 @@ class _MyRecipesTabState extends State<MyRecipesTab> {
                 children: [
                   Padding(
                     padding: const EdgeInsets.symmetric(
-                        vertical: 5.0, horizontal: 8.0),
+                        vertical: 10.0, horizontal: 8.0),
                     child: TextField(
                       controller: _searchController,
                       enabled: viewModel.savedRecipes.isNotEmpty,
@@ -166,7 +166,7 @@ class _MyRecipesTabState extends State<MyRecipesTab> {
                                       mainAxisSpacing: screenWidth *
                                           0.01, // Space between rows
                                       childAspectRatio:
-                                          0.94, // Adjust height-to-width ratio
+                                          .82, // Adjust height-to-width ratio
                                     ),
                                     itemCount:
                                         viewModel.filteredFoodInfos.length,

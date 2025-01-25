@@ -31,7 +31,7 @@ class FilipinoRecipeListWidget extends StatelessWidget {
     }
 
     return SizedBox(
-      height: 190, // Adjust the height as needed
+      height: 210, // Adjust the height as needed
       child: ListView.separated(
         padding: const EdgeInsets.symmetric(horizontal: 14.0),
         scrollDirection: Axis.horizontal,
@@ -55,6 +55,17 @@ class FilipinoRecipeListWidget extends StatelessWidget {
               width: 323,
               margin:
                   const EdgeInsets.symmetric(horizontal: 1.0, vertical: 4.0),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1), // Shadow color
+                    offset: const Offset(0, 1), // Shadow position
+                    blurRadius: 1, // Blur radius
+                    spreadRadius: 1.5, // Spread radius
+                  ),
+                ],
+              ),
               child: Stack(
                 children: [
                   // Background image
@@ -80,6 +91,15 @@ class FilipinoRecipeListWidget extends StatelessWidget {
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(8),
+                            boxShadow: const [
+                              BoxShadow(
+                                color: Colors.black12, // Shadow color
+                                offset: Offset(0,
+                                    .5), // Shadow offset (horizontal, vertical)
+                                blurRadius: .5, // Shadow blur
+                                spreadRadius: .5, // Spread of shadow
+                              ),
+                            ],
                           ),
                           child: Row(
                             children: [
@@ -111,6 +131,7 @@ class FilipinoRecipeListWidget extends StatelessWidget {
                         ),
 
                         const SizedBox(width: 8),
+
                         // Likes container
                         Container(
                           padding: const EdgeInsets.symmetric(
@@ -118,6 +139,15 @@ class FilipinoRecipeListWidget extends StatelessWidget {
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(8),
+                            boxShadow: const [
+                              BoxShadow(
+                                color: Colors.black12, // Shadow color
+                                offset: Offset(0,
+                                    .5), // Shadow offset (horizontal, vertical)
+                                blurRadius: .5, // Shadow blur
+                                spreadRadius: .5, // Spread of shadow
+                              ),
+                            ],
                           ),
                           child: Row(
                             children: [
@@ -150,6 +180,7 @@ class FilipinoRecipeListWidget extends StatelessWidget {
                       ],
                     ),
                   ),
+
                   // Icons for like and bookmark in a row with circular container
                   Positioned(
                     top: 8,
@@ -202,81 +233,74 @@ class FilipinoRecipeListWidget extends StatelessWidget {
                     left: 0,
                     right: 0,
                     child: ClipRRect(
-                      borderRadius: const BorderRadius.vertical(
-                        bottom: Radius.circular(16),
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(6),
+                        topRight: Radius.circular(6),
+                        bottomLeft: Radius.circular(16),
+                        bottomRight: Radius.circular(16),
                       ),
-                      child: BackdropFilter(
-                        filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
-                        child: Container(
-                          padding: const EdgeInsets.all(8.0),
-                          decoration: BoxDecoration(
-                            color: Colors.black.withOpacity(0.3),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              // Food name with icon
-                              Row(
-                                children: [
-                                  const Icon(
-                                    Icons
-                                        .emoji_food_beverage, // Change this to any relevant icon, e.g., chef icon
-                                    size: 18,
-                                    color: Colors.orange,
-                                  ),
-                                  const SizedBox(width: 4),
-                                  Flexible(
-                                    child: Text(
-                                      foodInfo.foodName,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: GoogleFonts.poppins(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.orange,
-                                        shadows: const [
-                                          Shadow(
-                                            offset: Offset(0, .3),
-                                            blurRadius: .1,
-                                            color: Colors.white,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 5),
-                              // Total cook time with icon, difficulty, and author
-                              Row(
-                                children: [
-                                  const Icon(
-                                    Icons.access_time,
-                                    size: 12,
-                                    color: Colors.orange,
-                                  ),
-                                  const SizedBox(width: 4),
-                                  Text(
-                                    foodInfo.totalCookTime ?? 'N/A',
-                                    style: GoogleFonts.poppins(
-                                      fontSize: 12,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Text(
-                                    '· ${foodInfo.difficulty ?? 'N/A'} · ${foodInfo.author ?? 'Unknown'}',
+                      child: Container(
+                        padding: const EdgeInsets.all(10.0),
+                        decoration: const BoxDecoration(
+                          color: Colors
+                              .white, // Replaced the semi-transparent black with solid grey
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Food name with icon
+                            Row(
+                              children: [
+                                const Icon(
+                                  Icons.emoji_food_beverage,
+                                  size: 18,
+                                  color: Colors.orange,
+                                ),
+                                const SizedBox(width: 4),
+                                Flexible(
+                                  child: Text(
+                                    foodInfo.foodName,
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                     style: GoogleFonts.poppins(
-                                      fontSize: 12,
-                                      color: Colors.white,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.orange,
                                     ),
                                   ),
-                                ],
-                              ),
-                            ],
-                          ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 5),
+                            // Total cook time with icon, difficulty, and author
+                            Row(
+                              children: [
+                                const Icon(
+                                  Icons.access_time,
+                                  size: 12,
+                                  color: Colors.orange,
+                                ),
+                                const SizedBox(width: 4),
+                                Text(
+                                  foodInfo.totalCookTime ?? 'N/A',
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 12,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  '· ${foodInfo.difficulty ?? 'N/A'} · ${foodInfo.author ?? 'Unknown'}',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 12,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
                       ),
                     ),
