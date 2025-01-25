@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:food_ai_thesis/ui/views/dashboard_recipes/dashboard_recipes_view.dart';
 import 'package:food_ai_thesis/ui/views/image_processing/image_processing_view.dart';
 import 'package:food_ai_thesis/ui/views/my_profile/my_profile_view.dart';
-import 'package:food_ai_thesis/ui/views/post_recipe/post_recipe_view.dart';
 import 'package:stacked/stacked.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -26,7 +25,6 @@ class MainpageView extends StackedView<MainpageViewModel> {
         body: IndexedStack(
           index: viewModel.currentIndex,
           children: const [
-            PostRecipeView(),
             DashboardRecipesView(),
             ImageProcessingView(),
             MyProfileView(),
@@ -59,22 +57,13 @@ class MainpageView extends StackedView<MainpageViewModel> {
                       viewModel.currentIndex == 0 ? Colors.orange : Colors.grey,
                 ),
                 label: 'Home',
-                tooltip: 'Go to Home',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(
-                  Icons.book,
-                  color:
-                      viewModel.currentIndex == 1 ? Colors.orange : Colors.grey,
-                ),
-                label: 'Recipes',
                 tooltip: 'View Recipes',
               ),
               BottomNavigationBarItem(
                 icon: Icon(
                   Icons.camera_alt,
                   color:
-                      viewModel.currentIndex == 2 ? Colors.orange : Colors.grey,
+                      viewModel.currentIndex == 1 ? Colors.orange : Colors.grey,
                 ),
                 label: 'Camera',
                 tooltip: 'Capture Photos',
@@ -83,7 +72,7 @@ class MainpageView extends StackedView<MainpageViewModel> {
                 icon: Icon(
                   Icons.person,
                   color:
-                      viewModel.currentIndex == 3 ? Colors.orange : Colors.grey,
+                      viewModel.currentIndex == 2 ? Colors.orange : Colors.grey,
                 ),
                 label: 'Profile',
                 tooltip: 'Go to Profile',

@@ -18,81 +18,140 @@ class WidgetSearchAllrecipesView
     final searchController = viewModel.searchController;
 
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.orange,
-        elevation: 4.0,
-        shadowColor: Colors.black.withOpacity(0.5),
-        title: const Text(
-          'Search Recipes',
-          style: TextStyle(color: Colors.white),
-        ),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () {
-            viewModel.searchFocusNode.unfocus();
-            Navigator.pop(context);
-          },
-        ),
-      ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Static search bar with filter icon
-          Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
-            child: Row(
-              children: [
-                // Search bar
-                Expanded(
-                  child: TextField(
-                    controller: searchController,
-                    focusNode: viewModel.searchFocusNode,
-                    style: const TextStyle(fontSize: 14.0),
-                    decoration: InputDecoration(
-                      hintText: 'Search recipes...',
-                      hintStyle: const TextStyle(fontSize: 14.0),
-                      contentPadding: const EdgeInsets.symmetric(
-                          vertical: 8.0, horizontal: 12.0),
-                      prefixIcon: const Icon(Icons.search, color: Colors.grey),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12.0),
-                        borderSide: const BorderSide(color: Colors.grey),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12.0),
-                        borderSide: const BorderSide(color: Colors.orange),
-                      ),
-                    ),
-                    onChanged: viewModel.filterRecipes,
-                  ),
+          // Custom header with back icon, title, search bar, and filter
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 8.0),
+            decoration: BoxDecoration(
+              color: Colors.orange,
+              borderRadius: const BorderRadius.only(
+                bottomLeft: Radius.circular(12.0),
+                bottomRight: Radius.circular(12.0),
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 8.0,
+                  offset: const Offset(0, 4),
                 ),
-                const SizedBox(width: 8.0),
-                // Filter icon with dropdown
-                PopupMenuButton<String>(
-                  icon: const Icon(Icons.filter_list, color: Colors.grey),
-                  onSelected: (String selectedCategory) {
-                    if (selectedCategory == 'Clear Filter') {
-                      viewModel.clearCategoryFilter();
-                    } else {
-                      viewModel.filterByCategory(selectedCategory);
-                    }
-                  },
-                  itemBuilder: (BuildContext context) {
-                    return [
-                      const PopupMenuItem<String>(
-                        value: 'Clear Filter',
-                        child: Text('Clear Filter'),
-                      ),
-                      ...viewModel.uniqueCategories.map(
-                        (category) => PopupMenuItem<String>(
-                          value: category,
-                          child: Text(category),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 35.0),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Row(
+                      children: [
+                        // Back navigation icon
+                        IconButton(
+                          icon:
+                              const Icon(Icons.arrow_back, color: Colors.white),
+                          onPressed: () {
+                            viewModel.searchFocusNode.unfocus();
+                            Navigator.pop(context);
+                          },
+                        ),
+                        // Title header
+                        const Text(
+                          'Search Recipes',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 20.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                    // Filter icon with dropdown
+                    PopupMenuButton<String>(
+                      icon: const Icon(Icons.filter_list, color: Colors.white),
+                      onSelected: (String selectedCategory) {
+                        if (selectedCategory == 'Clear Filter') {
+                          viewModel.clearCategoryFilter();
+                        } else {
+                          viewModel.filterByCategory(selectedCategory);
+                        }
+                      },
+                      itemBuilder: (BuildContext context) {
+                        return [
+                          const PopupMenuItem<String>(
+                            value: 'Clear Filter',
+                            child: Text('Clear Filter'),
+                          ),
+                          ...viewModel.uniqueCategories.map(
+                            (category) => PopupMenuItem<String>(
+                              value: category,
+                              child: Text(category),
+                            ),
+                          ),
+                        ];
+                      },
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 12.0),
+                // Adding horizontal padding for search bar and filter
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 12.0), // Add horizontal padding
+                  child: Row(
+                    children: [
+                      // Search bar
+                      Expanded(
+                        child: TextField(
+                          controller: searchController,
+                          focusNode: viewModel.searchFocusNode,
+                          style: const TextStyle(fontSize: 14.0),
+                          decoration: InputDecoration(
+                            hintText: 'Search recipes...',
+                            hintStyle: const TextStyle(fontSize: 14.0),
+                            contentPadding: const EdgeInsets.symmetric(
+                                vertical: 8.0, horizontal: 12.0),
+                            prefixIcon:
+                                const Icon(Icons.search, color: Colors.grey),
+                            suffixIcon:
+                                ValueListenableBuilder<TextEditingValue>(
+                              valueListenable: searchController,
+                              builder: (context, value, child) {
+                                // Show the clear icon only if there's text
+                                return value.text.isNotEmpty
+                                    ? IconButton(
+                                        icon: const Icon(Icons.clear,
+                                            color: Colors.grey),
+                                        onPressed: () {
+                                          searchController
+                                              .clear(); // Clear the text
+                                          viewModel.filterRecipes('');
+                                          FocusScope.of(context)
+                                              .unfocus(); // Optionally reset filters
+                                        },
+                                      )
+                                    : const SizedBox
+                                        .shrink(); // Empty widget if no text
+                              },
+                            ),
+                            filled: true,
+                            fillColor: Colors.white,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12.0),
+                              borderSide: BorderSide.none,
+                            ),
+                          ),
+                          onChanged: viewModel.filterRecipes,
                         ),
                       ),
-                    ];
-                  },
+                    ],
+                  ),
                 ),
+
+                const SizedBox(height: 1.0),
               ],
             ),
           ),
@@ -101,7 +160,8 @@ class WidgetSearchAllrecipesView
           Expanded(
             child: SingleChildScrollView(
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
                 child: viewModel.isLoading
                     ? Column(
                         children: List.generate(
