@@ -32,7 +32,7 @@ class AllRecipesWidget extends StatelessWidget {
                     ),
                   )
                 : GridView.builder(
-                    padding: const EdgeInsets.symmetric(horizontal: 3.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 1.0),
                     shrinkWrap:
                         true, // Ensures GridView does not expand infinitely
                     physics:
@@ -61,7 +61,18 @@ class AllRecipesWidget extends StatelessWidget {
                         child: Container(
                           width: MediaQuery.of(context).size.width / 2 - 24,
                           margin: const EdgeInsets.symmetric(
-                            vertical: 4.0,
+                              horizontal: 1.0, vertical: 4.0),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(16),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black
+                                    .withOpacity(0.1), // Shadow color
+                                offset: const Offset(0, 1), // Shadow position
+                                blurRadius: 1, // Blur radius
+                                spreadRadius: 1, // Spread radius
+                              ),
+                            ],
                           ),
                           child: Stack(
                             children: [
@@ -83,6 +94,15 @@ class AllRecipesWidget extends StatelessWidget {
                                   decoration: BoxDecoration(
                                     color: Colors.white,
                                     borderRadius: BorderRadius.circular(8),
+                                    boxShadow: const [
+                                      BoxShadow(
+                                        color: Colors.black12, // Shadow color
+                                        offset: Offset(0,
+                                            .5), // Shadow offset (horizontal, vertical)
+                                        blurRadius: .5, // Shadow blur
+                                        spreadRadius: .5, // Spread of shadow
+                                      ),
+                                    ],
                                   ),
                                   child: Row(
                                     children: [
@@ -138,76 +158,74 @@ class AllRecipesWidget extends StatelessWidget {
                                 left: 0,
                                 right: 0,
                                 child: ClipRRect(
-                                  borderRadius: const BorderRadius.vertical(
-                                    bottom: Radius.circular(16),
+                                  borderRadius: const BorderRadius.only(
+                                    topLeft: Radius.circular(6),
+                                    topRight: Radius.circular(6),
+                                    bottomLeft: Radius.circular(16),
+                                    bottomRight: Radius.circular(16),
                                   ),
-                                  child: BackdropFilter(
-                                    filter:
-                                        ImageFilter.blur(sigmaX: 7, sigmaY: 7),
-                                    child: Container(
-                                      padding: const EdgeInsets.all(8.0),
-                                      decoration: BoxDecoration(
-                                        color: Colors.black.withOpacity(0.2),
-                                      ),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Row(
-                                            children: [
-                                              const Icon(
-                                                Icons.emoji_food_beverage,
-                                                size: 14,
-                                                color: Colors.orange,
-                                              ),
-                                              const SizedBox(width: 4),
-                                              Flexible(
-                                                child: Text(
-                                                  foodInfo.foodName,
-                                                  maxLines: 1,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  style: GoogleFonts.poppins(
-                                                    fontSize: 14,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.orange,
-                                                    shadows: const [
-                                                      Shadow(
-                                                        offset: Offset(0, .3),
-                                                        blurRadius: .1,
-                                                        color: Colors.white,
-                                                      ),
-                                                    ],
-                                                  ),
+                                  child: Container(
+                                    padding: const EdgeInsets.all(10.0),
+                                    decoration: const BoxDecoration(
+                                      color: Colors
+                                          .white, // Replaced the semi-transparent black with solid grey
+                                    ),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            const Icon(
+                                              Icons.emoji_food_beverage,
+                                              size: 14,
+                                              color: Colors.orange,
+                                            ),
+                                            const SizedBox(width: 4),
+                                            Flexible(
+                                              child: Text(
+                                                foodInfo.foodName,
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: GoogleFonts.poppins(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.orange,
+                                                  shadows: const [
+                                                    Shadow(
+                                                      offset: Offset(0, .3),
+                                                      blurRadius: .1,
+                                                      color: Colors.white,
+                                                    ),
+                                                  ],
                                                 ),
                                               ),
-                                            ],
-                                          ),
-                                          const SizedBox(height: 5),
-                                          Row(
-                                            children: [
-                                              const Icon(
-                                                Icons.access_time,
-                                                size: 10,
-                                                color: Colors.orange,
-                                              ),
-                                              const SizedBox(width: 4),
-                                              Flexible(
-                                                child: Text(
-                                                  '${foodInfo.totalCookTime ?? 'N/A'} · ${foodInfo.difficulty ?? 'N/A'} · ${foodInfo.author ?? 'Unknown'}',
-                                                  maxLines: 1,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  style: GoogleFonts.poppins(
-                                                    fontSize: 10,
-                                                    color: Colors.white,
-                                                  ),
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 5),
+                                        Row(
+                                          children: [
+                                            const Icon(
+                                              Icons.access_time,
+                                              size: 10,
+                                              color: Colors.orange,
+                                            ),
+                                            const SizedBox(width: 4),
+                                            Flexible(
+                                              child: Text(
+                                                '${foodInfo.totalCookTime ?? 'N/A'} · ${foodInfo.difficulty ?? 'N/A'} · ${foodInfo.author ?? 'Unknown'}',
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: GoogleFonts.poppins(
+                                                  fontSize: 10,
+                                                  color: Colors.black,
                                                 ),
                                               ),
-                                            ],
-                                          )
-                                        ],
-                                      ),
+                                            ),
+                                          ],
+                                        )
+                                      ],
                                     ),
                                   ),
                                 ),

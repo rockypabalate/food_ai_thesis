@@ -65,7 +65,7 @@ class DashboardHeader extends StatelessWidget {
                       ),
                       const SizedBox(height: 1.0),
                       const Text(
-                        'Discover recipes from others!',
+                        'Discover filipino recipes!',
                         style: TextStyle(
                           fontSize: 12.0,
                           color: Colors.white,
@@ -77,8 +77,50 @@ class DashboardHeader extends StatelessWidget {
               ),
               Row(
                 children: [
+                  const SizedBox(width: 10.0),
                   _buildIcon(
-                    icon: Icons.search,
+                    icon: Icons.notification_add,
+                    onTap: () {
+                      // Add your add functionality here
+                      print('Add icon tapped');
+                    },
+                  ),
+                ],
+              ),
+            ],
+          ),
+          const SizedBox(height: 16.0),
+          // Search bar with filter button
+          Row(
+            children: [
+              Expanded(
+                child: SizedBox(
+                  height: 45.0, // Reduced height
+                  child: TextFormField(
+                    readOnly: true,
+                    decoration: InputDecoration(
+                      prefixIcon: const Icon(
+                        Icons.search,
+                        color: Colors.orange,
+                        size: 22.0, // Reduced icon size
+                      ),
+                      hintText: 'Search...',
+                      hintStyle: const TextStyle(
+                        color: Colors.grey,
+                        fontSize: 14.0, // Reduced font size
+                      ),
+                      filled: true,
+                      fillColor: Colors.grey.shade100,
+                      contentPadding: const EdgeInsets.symmetric(
+                        vertical: 6.0, // Reduced vertical padding
+                        horizontal: 6.0, // Reduced horizontal padding
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(
+                            10.0), // Slightly smaller radius
+                        borderSide: BorderSide.none,
+                      ),
+                    ),
                     onTap: () {
                       Navigator.push(
                         context,
@@ -89,19 +131,11 @@ class DashboardHeader extends StatelessWidget {
                       );
                     },
                   ),
-                  const SizedBox(width: 10.0),
-                  _buildIcon(
-                    icon: Icons.add,
-                    onTap: () {
-                      // Add your add functionality here
-                      print('Add icon tapped');
-                    },
-                  ),
-                ],
+                ),
               ),
             ],
           ),
-          const SizedBox(height: 5.0),
+          const SizedBox(height: 2.0),
         ],
       ),
     );
