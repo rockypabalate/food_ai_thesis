@@ -30,6 +30,7 @@ import 'package:food_ai_thesis/ui/views/user_dashboard/user_dashboard_view.dart'
 import 'package:food_ai_thesis/ui/views/edit_profile/edit_profile_view.dart';
 import 'package:food_ai_thesis/ui/views/image_classification/image_classification_view.dart';
 import 'package:food_ai_thesis/ui/views/sign_in/sign_in_view.dart';
+import 'package:food_ai_thesis/ui/views/create_recipe/create_recipe_view.dart';
 // @stacked-import
 
 @StackedApp(
@@ -66,7 +67,8 @@ import 'package:food_ai_thesis/ui/views/sign_in/sign_in_view.dart';
     MaterialRoute(page: EditProfileView),
     MaterialRoute(page: ImageClassificationView),
     MaterialRoute(page: SignInView),
-     MaterialRoute(page: SignUpView),
+    MaterialRoute(page: SignUpView),
+    MaterialRoute(page: CreateRecipeView),
 // @stacked-route
   ],
   dependencies: [

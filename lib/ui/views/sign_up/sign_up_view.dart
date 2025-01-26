@@ -4,7 +4,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:stacked/stacked.dart';
 import 'sign_up_viewmodel.dart';
 
-
 class SignUpView extends StackedView<SignUpViewModel> {
   const SignUpView({Key? key}) : super(key: key);
 
@@ -38,7 +37,8 @@ class SignUpView extends StackedView<SignUpViewModel> {
           Align(
             alignment: Alignment.bottomCenter,
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 25.0, vertical: 30.0),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 25.0, vertical: 30.0),
               decoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.surface,
                 borderRadius: const BorderRadius.only(

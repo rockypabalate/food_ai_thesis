@@ -12,16 +12,17 @@ class SignUpViewModel extends AppBaseViewModel {
   final AuthApiService _authApiService = locator<AuthApiService>();
   final SnackbarService _snackbarService = locator<SnackbarService>();
 
-  bool _isLoading = false; 
+  bool _isLoading = false;
   bool get isLoading => _isLoading;
 
-  bool _isPasswordVisible = false; 
+  bool _isPasswordVisible = false;
   bool get isPasswordVisible => _isPasswordVisible;
 
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confirmPasswordController = TextEditingController();
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
 
   String? errorMessage;
 
@@ -48,7 +49,10 @@ class SignUpViewModel extends AppBaseViewModel {
     final confirmPassword = confirmPasswordController.text;
 
     try {
-      if (username.isEmpty || email.isEmpty || password.isEmpty || confirmPassword.isEmpty) {
+      if (username.isEmpty ||
+          email.isEmpty ||
+          password.isEmpty ||
+          confirmPassword.isEmpty) {
         errorMessage = 'All fields are required';
         _snackbarService.showSnackbar(
           message: errorMessage!,

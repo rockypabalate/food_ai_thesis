@@ -38,7 +38,8 @@ class SignInView extends StackedView<SignInViewModel> {
           Align(
             alignment: Alignment.bottomCenter,
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 25.0, vertical: 30.0),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 25.0, vertical: 30.0),
               decoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.surface,
                 borderRadius: const BorderRadius.only(
