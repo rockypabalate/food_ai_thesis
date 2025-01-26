@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:food_ai_thesis/models/created_recipe/create_recipe.dart';
 import 'package:food_ai_thesis/models/list_recipes/list_recipes.dart';
 import 'package:food_ai_thesis/models/list_recipes/single_display_recipe.dart';
 import 'package:food_ai_thesis/models/saved_recipe_by_user/saved_recipe_by_user.dart';
@@ -359,6 +360,73 @@ class ApiServiceImpl implements ApiServiceService {
     } catch (e) {
       print('Unexpected Error: ${e.toString()}');
       return [];
+    }
+  }
+
+  // Create Recipe Method
+  @override
+  Future<RecipeResponse?> createRecipe(Recipe recipe) async {
+    try {
+      // Get the user authentication token
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString(bearerTokenKey);
+
+      if (token == null) {
+        print('Unauthorized: No Bearer token');
+        return null;
+      }
+
+      // Prepare the payload for the request
+      final data = {
+        "food_name": recipe.foodName,
+        "description": recipe.description,
+        "servings": recipe.servings,
+        "category": recipe.category,
+        "ingredients": recipe.ingredients,
+        "quantities": recipe.quantities,
+        "instructions": recipe.instructions,
+        "nutritional_content": recipe.nutritionalContent
+            .map((e) => {
+                  "name": e.name,
+                  "amount": e.amount,
+                })
+            .toList(),
+        "total_cook_time": recipe.totalCookTime,
+        "difficulty": recipe.difficulty,
+        "preparation_tips": recipe.preparationTips,
+        "nutritional_paragraph": recipe.nutritionalParagraph,
+      };
+
+      // Make the POST request
+      final response = await _dio.post(
+        '/recipes/user-recipe/create-recipe',
+        data: data,
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'accept': 'application/json',
+          },
+        ),
+      );
+
+      // Parse the response
+      if (response.statusCode == 200) {
+        return RecipeResponse.fromJson(response.data);
+      } else {
+        print(
+            'Failed to create recipe: ${response.statusCode} - ${response.data}');
+        return null;
+      }
+    } on DioException catch (e) {
+      if (e.response != null) {
+        print('Dio Error: ${e.response?.statusCode} - ${e.response?.data}');
+      } else {
+        print('Dio Error: ${e.message}');
+      }
+      return null;
+    } catch (e) {
+      print('Unexpected Error: ${e.toString()}');
+      return null;
     }
   }
 }

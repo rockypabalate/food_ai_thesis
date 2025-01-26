@@ -102,7 +102,7 @@ class UserDashboardView extends StackedView<UserDashboardViewModel> {
                         color: Colors.white,
                         child: viewModel.selectedTab == 0
                             ? const MyRecipesTab()
-                            : const MyRecipesTab(),
+                            : const BookmarkedRecipesTab(),
                       ),
                     ),
                   ],

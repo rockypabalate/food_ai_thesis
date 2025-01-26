@@ -1,3 +1,4 @@
+import 'package:food_ai_thesis/models/created_recipe/create_recipe.dart';
 import 'package:food_ai_thesis/models/list_recipes/list_recipes.dart';
 import 'package:food_ai_thesis/models/list_recipes/single_display_recipe.dart';
 import 'package:food_ai_thesis/models/saved_recipe_by_user/saved_recipe_by_user.dart';
@@ -12,4 +13,5 @@ abstract class ApiServiceService {
   Future<List<SavedFood>> getSavedRecipesByUser();
   Future<bool> deleteFoodById(int foodId);
   Future<List<FoodInformation>> searchRecipesByName(String foodName);
+  Future<RecipeResponse?> createRecipe(Recipe recipe);
 }
