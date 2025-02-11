@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:food_ai_thesis/ui/views/register/widgets_loading_sign_up.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:stacked/stacked.dart';
+import 'package:food_ai_thesis/ui/views/register/widgets_loading_sign_up.dart';
 import 'sign_up_viewmodel.dart';
 
 class SignUpView extends StackedView<SignUpViewModel> {
@@ -14,185 +14,160 @@ class SignUpView extends StackedView<SignUpViewModel> {
     Widget? child,
   ) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Colors.white,
       body: Stack(
         children: [
-          // Background container
-          Container(
-            width: double.infinity,
-            height: double.infinity,
-            color: Colors.orange, // Orange background color
-            child: Center(
-              child: Text(
-                'Create Your Account',
-                style: GoogleFonts.poppins(
-                  fontSize: 24.0,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-          ),
-          // Bottom container with sign-up fields
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 25.0, vertical: 30.0),
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surface,
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(30.0),
-                  topRight: Radius.circular(30.0),
-                ),
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Sign-Up header
-                  Text(
-                    'Sign Up',
-                    style: GoogleFonts.poppins(
-                      fontSize: 22.0,
-                      fontWeight: FontWeight.bold,
+          SafeArea(
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 25.0, vertical: 50.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 80.0),
+                    Text(
+                      'Create Your Account',
+                      style: GoogleFonts.poppins(
+                        fontSize: 26.0,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 20.0),
-                  // Username field
-                  TextFormField(
-                    controller: viewModel.usernameController,
-                    decoration: InputDecoration(
-                      labelText: 'Username',
-                      labelStyle: GoogleFonts.poppins(
-                        color: Colors.black, // Black label color when typing
+                    const SizedBox(height: 5.0),
+                    Text(
+                      'Sign up to explore delicious recipes and exclusive offers.',
+                      style: GoogleFonts.poppins(
+                        fontSize: 14.0,
+                        color: Colors.black54,
                       ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                        borderSide: const BorderSide(color: Colors.black),
-                      ),
-                      prefixIcon: const Icon(Icons.person),
                     ),
-                  ),
-                  const SizedBox(height: 20.0),
-                  // Email field
-                  TextFormField(
-                    controller: viewModel.emailController,
-                    decoration: InputDecoration(
-                      labelText: 'Email',
-                      labelStyle: GoogleFonts.poppins(
-                        color: Colors.black, // Black label color when typing
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                        borderSide: const BorderSide(color: Colors.black),
-                      ),
-                      prefixIcon: const Icon(Icons.email),
-                    ),
-                  ),
-                  const SizedBox(height: 20.0),
-                  // Password field
-                  TextFormField(
-                    controller: viewModel.passwordController,
-                    decoration: InputDecoration(
-                      labelText: 'Password',
-                      labelStyle: GoogleFonts.poppins(
-                        color: Colors.black, // Black label color when typing
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                        borderSide: const BorderSide(color: Colors.black),
-                      ),
-                      prefixIcon: const Icon(Icons.lock),
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          viewModel.isPasswordVisible
-                              ? Icons.visibility
-                              : Icons.visibility_off,
+                    const SizedBox(height: 30.0),
+                    TextFormField(
+                      controller: viewModel.usernameController,
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: Colors.white,
+                        hintText: 'Enter your username',
+                        hintStyle: GoogleFonts.poppins(color: Colors.black45),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30.0),
+                          borderSide: BorderSide(color: Colors.grey.shade300),
                         ),
-                        onPressed: viewModel.togglePasswordVisibility,
+                        prefixIcon: const Icon(Icons.person_outline,
+                            color: Colors.black54),
                       ),
                     ),
-                    obscureText: !viewModel.isPasswordVisible,
-                  ),
-                  const SizedBox(height: 20.0),
-                  // Confirm Password field
-                  TextFormField(
-                    controller: viewModel.confirmPasswordController,
-                    decoration: InputDecoration(
-                      labelText: 'Confirm Password',
-                      labelStyle: GoogleFonts.poppins(
-                        color: Colors.black, // Black label color when typing
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                        borderSide: const BorderSide(color: Colors.black),
-                      ),
-                      prefixIcon: const Icon(Icons.lock),
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          viewModel.isPasswordVisible
-                              ? Icons.visibility
-                              : Icons.visibility_off,
+                    const SizedBox(height: 15.0),
+                    TextFormField(
+                      controller: viewModel.emailController,
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: Colors.white,
+                        hintText: 'Enter your email address',
+                        hintStyle: GoogleFonts.poppins(color: Colors.black45),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30.0),
+                          borderSide: BorderSide(color: Colors.grey.shade300),
                         ),
-                        onPressed: viewModel.togglePasswordVisibility,
+                        prefixIcon: const Icon(Icons.email_outlined,
+                            color: Colors.black54),
                       ),
                     ),
-                    obscureText: !viewModel.isPasswordVisible,
-                  ),
-                  const SizedBox(height: 20.0),
-                  // Sign Up button
-                  ElevatedButton(
-                    onPressed: () => viewModel.register(),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.orange, // Button color orange
-                      foregroundColor: Colors.white, // Text color white
-                      minimumSize: const Size(double.infinity, 50),
-                    ),
-                    child: Text(
-                      'Sign Up',
-                      style: GoogleFonts.poppins(),
-                    ),
-                  ),
-                  const SizedBox(height: 20.0),
-                  // Sign in prompt
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        "Already have an account? ",
-                        style: GoogleFonts.poppins(),
+                    const SizedBox(height: 15.0),
+                    TextFormField(
+                      controller: viewModel.passwordController,
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: Colors.white,
+                        hintText: 'Enter your password',
+                        hintStyle: GoogleFonts.poppins(color: Colors.black45),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30.0),
+                          borderSide: BorderSide(color: Colors.grey.shade300),
+                        ),
+                        prefixIcon: const Icon(Icons.lock_outline,
+                            color: Colors.black54),
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            viewModel.isPasswordVisible
+                                ? Icons.visibility
+                                : Icons.visibility_off,
+                            color: Colors.black54,
+                          ),
+                          onPressed: viewModel.togglePasswordVisibility,
+                        ),
                       ),
-                      GestureDetector(
-                        onTap: viewModel.navigateToSignIn,
-                        child: Text(
-                          'Sign in here',
-                          style: GoogleFonts.poppins(
-                            color: Colors.orange, // Sign in text color orange
-                            fontWeight: FontWeight.bold,
+                      obscureText: !viewModel.isPasswordVisible,
+                    ),
+                    const SizedBox(height: 15.0),
+                    TextFormField(
+                      controller: viewModel.confirmPasswordController,
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: Colors.white,
+                        hintText: 'Confirm your password',
+                        hintStyle: GoogleFonts.poppins(color: Colors.black45),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30.0),
+                          borderSide: BorderSide(color: Colors.grey.shade300),
+                        ),
+                        prefixIcon: const Icon(Icons.lock_outline,
+                            color: Colors.black54),
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            viewModel.isPasswordVisible
+                                ? Icons.visibility
+                                : Icons.visibility_off,
+                            color: Colors.black54,
+                          ),
+                          onPressed: viewModel.togglePasswordVisibility,
+                        ),
+                      ),
+                      obscureText: !viewModel.isPasswordVisible,
+                    ),
+                    const SizedBox(height: 30.0),
+                    ElevatedButton(
+                      onPressed: viewModel.isLoading
+                          ? null //
+                          : () => viewModel.register(),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.orange,
+                        foregroundColor: Colors.white,
+                        minimumSize: const Size(double.infinity, 55),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30.0),
+                        ),
+                      ),
+                      child: Text(
+                        'Sign Up',
+                        style: GoogleFonts.poppins(fontSize: 16.0),
+                      ),
+                    ),
+                    const SizedBox(height: 20.0),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text("Already have an account? ",
+                            style: GoogleFonts.poppins()),
+                        GestureDetector(
+                          onTap: viewModel.navigateToSignIn,
+                          child: Text(
+                            'Sign in',
+                            style: GoogleFonts.poppins(
+                              color: Colors.orange,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
-          // Loading indicator
-          if (viewModel.isLoading)
+          if (viewModel.isLoading) // ✅ Show loading overlay
             const LoadingIndicatorSignUp(isLoading: true),
         ],
       ),
