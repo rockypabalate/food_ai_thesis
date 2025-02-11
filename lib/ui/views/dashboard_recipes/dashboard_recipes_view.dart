@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:food_ai_thesis/ui/views/dashboard_recipes/widget_categories.dart';
 import 'package:food_ai_thesis/ui/views/dashboard_recipes/widget_dashboard_header.dart';
 import 'package:food_ai_thesis/ui/views/dashboard_recipes/widget_featured_recipe.dart';
 import 'package:food_ai_thesis/ui/views/dashboard_recipes/widget_filipino_recipe.dart';
@@ -125,35 +124,35 @@ class _SectionTitle extends StatelessWidget {
               fontWeight: FontWeight.bold,
             ),
           ),
-          GestureDetector(
-            onTap: onSeeAllTap,
-            child: Stack(
-              children: [
-                const Padding(
-                  padding: EdgeInsets.only(bottom: 0), // Adjust the space
-                  child: Text(
-                    'See All',
-                    style: TextStyle(
-                      fontSize: 14.0,
-                      fontWeight: FontWeight.normal,
-                      color: Colors.orange,
-                    ),
-                  ),
-                ),
-                Positioned.fill(
-                  child: Align(
-                    alignment: Alignment.bottomCenter,
-                    child: Container(
-                      height: 1.0, // Thickness of the underline
-                      color: Colors.orange, // Color of the underline
-                      margin:
-                          const EdgeInsets.only(top: 0.0), // Adjust the spacing
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
+          // GestureDetector(
+          //   onTap: onSeeAllTap,
+          //   child: Stack(
+          //     children: [
+          //       const Padding(
+          //         padding: EdgeInsets.only(bottom: 0), // Adjust the space
+          //         child: Text(
+          //           'See All',
+          //           style: TextStyle(
+          //             fontSize: 14.0,
+          //             fontWeight: FontWeight.normal,
+          //             color: Colors.orange,
+          //           ),
+          //         ),
+          //       ),
+          //       Positioned.fill(
+          //         child: Align(
+          //           alignment: Alignment.bottomCenter,
+          //           child: Container(
+          //             height: 1.0, // Thickness of the underline
+          //             color: Colors.orange, // Color of the underline
+          //             margin:
+          //                 const EdgeInsets.only(top: 0.0), // Adjust the spacing
+          //           ),
+          //         ),
+          //       ),
+          //     ],
+          //   ),
+          // ),
         ],
       ),
     );

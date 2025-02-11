@@ -12,7 +12,7 @@ class SignInViewModel extends AppBaseViewModel {
   final AuthApiService _authApiService = locator<AuthApiService>();
   final SnackbarService _snackbarService = locator<SnackbarService>();
 
-  // TextEditingControllers for input fields
+  // Controllers for input fields
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
@@ -32,6 +32,8 @@ class SignInViewModel extends AppBaseViewModel {
   }
 
   Future<void> login(String email, String password) async {
+    if (_isLoading) return; // Prevent multiple logins
+
     if (email.isEmpty || password.isEmpty) {
       _snackbarService.showSnackbar(
         message: 'Please enter both email and password.',
@@ -49,7 +51,7 @@ class SignInViewModel extends AppBaseViewModel {
 
       if (response.statusCode == 200) {
         _snackbarService.showSnackbar(
-          message: 'Login successful',
+          message: 'Login successful!',
           title: 'Success',
         );
         _navigationService.navigateTo(Routes.mainpageView);
@@ -59,6 +61,7 @@ class SignInViewModel extends AppBaseViewModel {
           message: 'Login failed: $error',
           title: 'Error',
         );
+        passwordController.clear(); // ✅ Clear password after failed login
       }
     } catch (e) {
       _snackbarService.showSnackbar(
