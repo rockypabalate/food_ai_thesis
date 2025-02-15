@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:food_ai_thesis/models/created_recipe/create_recipe.dart';
 import 'package:food_ai_thesis/models/list_recipes/list_recipes.dart';
@@ -363,7 +365,6 @@ class ApiServiceImpl implements ApiServiceService {
     }
   }
 
-  // Create Recipe Method
   @override
   Future<RecipeResponse?> createRecipe(Recipe recipe) async {
     try {
@@ -397,6 +398,9 @@ class ApiServiceImpl implements ApiServiceService {
         "nutritional_paragraph": recipe.nutritionalParagraph,
       };
 
+      // Debugging the payload
+      print('Creating recipe with data: $data');
+
       // Make the POST request
       final response = await _dio.post(
         '/recipes/user-recipe/create-recipe',
@@ -409,12 +413,72 @@ class ApiServiceImpl implements ApiServiceService {
         ),
       );
 
+      // Debugging the response
+      print('API Response Status Code: ${response.statusCode}');
+      print('API Response Data: ${response.data}');
+
       // Parse the response
       if (response.statusCode == 200) {
-        return RecipeResponse.fromJson(response.data);
+        final recipeResponse = RecipeResponse.fromJson(response.data);
+
+        // Debugging the parsed response
+        print('Parsed Recipe Response: ${recipeResponse.toJson()}');
+        print('Extracted Recipe ID: ${recipeResponse.recipe.id}');
+
+        return recipeResponse;
       } else {
         print(
             'Failed to create recipe: ${response.statusCode} - ${response.data}');
+        return null;
+      }
+    } on DioException catch (e) {
+      if (e.response != null) {
+        print('Dio Error: ${e.response?.statusCode} - ${e.response?.data}');
+      } else {
+        print('Dio Error: ${e.message}');
+      }
+      return null;
+    } catch (e) {
+      print('Unexpected Error: ${e.toString()}');
+      return null;
+    }
+  }
+
+  Future<String?> uploadRecipeImage(int recipeId, File imageFile) async {
+    try {
+      // Get the user authentication token
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString(bearerTokenKey);
+
+      if (token == null) {
+        print('Unauthorized: No Bearer token');
+        return null;
+      }
+
+      // Prepare the form data for the image upload
+      final formData = FormData.fromMap({
+        'recipeImage': await MultipartFile.fromFile(imageFile.path,
+            filename: imageFile.path.split('/').last),
+      });
+
+      // Make the POST request to upload the image
+      final response = await _dio.post(
+        '/images/upload/recipe/$recipeId',
+        data: formData,
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'accept': 'application/json',
+          },
+        ),
+      );
+
+      // Parse the response
+      if (response.statusCode == 200) {
+        return response.data['image_url']; // Return the uploaded image URL
+      } else {
+        print(
+            'Failed to upload recipe image: ${response.statusCode} - ${response.data}');
         return null;
       }
     } on DioException catch (e) {

@@ -381,7 +381,6 @@ class CreateRecipeView extends StackedView<CreateRecipeViewModel> {
               },
             ),
 
-// Centered "Add Ingredient" Button
             Center(
               child: ElevatedButton(
                 onPressed: viewModel.addIngredient,
@@ -402,10 +401,28 @@ class CreateRecipeView extends StackedView<CreateRecipeViewModel> {
             ),
             const SizedBox(height: 20),
             // Nutritional Paragraph Input
-            const Text(
-              'Nutritional Content:',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            const Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Nutritional Content:',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 15),
+                Text(
+                  '(Adding Nutritional Content is optional)',
+                  style: TextStyle(
+                    fontSize: 10,
+                    fontStyle: FontStyle.italic,
+                    fontWeight: FontWeight.normal, // Ensure it’s not bold
+                  ),
+                ),
+              ],
             ),
+
             const SizedBox(height: 10),
             TextFormField(
               controller: viewModel.nutritionalParagraphController,

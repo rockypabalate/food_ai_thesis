@@ -13,9 +13,17 @@ class RecipeResponse {
       recipe: Recipe.fromJson(json['recipe']),
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'message': message,
+      'recipe': recipe.toJson(),
+    };
+  }
 }
 
 class Recipe {
+  final int id;
   final String foodName;
   final String description;
   final int servings;
@@ -30,6 +38,7 @@ class Recipe {
   final String nutritionalParagraph;
 
   Recipe({
+    required this.id,
     required this.foodName,
     required this.description,
     required this.servings,
@@ -46,6 +55,7 @@ class Recipe {
 
   factory Recipe.fromJson(Map<String, dynamic> json) {
     return Recipe(
+      id: json['id'],
       foodName: json['food_name'],
       description: json['description'],
       servings: json['servings'],
@@ -61,6 +71,25 @@ class Recipe {
       preparationTips: json['preparation_tips'],
       nutritionalParagraph: json['nutritional_paragraph'],
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'food_name': foodName,
+      'description': description,
+      'servings': servings,
+      'category': category,
+      'ingredients': ingredients,
+      'quantities': quantities,
+      'instructions': instructions,
+      'nutritional_content':
+          nutritionalContent.map((e) => e.toJson()).toList(),
+      'total_cook_time': totalCookTime,
+      'difficulty': difficulty,
+      'preparation_tips': preparationTips,
+      'nutritional_paragraph': nutritionalParagraph,
+    };
   }
 }
 
@@ -78,5 +107,12 @@ class NutritionalContent {
       name: json['name'],
       amount: json['amount'],
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'amount': amount,
+    };
   }
 }
