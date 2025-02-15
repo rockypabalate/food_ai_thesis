@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:food_ai_thesis/models/created_recipe/create_recipe.dart';
 import 'package:food_ai_thesis/models/list_recipes/list_recipes.dart';
 import 'package:food_ai_thesis/models/list_recipes/single_display_recipe.dart';
@@ -14,4 +16,5 @@ abstract class ApiServiceService {
   Future<bool> deleteFoodById(int foodId);
   Future<List<FoodInformation>> searchRecipesByName(String foodName);
   Future<RecipeResponse?> createRecipe(Recipe recipe);
+  Future<String?> uploadRecipeImage(int recipeId, File imageFile);
 }

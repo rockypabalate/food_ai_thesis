@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:food_ai_thesis/app/app.locator.dart';
+import 'package:food_ai_thesis/app/app.router.dart';
 import 'package:food_ai_thesis/app/app_base_viewmodel.dart';
 import 'package:food_ai_thesis/models/created_recipe/create_recipe.dart';
 import 'package:food_ai_thesis/services/api/api_services/api_service_service.dart';
@@ -8,6 +9,7 @@ import 'package:stacked_services/stacked_services.dart';
 class CreateRecipeViewModel extends AppBaseViewModel {
   final ApiServiceService _apiService = locator<ApiServiceService>();
   final SnackbarService _snackbarService = locator<SnackbarService>();
+  final NavigationService _navigationService = locator<NavigationService>();
 
   // Controllers for input fields
   final TextEditingController foodNameController = TextEditingController();
@@ -145,7 +147,7 @@ class CreateRecipeViewModel extends AppBaseViewModel {
     print(
         "Nutritional Content: ${nutritionalContent.isNotEmpty ? nutritionalContent.length.toString() : 'Empty'}");
 
-    // Check for empty fields
+    // Check for empty fields (excluding nutritionalContent)
     if (foodNameController.text.isEmpty ||
         descriptionController.text.isEmpty ||
         categoryController.text.isEmpty ||
@@ -154,8 +156,7 @@ class CreateRecipeViewModel extends AppBaseViewModel {
         nutritionalParagraphController.text.isEmpty ||
         ingredients.isEmpty ||
         quantities.isEmpty ||
-        instructions.isEmpty ||
-        nutritionalContent.isEmpty) {
+        instructions.isEmpty) {
       print("Validation failed: Some fields are empty!");
 
       _snackbarService.showSnackbar(
@@ -177,6 +178,7 @@ class CreateRecipeViewModel extends AppBaseViewModel {
 
     // Constructing the recipe object
     final recipe = Recipe(
+      id: 0, // Temporary ID (will be replaced by the backend response)
       foodName: foodNameController.text,
       description: descriptionController.text,
       servings: int.tryParse(servingsController.text) ?? 1,
@@ -195,9 +197,26 @@ class CreateRecipeViewModel extends AppBaseViewModel {
       final recipeResponse = await _apiService.createRecipe(recipe);
 
       if (recipeResponse != null) {
+        // Extracting the recipe ID for use in the next view
+        final createdRecipeId = recipeResponse.recipe.id;
+
+        // Debugging extracted ID
+        print('Extracted Recipe ID: $createdRecipeId');
+
+        // Show success message
         _snackbarService.showSnackbar(
-          message: 'Recipe created successfully!',
+          message: 'Recipe created successfully! Recipe ID: $createdRecipeId',
           duration: const Duration(seconds: 3),
+        );
+
+        // Debugging navigation
+        print(
+            'Navigating to UploadRecipeImageView with Recipe ID: $createdRecipeId');
+
+        // Navigate to UploadRecipeImageView, passing the recipe ID if needed
+        _navigationService.navigateTo(
+          Routes.uploadRecipeImageView,
+          arguments: UploadRecipeImageViewArguments(recipeId: createdRecipeId),
         );
 
         // Optionally, clear all fields after successful creation
@@ -213,6 +232,9 @@ class CreateRecipeViewModel extends AppBaseViewModel {
         message: 'An error occurred: $e',
         duration: const Duration(seconds: 3),
       );
+
+      // Debugging the exception
+      print('Error during recipe creation: $e');
     } finally {
       setBusy(false);
     }
