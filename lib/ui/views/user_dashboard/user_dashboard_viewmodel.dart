@@ -4,7 +4,9 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:food_ai_thesis/app/app.locator.dart';
 import 'package:food_ai_thesis/app/app_base_viewmodel.dart';
+import 'package:food_ai_thesis/models/display_created_recipe/display_user_recipe.dart';
 import 'package:food_ai_thesis/models/saved_recipe_by_user/saved_recipe_by_user.dart';
+import 'package:food_ai_thesis/models/list_recipes/list_recipes.dart';
 import 'package:food_ai_thesis/models/user/user_auth.dart';
 import 'package:food_ai_thesis/services/api/api_services/api_service_service.dart';
 import 'package:food_ai_thesis/services/api/auth/auth_api_service.dart';
@@ -28,6 +30,10 @@ class UserDashboardViewModel extends AppBaseViewModel {
   List<SavedFood> get filteredFoodInfos => _filteredFoodInfos;
 
   List<SavedFood> _foodInfos = [];
+
+  // List to store all user recipes
+  List<UserRecipe> _userRecipes = [];
+  List<UserRecipe> get userRecipes => _userRecipes;
 
   // Add selectedTab to manage the active view
   int selectedTab = 0;
@@ -68,6 +74,23 @@ class UserDashboardViewModel extends AppBaseViewModel {
     } catch (e) {
       _snackbarService.showSnackbar(
         message: 'Error fetching saved recipes: ${e.toString()}',
+      );
+    }
+    setBusy(false);
+  }
+
+  // Function to fetch all user recipes
+  Future<void> getAllUserRecipes() async {
+    setBusy(true);
+    try {
+      final recipes = await _apiService.fetchAllRecipes();
+      if (recipes != null) {
+        _userRecipes = recipes;
+        notifyListeners();
+      }
+    } catch (e) {
+      _snackbarService.showSnackbar(
+        message: 'Error fetching user recipes: ${e.toString()}',
       );
     }
     setBusy(false);

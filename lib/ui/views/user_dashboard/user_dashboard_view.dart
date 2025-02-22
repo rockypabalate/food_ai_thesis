@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:food_ai_thesis/ui/views/user_dashboard/widgets_bookmarked_recipes_tab.dart';
 import 'package:food_ai_thesis/ui/views/user_dashboard/widgets_my_recipes_tab.dart';
+import 'package:food_ai_thesis/ui/views/user_dashboard/widgets_bookmark_tab.dart';
 import 'package:food_ai_thesis/ui/views/user_dashboard/widgets_profile_header.dart';
 import 'package:stacked/stacked.dart';
 

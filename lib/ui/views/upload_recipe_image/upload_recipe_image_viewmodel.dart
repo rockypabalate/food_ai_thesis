@@ -91,7 +91,8 @@ class UploadRecipeImageViewModel extends AppBaseViewModel {
       final File imageFile = File(selectedImage!.path);
 
       // Upload the image using API service
-      final response = await _apiService.uploadRecipeImage(recipeId!, imageFile);
+      final response =
+          await _apiService.uploadRecipeImage(recipeId!, imageFile);
 
       if (response != null) {
         // Success

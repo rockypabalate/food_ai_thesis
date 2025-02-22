@@ -83,8 +83,7 @@ class Recipe {
       'ingredients': ingredients,
       'quantities': quantities,
       'instructions': instructions,
-      'nutritional_content':
-          nutritionalContent.map((e) => e.toJson()).toList(),
+      'nutritional_content': nutritionalContent.map((e) => e.toJson()).toList(),
       'total_cook_time': totalCookTime,
       'difficulty': difficulty,
       'preparation_tips': preparationTips,

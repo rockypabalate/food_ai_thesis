@@ -5,7 +5,7 @@
 // **************************************************************************
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'package:flutter/material.dart' as _i24;
+import 'package:flutter/material.dart' as _i25;
 import 'package:flutter/material.dart';
 import 'package:food_ai_thesis/ui/views/check_auth/check_auth_view.dart'
     as _i11;
@@ -36,6 +36,8 @@ import 'package:food_ai_thesis/ui/views/seeall_liked_viewed_recipes/seeall_liked
     as _i15;
 import 'package:food_ai_thesis/ui/views/sign_in/sign_in_view.dart' as _i20;
 import 'package:food_ai_thesis/ui/views/sign_up/sign_up_view.dart' as _i21;
+import 'package:food_ai_thesis/ui/views/single_view_page_recipe/single_view_page_recipe_view.dart'
+    as _i24;
 import 'package:food_ai_thesis/ui/views/startup/startup_view.dart' as _i3;
 import 'package:food_ai_thesis/ui/views/upload_recipe_image/upload_recipe_image_view.dart'
     as _i23;
@@ -44,7 +46,7 @@ import 'package:food_ai_thesis/ui/views/user_dashboard/user_dashboard_view.dart'
 import 'package:food_ai_thesis/ui/views/widget_search_allrecipes/widget_search_allrecipes_view.dart'
     as _i12;
 import 'package:stacked/stacked.dart' as _i1;
-import 'package:stacked_services/stacked_services.dart' as _i25;
+import 'package:stacked_services/stacked_services.dart' as _i26;
 
 class Routes {
   static const homeView = '/home-view';
@@ -92,6 +94,8 @@ class Routes {
 
   static const uploadRecipeImageView = '/upload-recipe-image-view';
 
+  static const singleViewPageRecipeView = '/single-view-page-recipe-view';
+
   static const all = <String>{
     homeView,
     startupView,
@@ -115,6 +119,7 @@ class Routes {
     signUpView,
     createRecipeView,
     uploadRecipeImageView,
+    singleViewPageRecipeView,
   };
 }
 
@@ -208,23 +213,27 @@ class StackedRouter extends _i1.RouterBase {
       Routes.uploadRecipeImageView,
       page: _i23.UploadRecipeImageView,
     ),
+    _i1.RouteDef(
+      Routes.singleViewPageRecipeView,
+      page: _i24.SingleViewPageRecipeView,
+    ),
   ];
 
   final _pagesMap = <Type, _i1.StackedRouteFactory>{
     _i2.HomeView: (data) {
-      return _i24.MaterialPageRoute<dynamic>(
+      return _i25.MaterialPageRoute<dynamic>(
         builder: (context) => const _i2.HomeView(),
         settings: data,
       );
     },
     _i3.StartupView: (data) {
-      return _i24.MaterialPageRoute<dynamic>(
+      return _i25.MaterialPageRoute<dynamic>(
         builder: (context) => const _i3.StartupView(),
         settings: data,
       );
     },
     _i4.LoginView: (data) {
-      return _i24.PageRouteBuilder<dynamic>(
+      return _i25.PageRouteBuilder<dynamic>(
         pageBuilder: (context, animation, secondaryAnimation) =>
             const _i4.LoginView(),
         settings: data,
@@ -234,7 +243,7 @@ class StackedRouter extends _i1.RouterBase {
       );
     },
     _i5.RegisterView: (data) {
-      return _i24.PageRouteBuilder<dynamic>(
+      return _i25.PageRouteBuilder<dynamic>(
         pageBuilder: (context, animation, secondaryAnimation) =>
             const _i5.RegisterView(),
         settings: data,
@@ -244,7 +253,7 @@ class StackedRouter extends _i1.RouterBase {
       );
     },
     _i6.MainpageView: (data) {
-      return _i24.PageRouteBuilder<dynamic>(
+      return _i25.PageRouteBuilder<dynamic>(
         pageBuilder: (context, animation, secondaryAnimation) =>
             const _i6.MainpageView(),
         settings: data,
@@ -253,55 +262,55 @@ class StackedRouter extends _i1.RouterBase {
       );
     },
     _i7.PostRecipeView: (data) {
-      return _i24.MaterialPageRoute<dynamic>(
+      return _i25.MaterialPageRoute<dynamic>(
         builder: (context) => const _i7.PostRecipeView(),
         settings: data,
       );
     },
     _i8.MyProfileView: (data) {
-      return _i24.MaterialPageRoute<dynamic>(
+      return _i25.MaterialPageRoute<dynamic>(
         builder: (context) => const _i8.MyProfileView(),
         settings: data,
       );
     },
     _i9.ImageProcessingView: (data) {
-      return _i24.MaterialPageRoute<dynamic>(
+      return _i25.MaterialPageRoute<dynamic>(
         builder: (context) => const _i9.ImageProcessingView(),
         settings: data,
       );
     },
     _i10.DashboardRecipesView: (data) {
-      return _i24.MaterialPageRoute<dynamic>(
+      return _i25.MaterialPageRoute<dynamic>(
         builder: (context) => const _i10.DashboardRecipesView(),
         settings: data,
       );
     },
     _i11.CheckAuthView: (data) {
-      return _i24.MaterialPageRoute<dynamic>(
+      return _i25.MaterialPageRoute<dynamic>(
         builder: (context) => const _i11.CheckAuthView(),
         settings: data,
       );
     },
     _i12.WidgetSearchAllrecipesView: (data) {
-      return _i24.MaterialPageRoute<dynamic>(
+      return _i25.MaterialPageRoute<dynamic>(
         builder: (context) => const _i12.WidgetSearchAllrecipesView(),
         settings: data,
       );
     },
     _i13.SeeallFilipinoRecipesView: (data) {
-      return _i24.MaterialPageRoute<dynamic>(
+      return _i25.MaterialPageRoute<dynamic>(
         builder: (context) => const _i13.SeeallFilipinoRecipesView(),
         settings: data,
       );
     },
     _i14.SeeallFeaturedRecipesView: (data) {
-      return _i24.MaterialPageRoute<dynamic>(
+      return _i25.MaterialPageRoute<dynamic>(
         builder: (context) => const _i14.SeeallFeaturedRecipesView(),
         settings: data,
       );
     },
     _i15.SeeallLikedViewedRecipesView: (data) {
-      return _i24.MaterialPageRoute<dynamic>(
+      return _i25.MaterialPageRoute<dynamic>(
         builder: (context) => const _i15.SeeallLikedViewedRecipesView(),
         settings: data,
       );
@@ -309,53 +318,62 @@ class StackedRouter extends _i1.RouterBase {
     _i16.DisplaySingleRecipeView: (data) {
       final args =
           data.getArgs<DisplaySingleRecipeViewArguments>(nullOk: false);
-      return _i24.MaterialPageRoute<dynamic>(
+      return _i25.MaterialPageRoute<dynamic>(
         builder: (context) =>
             _i16.DisplaySingleRecipeView(key: args.key, foodId: args.foodId),
         settings: data,
       );
     },
     _i17.UserDashboardView: (data) {
-      return _i24.MaterialPageRoute<dynamic>(
+      return _i25.MaterialPageRoute<dynamic>(
         builder: (context) => const _i17.UserDashboardView(),
         settings: data,
       );
     },
     _i18.EditProfileView: (data) {
-      return _i24.MaterialPageRoute<dynamic>(
+      return _i25.MaterialPageRoute<dynamic>(
         builder: (context) => const _i18.EditProfileView(),
         settings: data,
       );
     },
     _i19.ImageClassificationView: (data) {
-      return _i24.MaterialPageRoute<dynamic>(
+      return _i25.MaterialPageRoute<dynamic>(
         builder: (context) => const _i19.ImageClassificationView(),
         settings: data,
       );
     },
     _i20.SignInView: (data) {
-      return _i24.MaterialPageRoute<dynamic>(
+      return _i25.MaterialPageRoute<dynamic>(
         builder: (context) => const _i20.SignInView(),
         settings: data,
       );
     },
     _i21.SignUpView: (data) {
-      return _i24.MaterialPageRoute<dynamic>(
+      return _i25.MaterialPageRoute<dynamic>(
         builder: (context) => const _i21.SignUpView(),
         settings: data,
       );
     },
     _i22.CreateRecipeView: (data) {
-      return _i24.MaterialPageRoute<dynamic>(
+      return _i25.MaterialPageRoute<dynamic>(
         builder: (context) => const _i22.CreateRecipeView(),
         settings: data,
       );
     },
     _i23.UploadRecipeImageView: (data) {
       final args = data.getArgs<UploadRecipeImageViewArguments>(nullOk: false);
-      return _i24.MaterialPageRoute<dynamic>(
+      return _i25.MaterialPageRoute<dynamic>(
         builder: (context) =>
             _i23.UploadRecipeImageView(key: args.key, recipeId: args.recipeId),
+        settings: data,
+      );
+    },
+    _i24.SingleViewPageRecipeView: (data) {
+      final args =
+          data.getArgs<SingleViewPageRecipeViewArguments>(nullOk: false);
+      return _i25.MaterialPageRoute<dynamic>(
+        builder: (context) => _i24.SingleViewPageRecipeView(
+            key: args.key, recipeId: args.recipeId),
         settings: data,
       );
     },
@@ -374,7 +392,7 @@ class DisplaySingleRecipeViewArguments {
     required this.foodId,
   });
 
-  final _i24.Key? key;
+  final _i25.Key? key;
 
   final int foodId;
 
@@ -401,7 +419,7 @@ class UploadRecipeImageViewArguments {
     required this.recipeId,
   });
 
-  final _i24.Key? key;
+  final _i25.Key? key;
 
   final int recipeId;
 
@@ -422,7 +440,34 @@ class UploadRecipeImageViewArguments {
   }
 }
 
-extension NavigatorStateExtension on _i25.NavigationService {
+class SingleViewPageRecipeViewArguments {
+  const SingleViewPageRecipeViewArguments({
+    this.key,
+    required this.recipeId,
+  });
+
+  final _i25.Key? key;
+
+  final String recipeId;
+
+  @override
+  String toString() {
+    return '{"key": "$key", "recipeId": "$recipeId"}';
+  }
+
+  @override
+  bool operator ==(covariant SingleViewPageRecipeViewArguments other) {
+    if (identical(this, other)) return true;
+    return other.key == key && other.recipeId == recipeId;
+  }
+
+  @override
+  int get hashCode {
+    return key.hashCode ^ recipeId.hashCode;
+  }
+}
+
+extension NavigatorStateExtension on _i26.NavigationService {
   Future<dynamic> navigateToHomeView([
     int? routerId,
     bool preventDuplicates = true,
@@ -620,7 +665,7 @@ extension NavigatorStateExtension on _i25.NavigationService {
   }
 
   Future<dynamic> navigateToDisplaySingleRecipeView({
-    _i24.Key? key,
+    _i25.Key? key,
     required int foodId,
     int? routerId,
     bool preventDuplicates = true,
@@ -721,7 +766,7 @@ extension NavigatorStateExtension on _i25.NavigationService {
   }
 
   Future<dynamic> navigateToUploadRecipeImageView({
-    _i24.Key? key,
+    _i25.Key? key,
     required int recipeId,
     int? routerId,
     bool preventDuplicates = true,
@@ -731,6 +776,24 @@ extension NavigatorStateExtension on _i25.NavigationService {
   }) async {
     return navigateTo<dynamic>(Routes.uploadRecipeImageView,
         arguments: UploadRecipeImageViewArguments(key: key, recipeId: recipeId),
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
+  Future<dynamic> navigateToSingleViewPageRecipeView({
+    _i25.Key? key,
+    required String recipeId,
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  }) async {
+    return navigateTo<dynamic>(Routes.singleViewPageRecipeView,
+        arguments:
+            SingleViewPageRecipeViewArguments(key: key, recipeId: recipeId),
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,
@@ -934,7 +997,7 @@ extension NavigatorStateExtension on _i25.NavigationService {
   }
 
   Future<dynamic> replaceWithDisplaySingleRecipeView({
-    _i24.Key? key,
+    _i25.Key? key,
     required int foodId,
     int? routerId,
     bool preventDuplicates = true,
@@ -1035,7 +1098,7 @@ extension NavigatorStateExtension on _i25.NavigationService {
   }
 
   Future<dynamic> replaceWithUploadRecipeImageView({
-    _i24.Key? key,
+    _i25.Key? key,
     required int recipeId,
     int? routerId,
     bool preventDuplicates = true,
@@ -1045,6 +1108,24 @@ extension NavigatorStateExtension on _i25.NavigationService {
   }) async {
     return replaceWith<dynamic>(Routes.uploadRecipeImageView,
         arguments: UploadRecipeImageViewArguments(key: key, recipeId: recipeId),
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
+  Future<dynamic> replaceWithSingleViewPageRecipeView({
+    _i25.Key? key,
+    required String recipeId,
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  }) async {
+    return replaceWith<dynamic>(Routes.singleViewPageRecipeView,
+        arguments:
+            SingleViewPageRecipeViewArguments(key: key, recipeId: recipeId),
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,

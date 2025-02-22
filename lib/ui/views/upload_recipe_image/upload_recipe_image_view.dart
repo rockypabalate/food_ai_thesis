@@ -35,7 +35,8 @@ class UploadRecipeImageView extends StackedView<UploadRecipeImageViewModel> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               GestureDetector(
-                onTap: () => viewModel.showImagePickerDialog(context), // Open image picker dialog
+                onTap: () => viewModel
+                    .showImagePickerDialog(context), // Open image picker dialog
                 child: Container(
                   height: 250,
                   width: double.infinity,
@@ -66,7 +67,8 @@ class UploadRecipeImageView extends StackedView<UploadRecipeImageViewModel> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.orange, // Button color
                   foregroundColor: Colors.white, // Text color
-                  padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 30),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 12, horizontal: 30),
                 ),
                 child: const Text(
                   'Upload',

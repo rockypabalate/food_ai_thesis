@@ -1,453 +1,206 @@
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
-import 'package:food_ai_thesis/ui/views/display_single_recipe/display_single_recipe_view.dart';
-import 'package:food_ai_thesis/ui/views/user_dashboard/recipe_slide_animation.dart';
-import 'package:food_ai_thesis/ui/views/user_dashboard/user_dashboard_viewmodel.dart';
-import 'package:food_ai_thesis/ui/views/user_dashboard/widgets_delete_button.dart';
+import 'package:food_ai_thesis/ui/views/create_recipe/create_recipe_view.dart';
+import 'package:food_ai_thesis/ui/views/single_view_page_recipe/single_view_page_recipe_view.dart';
 import 'package:food_ai_thesis/utils/shimmer_loading_widget.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:lottie/lottie.dart';
 import 'package:stacked/stacked.dart';
+import 'package:food_ai_thesis/ui/views/user_dashboard/user_dashboard_viewmodel.dart';
+import 'package:google_fonts/google_fonts.dart';
 
-class MyRecipesTab extends StatefulWidget {
+class MyRecipesTab extends StatelessWidget {
   const MyRecipesTab({Key? key}) : super(key: key);
 
-  @override
-  _MyRecipesTabState createState() => _MyRecipesTabState();
-}
-
-class _MyRecipesTabState extends State<MyRecipesTab> {
-  late TextEditingController _searchController;
-
-  @override
-  void initState() {
-    super.initState();
-    _searchController = TextEditingController();
-  }
-
-  @override
-  void dispose() {
-    _searchController.dispose();
-    super.dispose();
+  int getCrossAxisCount(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    return screenWidth < 600 ? 2 : 3;
   }
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
+    double screenWidth = MediaQuery.of(context).size.width;
 
     return ViewModelBuilder<UserDashboardViewModel>.reactive(
       viewModelBuilder: () => UserDashboardViewModel(),
-      onViewModelReady: (viewModel) {
-        viewModel.getSavedRecipesByUser();
-
-        _searchController.addListener(() {
-          viewModel.filterRecipes(_searchController.text);
-        });
-      },
+      onModelReady: (viewModel) => viewModel.getAllUserRecipes(),
       builder: (context, viewModel, child) {
-        return Stack(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 10.0, horizontal: 8.0),
-                    child: TextField(
-                      controller: _searchController,
-                      enabled: viewModel.savedRecipes.isNotEmpty,
-                      decoration: InputDecoration(
-                        labelText: 'Search Bookmarked Recipes',
-                        labelStyle: TextStyle(
-                          color: viewModel.savedRecipes.isNotEmpty
-                              ? Colors.black
-                              : Colors.grey,
-                        ),
-                        hintStyle: const TextStyle(color: Colors.black),
-                        prefixIcon: const Icon(Icons.search),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                          borderSide: const BorderSide(
-                              color: Color.fromARGB(255, 0, 0, 0), width: 1.0),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                          borderSide: const BorderSide(
-                              color: Color.fromARGB(255, 0, 0, 0), width: 1.0),
-                        ),
-                        filled: true,
-                        fillColor: Colors.white,
-                        contentPadding: const EdgeInsets.symmetric(
-                            vertical: 10.0, horizontal: 15.0),
+        return Scaffold(
+          backgroundColor: Colors.white,
+          body: viewModel.isBusy
+              ? const Center(child: ShimmerLoadingWidget())
+              : viewModel.userRecipes.isEmpty
+                  ? const Center(
+                      child: Text(
+                        "You haven't created any recipes yet.",
+                        style: TextStyle(fontSize: 16, color: Colors.black),
                       ),
-                      style: const TextStyle(color: Colors.black),
-                    ),
-                  ),
-                  Expanded(
-                    child: viewModel.isBusy
-                        ? ListView.builder(
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            itemCount: 6,
-                            itemBuilder: (context, index) => const Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: ShimmerLoadingWidget(),
+                    )
+                  : GridView.builder(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10.0, vertical: 10.0),
+                      shrinkWrap: true,
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: getCrossAxisCount(context),
+                        crossAxisSpacing: screenWidth * 0.01,
+                        mainAxisSpacing: screenWidth * 0.01,
+                        childAspectRatio: 0.82,
+                      ),
+                      itemCount: viewModel.userRecipes.length,
+                      itemBuilder: (context, index) {
+                        final recipe = viewModel.userRecipes[index];
+
+                        return InkWell(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => SingleViewPageRecipeView(
+                                    recipeId: recipe.recipeId.toString()),
+                              ),
+                            );
+                          },
+                          child: Container(
+                            margin: const EdgeInsets.symmetric(
+                                horizontal: 4.0, vertical: 4),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(
+                                color: Colors.grey.shade300,
+                                width: .8,
+                              ),
                             ),
-                          )
-                        : viewModel.savedRecipes.isEmpty
-                            ? SingleChildScrollView(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    SizedBox(
-                                      height: 320,
-                                      child: Lottie.asset(
-                                        'lib/assets/not_found.json',
-                                        fit: BoxFit.cover,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 20.0),
-                                    const Text(
-                                      'Looks like you didn\'t save any recipes',
-                                      style: TextStyle(
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    const SizedBox(height: 8),
-                                    ElevatedButton(
-                                      onPressed: () {},
-                                      style: ElevatedButton.styleFrom(
-                                        foregroundColor: Colors.white,
-                                        backgroundColor: Colors.green,
-                                      ),
-                                      child: const Text('Search Recipes'),
-                                    ),
-                                  ],
-                                ),
-                              )
-                            : viewModel.filteredFoodInfos.isEmpty
-                                ? SingleChildScrollView(
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      children: [
-                                        SizedBox(
-                                          height: 320,
-                                          child: Lottie.asset(
-                                            'lib/assets/not_found.json',
-                                            fit: BoxFit.cover,
-                                          ),
-                                        ),
-                                        const SizedBox(height: 20.0),
-                                        const Text(
-                                          'No recipes match your search',
-                                          style: TextStyle(
-                                              fontSize: 15,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                        const SizedBox(height: 8),
-                                      ],
-                                    ),
-                                  )
-                                : GridView.builder(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 3.0),
-                                    shrinkWrap:
-                                        true, // Ensures GridView does not expand infinitely
-
-                                    gridDelegate:
-                                        SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: getCrossAxisCount(
-                                          context), // Number of columns
-                                      crossAxisSpacing: screenWidth *
-                                          0.01, // Space between columns
-                                      mainAxisSpacing: screenWidth *
-                                          0.01, // Space between rows
-                                      childAspectRatio:
-                                          .82, // Adjust height-to-width ratio
-                                    ),
-                                    itemCount:
-                                        viewModel.filteredFoodInfos.length,
-                                    itemBuilder: (context, index) {
-                                      final recipe =
-                                          viewModel.filteredFoodInfos[index];
-                                      final delay = index * 70;
-
-                                      return RecipeSlideAnimation(
-                                        delay: delay,
-                                        child: InkWell(
-                                          onTap: () {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    DisplaySingleRecipeView(
-                                                        foodId: recipe.id),
-                                              ),
-                                            );
+                            child: Stack(
+                              children: [
+                                // Recipe Image or Placeholder
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(16),
+                                  child: recipe.images.isNotEmpty
+                                      ? Image.network(
+                                          recipe.images.first,
+                                          width: double.infinity,
+                                          height: double.infinity,
+                                          fit: BoxFit.cover,
+                                          errorBuilder:
+                                              (context, error, stackTrace) {
+                                            return noImageWidget();
                                           },
-                                          child: Container(
-                                            margin: const EdgeInsets.symmetric(
-                                                horizontal: 4.0, vertical: 4),
-                                            child: Stack(
-                                              children: [
-                                                // Recipe Image
-                                                ClipRRect(
-                                                  borderRadius:
-                                                      BorderRadius.circular(16),
-                                                  child: Hero(
-                                                    tag: '${recipe.id}',
-                                                    child: Image.network(
-                                                      recipe.image?.imageUrl ??
-                                                          '',
-                                                      width: double.infinity,
-                                                      height: double.infinity,
-                                                      fit: BoxFit.cover,
-                                                      errorBuilder: (context,
-                                                          error, stackTrace) {
-                                                        return const Icon(
-                                                            Icons.fastfood,
-                                                            size: 50);
-                                                      },
-                                                    ),
-                                                  ),
-                                                ),
+                                        )
+                                      : noImageWidget(),
+                                ),
 
-                                                // Views and Likes Section
-                                                Positioned(
-                                                  top: 8,
-                                                  left: 8,
-                                                  child: Container(
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                        horizontal: 8.0,
-                                                        vertical: 4.0),
-                                                    decoration: BoxDecoration(
-                                                      color: Colors.white,
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              8),
-                                                    ),
-                                                    child: Row(
-                                                      children: [
-                                                        // Views
-                                                        Row(
-                                                          children: [
-                                                            const Icon(
-                                                              Icons
-                                                                  .remove_red_eye,
-                                                              size: 10,
-                                                              color:
-                                                                  Colors.orange,
-                                                            ),
-                                                            const SizedBox(
-                                                                width: 4),
-                                                            Text(
-                                                              '${recipe.views} Views',
-                                                              style: GoogleFonts
-                                                                  .poppins(
-                                                                fontSize: 8,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                color: Colors
-                                                                    .black,
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                        const SizedBox(
-                                                            width: 5),
-                                                        // Likes
-                                                        Row(
-                                                          children: [
-                                                            const Icon(
-                                                              Icons.favorite,
-                                                              size: 10,
-                                                              color: Colors.red,
-                                                            ),
-                                                            const SizedBox(
-                                                                width: 4),
-                                                            Text(
-                                                              '${recipe.likes} Likes',
-                                                              style: GoogleFonts
-                                                                  .poppins(
-                                                                fontSize: 8,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                color: Colors
-                                                                    .black,
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ],
-                                                    ),
+                                // Recipe Details Overlay
+                                Positioned(
+                                  bottom: 0,
+                                  left: 0,
+                                  right: 0,
+                                  child: ClipRRect(
+                                    borderRadius: const BorderRadius.vertical(
+                                      bottom: Radius.circular(16),
+                                    ),
+                                    child: BackdropFilter(
+                                      filter: ImageFilter.blur(
+                                          sigmaX: 7, sigmaY: 7),
+                                      child: Container(
+                                        padding: const EdgeInsets.all(8.0),
+                                        decoration: BoxDecoration(
+                                          color: Colors.black.withOpacity(0.2),
+                                        ),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              recipe.foodName,
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: GoogleFonts.poppins(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.orange,
+                                                shadows: const [
+                                                  Shadow(
+                                                    offset: Offset(0, .3),
+                                                    blurRadius: .1,
+                                                    color: Colors.white,
                                                   ),
+                                                ],
+                                              ),
+                                            ),
+                                            const SizedBox(height: 5),
+                                            Row(
+                                              children: [
+                                                const Icon(
+                                                  Icons.access_time,
+                                                  size: 10,
+                                                  color: Colors.orange,
                                                 ),
-                                                // Recipe Details Section
-                                                DeleteButton(
-                                                  onDelete: () async {
-                                                    await viewModel
-                                                        .deleteFoodById(
-                                                            recipe.id);
-                                                    await viewModel
-                                                        .getSavedRecipesByUser();
-                                                  },
-                                                ),
-                                                Positioned(
-                                                  bottom: 0,
-                                                  left: 0,
-                                                  right: 0,
-                                                  child: ClipRRect(
-                                                    borderRadius:
-                                                        const BorderRadius
-                                                            .vertical(
-                                                      bottom:
-                                                          Radius.circular(16),
-                                                    ),
-                                                    child: BackdropFilter(
-                                                      filter: ImageFilter.blur(
-                                                          sigmaX: 7, sigmaY: 7),
-                                                      child: Container(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .all(8.0),
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          color: Colors.black
-                                                              .withOpacity(0.2),
-                                                        ),
-                                                        child: Column(
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
-                                                          children: [
-                                                            Row(
-                                                              children: [
-                                                                const Icon(
-                                                                  Icons
-                                                                      .emoji_food_beverage,
-                                                                  size: 14,
-                                                                  color: Colors
-                                                                      .orange,
-                                                                ),
-                                                                const SizedBox(
-                                                                    width: 4),
-                                                                Flexible(
-                                                                  child: Text(
-                                                                    recipe
-                                                                        .foodName,
-                                                                    maxLines: 1,
-                                                                    overflow:
-                                                                        TextOverflow
-                                                                            .ellipsis,
-                                                                    style: GoogleFonts
-                                                                        .poppins(
-                                                                      fontSize:
-                                                                          14,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold,
-                                                                      color: Colors
-                                                                          .orange,
-                                                                      shadows: const [
-                                                                        Shadow(
-                                                                          offset: Offset(
-                                                                              0,
-                                                                              .3),
-                                                                          blurRadius:
-                                                                              .1,
-                                                                          color:
-                                                                              Colors.white,
-                                                                        ),
-                                                                      ],
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                            const SizedBox(
-                                                                height: 5),
-                                                            Row(
-                                                              children: [
-                                                                const Icon(
-                                                                  Icons
-                                                                      .access_time,
-                                                                  size: 10,
-                                                                  color: Colors
-                                                                      .orange,
-                                                                ),
-                                                                const SizedBox(
-                                                                    width: 4),
-                                                                Flexible(
-                                                                  child: Text(
-                                                                    '${recipe.totalCookTime ?? 'N/A'} · ${recipe.difficulty ?? 'N/A'} · by ${recipe.author ?? 'Unknown'}',
-                                                                    maxLines: 1,
-                                                                    overflow:
-                                                                        TextOverflow
-                                                                            .ellipsis,
-                                                                    style: GoogleFonts
-                                                                        .poppins(
-                                                                      fontSize:
-                                                                          10,
-                                                                      color: Colors
-                                                                          .white,
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
+                                                const SizedBox(width: 4),
+                                                Flexible(
+                                                  child: Text(
+                                                    '${recipe.totalCookTime} · ${recipe.difficulty}',
+                                                    maxLines: 1,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    style: GoogleFonts.poppins(
+                                                      fontSize: 10,
+                                                      color: Colors.white,
                                                     ),
                                                   ),
                                                 ),
                                               ],
                                             ),
-                                          ),
+                                          ],
                                         ),
-                                      );
-                                    },
+                                      ),
+                                    ),
                                   ),
-                  ),
-                ],
-              ),
-            ),
-            // Positioned(
-            //   bottom: 16,
-            //   right: 16,
-            //   child: FloatingActionButton(
-            //     onPressed: () {
-            //       // Action for adding a new recipe
-            //     },
-            //     backgroundColor: Colors.orangeAccent,
-            //     shape: const CircleBorder(),
-            //     elevation: 6.0,
-            //     child: const Icon(
-            //       Icons.add,
-            //       color: Colors.white,
-            //     ),
-            //   ),
-            // ),
-          ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+          floatingActionButton: FloatingActionButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const CreateRecipeView(),
+                ),
+              );
+            },
+            backgroundColor: Colors.orange,
+            shape: const CircleBorder(),
+            child: const Icon(Icons.add, size: 28, color: Colors.white),
+          ),
         );
       },
     );
   }
+}
 
-  int getCrossAxisCount(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    if (screenWidth >= 1200) {
-      return 4;
-    } else if (screenWidth >= 800) {
-      return 3;
-    } else {
-      return 2;
-    }
-  }
+Widget noImageWidget() {
+  return Container(
+    width: double.infinity,
+    height: double.infinity,
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(16),
+      color: Colors.grey.shade200,
+    ),
+    child: const Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(
+          Icons.image_not_supported,
+          size: 50,
+          color: Colors.grey,
+        ),
+        SizedBox(height: 8),
+        Text(
+          "No Image",
+          style: TextStyle(fontSize: 14, color: Colors.grey),
+        ),
+      ],
+    ),
+  );
 }
