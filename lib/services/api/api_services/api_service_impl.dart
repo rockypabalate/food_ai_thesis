@@ -2,10 +2,12 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:food_ai_thesis/models/created_recipe/create_recipe.dart';
+import 'package:food_ai_thesis/models/display_created_recipe/display_user_recipe.dart';
 import 'package:food_ai_thesis/models/list_recipes/list_recipes.dart';
 import 'package:food_ai_thesis/models/list_recipes/single_display_recipe.dart';
 import 'package:food_ai_thesis/models/saved_recipe_by_user/saved_recipe_by_user.dart';
 import 'package:food_ai_thesis/models/search_recipe_name/food_description.dart';
+import 'package:food_ai_thesis/models/single_view_created_recipe/single_view_created_recipe.dart';
 import 'package:food_ai_thesis/services/api/helpers/dio_client.dart';
 import 'package:food_ai_thesis/services/api/api_services/api_service_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -491,6 +493,164 @@ class ApiServiceImpl implements ApiServiceService {
     } catch (e) {
       print('Unexpected Error: ${e.toString()}');
       return null;
+    }
+  }
+
+  @override
+  Future<List<UserRecipe>?> fetchAllRecipes() async {
+    try {
+      // Get the user authentication token
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString(bearerTokenKey);
+
+      if (token == null) {
+        print('Unauthorized: No Bearer token');
+        return null;
+      }
+
+      // Make the GET request
+      final response = await _dio.get(
+        '/recipes/user-recipe/all',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'accept': 'application/json',
+          },
+        ),
+      );
+
+      // Debugging response
+      print('API Response Status Code: ${response.statusCode}');
+      print('API Response Data: ${response.data}');
+
+      // Parse the response
+      if (response.statusCode == 200) {
+        final List<dynamic> data = response.data;
+        final List<UserRecipe> recipes =
+            data.map((json) => UserRecipe.fromJson(json)).toList();
+
+        // Debugging parsed data
+        print('Fetched Recipes Count: ${recipes.length}');
+
+        return recipes;
+      } else {
+        print(
+            'Failed to fetch recipes: ${response.statusCode} - ${response.data}');
+        return null;
+      }
+    } on DioException catch (e) {
+      if (e.response != null) {
+        print('Dio Error: ${e.response?.statusCode} - ${e.response?.data}');
+      } else {
+        print('Dio Error: ${e.message}');
+      }
+      return null;
+    } catch (e) {
+      print('Unexpected Error: ${e.toString()}');
+      return null;
+    }
+  }
+
+  @override
+  Future<SingleDisplayRecipe?> fetchSingleRecipe(String recipeId) async {
+    try {
+      // Get the user authentication token
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString(bearerTokenKey);
+
+      if (token == null) {
+        print('Unauthorized: No Bearer token');
+        return null;
+      }
+
+      // Make the GET request
+      final response = await _dio.get(
+        '/recipes/user-recipe/single-recipe/$recipeId',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'accept': 'application/json',
+          },
+        ),
+      );
+
+      // Debugging response
+      print('API Response Status Code: ${response.statusCode}');
+      print('API Response Data: ${response.data}');
+
+      // Parse the response
+      if (response.statusCode == 200) {
+        final data = response.data;
+        final singleRecipe = SingleDisplayRecipe.fromJson(data);
+
+        // Debugging parsed data
+        print('Fetched Recipe: ${singleRecipe.foodName}');
+
+        return singleRecipe;
+      } else {
+        print(
+            'Failed to fetch recipe: ${response.statusCode} - ${response.data}');
+        return null;
+      }
+    } on DioException catch (e) {
+      if (e.response != null) {
+        print('Dio Error: ${e.response?.statusCode} - ${e.response?.data}');
+      } else {
+        print('Dio Error: ${e.message}');
+      }
+      return null;
+    } catch (e) {
+      print('Unexpected Error: ${e.toString()}');
+      return null;
+    }
+  }
+
+  @override
+  Future<bool> deleteRecipe(String recipeId) async {
+    try {
+      // Get the user authentication token
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString(bearerTokenKey);
+
+      if (token == null) {
+        print('Unauthorized: No Bearer token');
+        return false;
+      }
+
+      // Make the DELETE request
+      final response = await _dio.delete(
+        '/recipes/user-recipe/delete-recipe/$recipeId',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'accept': 'application/json',
+          },
+        ),
+      );
+
+      // Debugging response
+      print('API Response Status Code: ${response.statusCode}');
+      print('API Response Data: ${response.data}');
+
+      // Check if the deletion was successful
+      if (response.statusCode == 200) {
+        print('Recipe deleted successfully');
+        return true;
+      } else {
+        print(
+            'Failed to delete recipe: ${response.statusCode} - ${response.data}');
+        return false;
+      }
+    } on DioException catch (e) {
+      if (e.response != null) {
+        print('Dio Error: ${e.response?.statusCode} - ${e.response?.data}');
+      } else {
+        print('Dio Error: ${e.message}');
+      }
+      return false;
+    } catch (e) {
+      print('Unexpected Error: ${e.toString()}');
+      return false;
     }
   }
 }
