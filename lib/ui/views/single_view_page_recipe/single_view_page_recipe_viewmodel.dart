@@ -13,6 +13,22 @@ class SingleViewPageRecipeViewModel extends AppBaseViewModel {
 
   SingleDisplayRecipe? singleRecipe;
 
+  void navigateToUploadImage(String recipeId) {
+  int parsedRecipeId = int.tryParse(recipeId) ?? 0; // Convert String to int safely
+  if (parsedRecipeId == 0) {
+    _snackbarService.showSnackbar(
+      message: 'Invalid recipe ID. Please try again.',
+    );
+    return;
+  }
+
+  _navigationService.navigateTo(
+    Routes.uploadRecipeImageView,
+    arguments: UploadRecipeImageViewArguments(recipeId: parsedRecipeId),
+  );
+}
+
+
   // Method to fetch a single recipe by ID
   Future<void> fetchSingleRecipe(String recipeId) async {
     setBusy(true);

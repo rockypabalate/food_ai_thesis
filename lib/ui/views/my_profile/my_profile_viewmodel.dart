@@ -19,7 +19,7 @@ class MyProfileViewModel extends AppBaseViewModel {
   dynamic get currentUser => _currentUser;
 
   MyProfileViewModel() {
-    _getCurrentUser();
+    getCurrentUser();
   }
 
   Future<void> logout() async {
@@ -34,7 +34,7 @@ class MyProfileViewModel extends AppBaseViewModel {
     }
   }
 
-  Future<void> _getCurrentUser() async {
+  Future<void> getCurrentUser() async {
     setBusy(true);
 
     try {

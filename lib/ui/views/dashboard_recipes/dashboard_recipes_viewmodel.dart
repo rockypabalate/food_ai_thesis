@@ -37,7 +37,7 @@ class DashboardRecipesViewModel extends AppBaseViewModel {
   String? get successMessage => _successMessage;
 
   DashboardRecipesViewModel() {
-    _getCurrentUser();
+    getCurrentUser();
   }
 
   @override
@@ -138,7 +138,7 @@ class DashboardRecipesViewModel extends AppBaseViewModel {
   }
 
   /// Retrieve the current user information
-  Future<void> _getCurrentUser() async {
+  Future<void> getCurrentUser() async {
     setBusy(true);
 
     try {
