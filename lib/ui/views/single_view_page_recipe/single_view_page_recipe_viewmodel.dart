@@ -14,20 +14,20 @@ class SingleViewPageRecipeViewModel extends AppBaseViewModel {
   SingleDisplayRecipe? singleRecipe;
 
   void navigateToUploadImage(String recipeId) {
-  int parsedRecipeId = int.tryParse(recipeId) ?? 0; // Convert String to int safely
-  if (parsedRecipeId == 0) {
-    _snackbarService.showSnackbar(
-      message: 'Invalid recipe ID. Please try again.',
+    int parsedRecipeId =
+        int.tryParse(recipeId) ?? 0; // Convert String to int safely
+    if (parsedRecipeId == 0) {
+      _snackbarService.showSnackbar(
+        message: 'Invalid recipe ID. Please try again.',
+      );
+      return;
+    }
+
+    _navigationService.navigateTo(
+      Routes.uploadRecipeImageView,
+      arguments: UploadRecipeImageViewArguments(recipeId: parsedRecipeId),
     );
-    return;
   }
-
-  _navigationService.navigateTo(
-    Routes.uploadRecipeImageView,
-    arguments: UploadRecipeImageViewArguments(recipeId: parsedRecipeId),
-  );
-}
-
 
   // Method to fetch a single recipe by ID
   Future<void> fetchSingleRecipe(String recipeId) async {
@@ -50,37 +50,36 @@ class SingleViewPageRecipeViewModel extends AppBaseViewModel {
     notifyListeners();
   }
 
-Future<void> deleteRecipe(String recipeId) async {
-  var response = await _dialogService.showConfirmationDialog(
-    title: 'Delete Recipe',
-    description: 'Are you sure you want to delete this recipe?',
-    confirmationTitle: 'Delete',
-    cancelTitle: 'Cancel',
-  );
+  Future<void> deleteRecipe(String recipeId) async {
+    var response = await _dialogService.showConfirmationDialog(
+      title: 'Delete Recipe',
+      description: 'Are you sure you want to delete this recipe?',
+      confirmationTitle: 'Delete',
+      cancelTitle: 'Cancel',
+    );
 
-  if (response?.confirmed == true) {
-    setBusy(true);
-    try {
-      bool success = await _apiService.deleteRecipe(recipeId);
-      if (success) {
-        _snackbarService.showSnackbar(
-          message: 'Recipe deleted successfully.',
-        );
+    if (response?.confirmed == true) {
+      setBusy(true);
+      try {
+        bool success = await _apiService.deleteRecipe(recipeId);
+        if (success) {
+          _snackbarService.showSnackbar(
+            message: 'Recipe deleted successfully.',
+          );
 
-        // Clears the navigation stack and replaces it with UserDashboardView
-        _navigationService.clearStackAndShow(Routes.userDashboardView);
-      } else {
+          // Clears the navigation stack and replaces it with UserDashboardView
+          _navigationService.clearStackAndShow(Routes.userDashboardView);
+        } else {
+          _snackbarService.showSnackbar(
+            message: 'Failed to delete recipe. Try again.',
+          );
+        }
+      } catch (e) {
         _snackbarService.showSnackbar(
-          message: 'Failed to delete recipe. Try again.',
+          message: 'Error deleting recipe: ${e.toString()}',
         );
       }
-    } catch (e) {
-      _snackbarService.showSnackbar(
-        message: 'Error deleting recipe: ${e.toString()}',
-      );
+      setBusy(false);
     }
-    setBusy(false);
   }
-}
-
 }

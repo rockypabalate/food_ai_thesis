@@ -26,7 +26,7 @@ class CheckAuthViewModel extends AppBaseViewModel {
       // Retrieve the Bearer token instead of session ID
       String? bearerToken = await _sharedPreferenceService.getBearerToken();
       if (bearerToken == null) {
-        _navigationService.clearStackAndShow(Routes.signInView);
+        _navigationService.clearStackAndShow(Routes.loginregisterView);
         return;
       }
 
@@ -35,11 +35,11 @@ class CheckAuthViewModel extends AppBaseViewModel {
       if (response.statusCode == 200 && response.data != null) {
         _navigationService.navigateTo(Routes.mainpageView);
       } else {
-        _navigationService.clearStackAndShow(Routes.signInView);
+        _navigationService.clearStackAndShow(Routes.loginView);
       }
     } catch (e) {
       print('Error during authentication: $e');
-      _navigationService.clearStackAndShow(Routes.loginView);
+      _navigationService.clearStackAndShow(Routes.loginregisterView);
     } finally {
       _isLoading = false;
       notifyListeners();

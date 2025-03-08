@@ -26,7 +26,7 @@ class MyProfileViewModel extends AppBaseViewModel {
     final response = await _authApiService.logoutUser();
 
     if (response.statusCode == 200) {
-      _navigationService.navigateTo(Routes.signInView);
+      _navigationService.navigateTo(Routes.loginView);
       _snackbarService.showSnackbar(message: 'Logged out successfully');
     } else {
       _snackbarService.showSnackbar(

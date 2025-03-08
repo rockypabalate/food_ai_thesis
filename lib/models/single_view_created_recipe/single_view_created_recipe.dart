@@ -53,7 +53,6 @@ class SingleDisplayRecipe {
   }
 }
 
-
 class NutritionalContent {
   final String name;
   final String amount;

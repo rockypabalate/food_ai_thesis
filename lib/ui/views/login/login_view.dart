@@ -207,6 +207,95 @@ class _LoginViewState extends State<LoginView> {
                                     ),
                                     const SizedBox(height: 20),
                                     FadeEffectLogin(
+                                      delay: 800,
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment
+                                            .center, // Center horizontally
+                                        children: [
+                                          Expanded(
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 8.0),
+                                              child: Text(
+                                                'other way to sign up',
+                                                textAlign: TextAlign
+                                                    .center, // Center text inside the widget
+                                                style: GoogleFonts.poppins(
+                                                  fontSize: 14,
+                                                  color: Colors.grey,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    const SizedBox(height: 20),
+                                    FadeEffectLogin(
+                                      delay: 900,
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          InkWell(
+                                            onTap: () {},
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                shape: BoxShape.circle,
+                                                boxShadow: [
+                                                  BoxShadow(
+                                                    color: Colors.black
+                                                        .withOpacity(0.2),
+                                                    spreadRadius: 1,
+                                                    blurRadius: 2,
+                                                    offset: const Offset(0, 1),
+                                                  ),
+                                                ],
+                                              ),
+                                              child: CircleAvatar(
+                                                radius: 20,
+                                                backgroundColor: Colors.white,
+                                                child: Image.asset(
+                                                  'lib/assets/search.png',
+                                                  height: 23,
+                                                  width: 23,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(width: 20),
+                                          InkWell(
+                                            onTap: () {},
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                shape: BoxShape.circle,
+                                                boxShadow: [
+                                                  BoxShadow(
+                                                    color: Colors.black
+                                                        .withOpacity(0.2),
+                                                    spreadRadius: 1,
+                                                    blurRadius: 2,
+                                                    offset: const Offset(0, 1),
+                                                  ),
+                                                ],
+                                              ),
+                                              child: CircleAvatar(
+                                                radius: 20,
+                                                backgroundColor: Colors.white,
+                                                child: Image.asset(
+                                                  'lib/assets/facebook.png',
+                                                  height: 23,
+                                                  width: 23,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    const SizedBox(height: 30),
+                                    FadeEffectLogin(
                                       delay: 1000,
                                       child: RichText(
                                         text: TextSpan(
