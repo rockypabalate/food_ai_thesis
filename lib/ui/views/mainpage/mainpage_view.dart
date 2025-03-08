@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:food_ai_thesis/ui/views/dashboard_recipes/dashboard_recipes_view.dart';
 import 'package:food_ai_thesis/ui/views/image_processing/image_processing_view.dart';
 import 'package:food_ai_thesis/ui/views/my_profile/my_profile_view.dart';
+import 'package:food_ai_thesis/ui/views/user_dashboard/user_dashboard_view.dart';
 import 'package:stacked/stacked.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -27,7 +28,7 @@ class MainpageView extends StackedView<MainpageViewModel> {
           children: const [
             DashboardRecipesView(),
             ImageProcessingView(),
-            MyProfileView(),
+            UserDashboardView(),
           ],
         ),
         bottomNavigationBar: Container(

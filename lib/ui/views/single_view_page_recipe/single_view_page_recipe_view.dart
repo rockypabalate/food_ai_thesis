@@ -49,7 +49,7 @@ class SingleViewPageRecipeView
             icon:
                 const Icon(Icons.delete, color: Colors.white), // ✅ Delete Icon
             onPressed: () {
-              viewModel.deleteRecipe(recipe.id); 
+              viewModel.deleteRecipe(recipe.id);
             },
           ),
         ],
@@ -61,29 +61,48 @@ class SingleViewPageRecipeView
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ✅ Display Images
-            if (recipe.images.isNotEmpty)
-              SizedBox(
-                height: 200,
-                child: PageView(
-                  children: recipe.images.map((imageUrl) {
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 16.0),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
-                        child: Image.network(
-                          imageUrl,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) =>
-                              const Icon(Icons.image_not_supported,
-                                  size: 100, color: Colors.grey),
+            // ✅ Display Images or Show Upload Container
+            SizedBox(
+              height: 200,
+              child: recipe.images.isNotEmpty
+                  ? PageView(
+                      children: recipe.images.map((imageUrl) {
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 16.0),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: Image.network(
+                              imageUrl,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) =>
+                                  const Icon(Icons.image_not_supported,
+                                      size: 100, color: Colors.grey),
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    )
+                  : GestureDetector(
+                      onTap: () {
+                        // Navigate to upload image screen and pass recipeId
+                        viewModel.navigateToUploadImage(recipe.id);
+                      },
+                      child: Container(
+                        height: 200,
+                        decoration: BoxDecoration(
+                          color: Colors.grey[300],
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: Colors.grey),
+                        ),
+                        child: const Center(
+                          child:
+                              Icon(Icons.add, size: 50, color: Colors.black54),
                         ),
                       ),
-                    );
-                  }).toList(),
-                ),
-              ),
+                    ),
+            ),
 
+            const SizedBox(height: 12),
             // Recipe Title and Description
             Text(
               recipe.foodName,
@@ -117,13 +136,17 @@ class SingleViewPageRecipeView
 
             const SizedBox(height: 16),
 
+            // Preparation Tips
+            if (recipe.preparationTips.isNotEmpty)
+              _buildSectionWithContent(
+                  'Preparation Tips', recipe.preparationTips),
+            const SizedBox(height: 16),
+
             // Instructions Section
             _buildSectionTitle('Instructions'),
             ..._buildListItems(
               recipe.instructions
-                  .asMap()
-                  .entries
-                  .map((entry) => '${entry.key + 1}. ${entry.value}')
+                  .map((instruction) => ' $instruction')
                   .toList(),
             ),
 
@@ -131,18 +154,25 @@ class SingleViewPageRecipeView
 
             // Nutritional Content Section
             _buildSectionTitle('Nutritional Content'),
-            ..._buildListItems(
-              recipe.nutritionalContent
-                  .map((item) => '- ${item.name}: ${item.amount}')
-                  .toList(),
-            ),
+            if (recipe.nutritionalContent.isNotEmpty)
+              ..._buildListItems(
+                recipe.nutritionalContent
+                    .map((item) => '- ${item.name}: ${item.amount}')
+                    .toList(),
+              )
+            else
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 4.0),
+                child: Text(
+                  'No Nutritional Content',
+                  style: TextStyle(
+                      fontSize: 16,
+                      fontStyle: FontStyle.italic,
+                      color: Colors.grey),
+                ),
+              ),
 
             const SizedBox(height: 16),
-
-            // Preparation Tips
-            if (recipe.preparationTips.isNotEmpty)
-              _buildSectionWithContent(
-                  'Preparation Tips', recipe.preparationTips),
 
             // Nutritional Paragraph
             if (recipe.nutritionalParagraph.isNotEmpty)

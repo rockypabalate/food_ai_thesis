@@ -143,7 +143,6 @@ class AuthServiceImpl implements AuthApiService {
   @override
   Future<Response> logoutUser() async {
     try {
-      // Retrieve the Bearer token from SharedPreferences
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString(bearerTokenKey);
 
@@ -218,7 +217,7 @@ class AuthServiceImpl implements AuthApiService {
         data: formData,
         options: Options(
           headers: {
-            'Authorization': 'Bearer $token', // Include Bearer token
+            'Authorization': 'Bearer $token',
             'Accept': 'application/json',
             'Content-Type': 'multipart/form-data',
           },

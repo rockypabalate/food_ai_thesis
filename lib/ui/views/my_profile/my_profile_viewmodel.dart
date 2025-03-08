@@ -19,14 +19,14 @@ class MyProfileViewModel extends AppBaseViewModel {
   dynamic get currentUser => _currentUser;
 
   MyProfileViewModel() {
-    _getCurrentUser();
+    getCurrentUser();
   }
 
   Future<void> logout() async {
     final response = await _authApiService.logoutUser();
 
     if (response.statusCode == 200) {
-      _navigationService.navigateTo(Routes.signInView);
+      _navigationService.navigateTo(Routes.loginView);
       _snackbarService.showSnackbar(message: 'Logged out successfully');
     } else {
       _snackbarService.showSnackbar(
@@ -34,7 +34,7 @@ class MyProfileViewModel extends AppBaseViewModel {
     }
   }
 
-  Future<void> _getCurrentUser() async {
+  Future<void> getCurrentUser() async {
     setBusy(true);
 
     try {
