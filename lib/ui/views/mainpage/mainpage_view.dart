@@ -28,7 +28,7 @@ class MainpageView extends StackedView<MainpageViewModel> {
           children: const [
             DashboardRecipesView(),
             ImageProcessingView(),
-            UserDashboardView(),
+            // UserDashboardView(),
           ],
         ),
         bottomNavigationBar: Container(
@@ -69,15 +69,15 @@ class MainpageView extends StackedView<MainpageViewModel> {
                 label: 'Camera',
                 tooltip: 'Capture Photos',
               ),
-              BottomNavigationBarItem(
-                icon: Icon(
-                  Icons.person,
-                  color:
-                      viewModel.currentIndex == 2 ? Colors.orange : Colors.grey,
-                ),
-                label: 'Profile',
-                tooltip: 'Go to Profile',
-              ),
+              // BottomNavigationBarItem(
+              //   icon: Icon(
+              //     Icons.person,
+              //     color:
+              //         viewModel.currentIndex == 2 ? Colors.orange : Colors.grey,
+              //   ),
+              //   label: 'Profile',
+              //   tooltip: 'Go to Profile',
+              // ),
             ],
             // Apply Google Font to labels
             selectedLabelStyle: GoogleFonts.poppins(

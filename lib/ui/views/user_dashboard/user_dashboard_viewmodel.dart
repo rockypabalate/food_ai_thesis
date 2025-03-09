@@ -34,8 +34,13 @@ class UserDashboardViewModel extends AppBaseViewModel {
   List<SavedFood> _foodInfos = [];
 
   // List to store all user recipes
-  List<UserRecipe> _userRecipes = [];
-  List<UserRecipe> get userRecipes => _userRecipes;
+   List<UserRecipe> _userRecipes = [];
+  List<UserRecipe> get userRecipes => _filteredUserRecipes;
+  List<UserRecipe> get allUserRecipes => _userRecipes;
+
+
+
+  List<UserRecipe> _filteredUserRecipes = [];
 
   // Add selectedTab to manage the active view
   int selectedTab = 0;
@@ -45,6 +50,30 @@ class UserDashboardViewModel extends AppBaseViewModel {
     selectedTab = tab;
     notifyListeners();
   }
+
+  void userfilterRecipes(String query) {
+  setBusy(true); // Indicate the view is loading (this will trigger shimmer)
+
+  if (_debounce?.isActive ?? false) {
+    _debounce!.cancel(); // Cancel any ongoing debounce timer
+  }
+
+  _debounce = Timer(const Duration(milliseconds: 500), () {
+    if (query.isEmpty) {
+      _filteredUserRecipes = List.from(_userRecipes); // Ensure a fresh list copy
+    } else {
+      _filteredUserRecipes = _userRecipes
+          .where((recipe) =>
+              recipe.foodName.toLowerCase().contains(query.toLowerCase()))
+          .toList();
+    }
+
+    setBusy(false); // Stop shimmer/loading
+    notifyListeners(); // Notify UI of changes
+  });
+}
+
+
 
   Future<void> getCurrentUser() async {
     setBusy(true);
@@ -82,21 +111,23 @@ class UserDashboardViewModel extends AppBaseViewModel {
   }
 
   // Function to fetch all user recipes
-  Future<void> getAllUserRecipes() async {
-    setBusy(true);
-    try {
-      final recipes = await _apiService.fetchAllRecipes();
-      if (recipes != null) {
-        _userRecipes = recipes;
-        notifyListeners();
-      }
-    } catch (e) {
-      _snackbarService.showSnackbar(
-        message: 'Error fetching user recipes: ${e.toString()}',
-      );
+ Future<void> getAllUserRecipes() async {
+  setBusy(true);
+  try {
+    final recipes = await _apiService.fetchAllRecipes();
+    if (recipes != null) {
+      _userRecipes = recipes;
+      _filteredUserRecipes = List.from(_userRecipes); // Ensure filtered list starts with all recipes
+      notifyListeners();
     }
-    setBusy(false);
+  } catch (e) {
+    _snackbarService.showSnackbar(
+      message: 'Error fetching user recipes: ${e.toString()}',
+    );
   }
+  setBusy(false);
+}
+
 
   void filterRecipes(String query) {
     setBusy(
@@ -164,5 +195,9 @@ class UserDashboardViewModel extends AppBaseViewModel {
 
   Future<void> navigateToEditProfile() async {
     _navigationService.navigateTo(Routes.editProfileView);
+  }
+
+    Future<void> navigateToSearchRecipes() async {
+    _navigationService.navigateTo(Routes.widgetSearchAllrecipesView);
   }
 }

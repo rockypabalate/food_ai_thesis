@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:stacked/stacked.dart';
-
 import 'edit_profile_viewmodel.dart';
 
 class EditProfileView extends StackedView<EditProfileViewModel> {
@@ -22,7 +21,7 @@ class EditProfileView extends StackedView<EditProfileViewModel> {
     }
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.grey[100],
       appBar: AppBar(
         title: Text(
           'Edit Profile',
@@ -36,65 +35,54 @@ class EditProfileView extends StackedView<EditProfileViewModel> {
         elevation: 0,
         backgroundColor: Colors.orange,
         iconTheme: const IconThemeData(color: Colors.white),
-        actions: [
-          TextButton(
-            onPressed: () {
-              viewModel.updateUserProfile(context);
-            },
-            child: Text(
-              'Save',
-              style: GoogleFonts.poppins(
-                fontWeight: FontWeight.w600,
-                fontSize: 16,
-                color: Colors.white,
-              ),
-            ),
-          ),
-        ],
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
             Container(
               width: double.infinity,
-              color: Colors.orange,
+              padding: const EdgeInsets.symmetric(vertical: 20),
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Colors.orange, Colors.orange],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+              ),
               child: Column(
                 children: [
-                  const SizedBox(height: 10),
                   Stack(
                     alignment: Alignment.center,
                     children: [
-                      Container(
-                        width: 170,
-                        height: 170,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: Colors.white,
-                            width: 1,
-                          ),
-                        ),
-                        child: CircleAvatar(
-                          radius: 90,
-                          backgroundImage: viewModel.profileImage != null
-                              ? FileImage(viewModel.profileImage!)
-                                  as ImageProvider
-                              : NetworkImage(
-                                  viewModel.user!.profileImage ?? ''),
-                          onBackgroundImageError: (_, __) =>
-                              const Icon(Icons.person, size: 50),
-                        ),
+                      CircleAvatar(
+                        radius: 70,
+                        backgroundImage: viewModel.profileImage != null
+                            ? FileImage(viewModel.profileImage!)
+                                as ImageProvider
+                            : NetworkImage(
+                                viewModel.user!.profileImage ?? '',
+                              ),
+                        onBackgroundImageError: (_, __) => const Icon(
+                            Icons.person,
+                            size: 50,
+                            color: Colors.white),
                       ),
                       Positioned(
-                        bottom: 10,
+                        bottom: 5,
                         right: 5,
                         child: GestureDetector(
-                          onTap: () => viewModel
-                              .selectImage(context), // Trigger image selection
+                          onTap: () => viewModel.selectImage(context),
                           child: Container(
                             decoration: const BoxDecoration(
                               shape: BoxShape.circle,
                               color: Colors.white,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black26,
+                                  blurRadius: 4,
+                                  spreadRadius: 1,
+                                ),
+                              ],
                             ),
                             padding: const EdgeInsets.all(6),
                             child: const Icon(
@@ -116,13 +104,13 @@ class EditProfileView extends StackedView<EditProfileViewModel> {
                       color: Colors.white,
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 10),
                 ],
               ),
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 20),
             Padding(
-              padding: const EdgeInsets.all(25.0),
+              padding: const EdgeInsets.symmetric(horizontal: 25),
               child: Column(
                 children: [
                   _buildTextFormField(
@@ -130,17 +118,31 @@ class EditProfileView extends StackedView<EditProfileViewModel> {
                     label: 'Username',
                     icon: Icons.person_outline,
                   ),
-                  _buildTextFormField(
-                    controller: viewModel.addressController,
-                    label: 'Address',
-                    icon: Icons.location_on_outlined,
+                  const SizedBox(height: 30),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        viewModel.updateUserProfile(context);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 15),
+                        backgroundColor: Colors.orange,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        elevation: 3,
+                      ),
+                      child: Text(
+                        'Update Profile',
+                        style: GoogleFonts.poppins(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
                   ),
-                  _buildTextFormField(
-                    controller: viewModel.roleController,
-                    label: 'Role',
-                    icon: Icons.person_pin_circle_outlined,
-                  ),
-                  const SizedBox(height: 40),
                 ],
               ),
             ),
@@ -156,26 +158,26 @@ class EditProfileView extends StackedView<EditProfileViewModel> {
     required IconData icon,
     int maxLines = 1,
   }) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 20),
-      child: TextFormField(
-        controller: controller,
-        maxLines: maxLines,
-        style: GoogleFonts.poppins(),
-        decoration: InputDecoration(
-          prefixIcon: Icon(icon, color: Colors.orange),
-          labelText: label,
-          labelStyle: GoogleFonts.poppins(),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: Colors.orangeAccent),
-            borderRadius: BorderRadius.circular(10),
-          ),
-          contentPadding:
-              const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+    return TextFormField(
+      controller: controller,
+      maxLines: maxLines,
+      style: GoogleFonts.poppins(),
+      decoration: InputDecoration(
+        prefixIcon: Icon(icon, color: Colors.deepOrangeAccent),
+        labelText: label,
+        labelStyle: GoogleFonts.poppins(),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: Colors.grey[300]!),
         ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: const BorderSide(color: Colors.deepOrangeAccent),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        contentPadding:
+            const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+        filled: true,
+        fillColor: Colors.white,
       ),
     );
   }

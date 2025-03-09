@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:food_ai_thesis/app/app.locator.dart';
+import 'package:food_ai_thesis/app/app.router.dart';
 import 'package:food_ai_thesis/app/app_base_viewmodel.dart';
 import 'package:food_ai_thesis/models/list_recipes/list_recipes.dart';
 import 'package:food_ai_thesis/services/api/api_services/api_service_service.dart';
@@ -160,5 +161,9 @@ class DashboardRecipesViewModel extends AppBaseViewModel {
       setBusy(false);
       notifyListeners();
     }
+  }
+
+   void navigateToProfile() {
+    _navigationService.navigateTo(Routes.userDashboardView);
   }
 }
