@@ -20,7 +20,7 @@ class CreateRecipeViewModel extends AppBaseViewModel {
   final TextEditingController preparationTipsController =
       TextEditingController();
   final TextEditingController nutritionalParagraphController =
-      TextEditingController();
+      TextEditingController(); // Added
 
   // Dynamic lists for ingredients, quantities, and instructions
   List<String> ingredients = [""];
@@ -31,10 +31,6 @@ class CreateRecipeViewModel extends AppBaseViewModel {
   String cookTimeUnit = "Minutes"; // Default value
   String difficultyLevel = "Easy"; // Default value
 
-  // Nutritional Content List
-  List<NutritionalContent> nutritionalContent = [];
-
-  /// Method to update the cook time unit when dropdown is changed
   void updateCookTimeUnit(String? value) {
     if (value != null) {
       cookTimeUnit = value;
@@ -42,7 +38,6 @@ class CreateRecipeViewModel extends AppBaseViewModel {
     }
   }
 
-  /// Method to update the difficulty level when dropdown is changed
   void updateDifficultyLevel(String? value) {
     if (value != null) {
       difficultyLevel = value;
@@ -50,14 +45,12 @@ class CreateRecipeViewModel extends AppBaseViewModel {
     }
   }
 
-  /// Adds an ingredient and a corresponding quantity field
   void addIngredient() {
     ingredients.add("");
     quantities.add("");
     notifyListeners();
   }
 
-  /// Updates an ingredient
   void updateIngredient(int index, String value) {
     if (index < ingredients.length) {
       ingredients[index] = value;
@@ -65,7 +58,6 @@ class CreateRecipeViewModel extends AppBaseViewModel {
     }
   }
 
-  /// Updates a quantity
   void updateQuantity(int index, String value) {
     if (index < quantities.length) {
       quantities[index] = value;
@@ -73,7 +65,6 @@ class CreateRecipeViewModel extends AppBaseViewModel {
     }
   }
 
-  /// Removes an ingredient and its corresponding quantity
   void removeIngredient(int index) {
     if (index < ingredients.length) {
       ingredients.removeAt(index);
@@ -82,13 +73,11 @@ class CreateRecipeViewModel extends AppBaseViewModel {
     }
   }
 
-  /// Adds a new instruction step
   void addInstruction() {
     instructions.add("");
     notifyListeners();
   }
 
-  /// Updates an instruction
   void updateInstruction(int index, String value) {
     if (index < instructions.length) {
       instructions[index] = value;
@@ -96,7 +85,6 @@ class CreateRecipeViewModel extends AppBaseViewModel {
     }
   }
 
-  /// Removes an instruction step
   void removeInstruction(int index) {
     if (index < instructions.length) {
       instructions.removeAt(index);
@@ -104,81 +92,31 @@ class CreateRecipeViewModel extends AppBaseViewModel {
     }
   }
 
-  // Adds a new nutritional content field
-  void addNutritionalContent() {
-    nutritionalContent
-        .add(NutritionalContent(name: "", amount: "")); // Add "amount"
-    notifyListeners();
-  }
-
-  void updateNutritionalContent(int index, String name, String amount) {
-    if (index < nutritionalContent.length) {
-      nutritionalContent[index] =
-          NutritionalContent(name: name, amount: amount);
-      notifyListeners();
-    }
-  }
-
-// Removes a nutritional content field
-  void removeNutritionalContent(int index) {
-    if (index < nutritionalContent.length) {
-      nutritionalContent.removeAt(index);
-      notifyListeners();
-    }
-  }
-
-  /// Validates input fields before creating a recipe
   bool validateInputs() {
-    print("Validating inputs...");
-
-    // Print all field values for debugging
-    print("Food Name: ${foodNameController.text}");
-    print("Description: ${descriptionController.text}");
-    print("Category: ${categoryController.text}");
-    print("Total Cook Time: ${totalCookTimeController.text}");
-    print("Preparation Tips: ${preparationTipsController.text}");
-    print("Nutritional Paragraph: ${nutritionalParagraphController.text}");
-    print(
-        "Ingredients: ${ingredients.isNotEmpty ? ingredients.join(', ') : 'Empty'}");
-    print(
-        "Quantities: ${quantities.isNotEmpty ? quantities.join(', ') : 'Empty'}");
-    print(
-        "Instructions: ${instructions.isNotEmpty ? instructions.join(', ') : 'Empty'}");
-    print(
-        "Nutritional Content: ${nutritionalContent.isNotEmpty ? nutritionalContent.length.toString() : 'Empty'}");
-
-    // Check for empty fields (excluding nutritionalContent)
     if (foodNameController.text.isEmpty ||
         descriptionController.text.isEmpty ||
         categoryController.text.isEmpty ||
         totalCookTimeController.text.isEmpty ||
         preparationTipsController.text.isEmpty ||
-        nutritionalParagraphController.text.isEmpty ||
         ingredients.isEmpty ||
         quantities.isEmpty ||
         instructions.isEmpty) {
-      print("Validation failed: Some fields are empty!");
-
       _snackbarService.showSnackbar(
         message: "All fields are required!",
         duration: const Duration(seconds: 3),
       );
       return false;
     }
-
-    print("Validation passed: All fields are filled.");
     return true;
   }
 
-  /// Creates a recipe by sending data to the API
   Future<void> createRecipe() async {
-    if (!validateInputs()) return; // Stop if validation fails
+    if (!validateInputs()) return;
 
-    setBusy(true); // Show loading state
+    setBusy(true);
 
-    // Constructing the recipe object
     final recipe = Recipe(
-      id: 0, // Temporary ID (will be replaced by the backend response)
+      id: 0, // Temporary ID
       foodName: foodNameController.text,
       description: descriptionController.text,
       servings: int.tryParse(servingsController.text) ?? 1,
@@ -186,40 +124,30 @@ class CreateRecipeViewModel extends AppBaseViewModel {
       ingredients: ingredients,
       quantities: quantities,
       instructions: instructions,
-      nutritionalContent: nutritionalContent,
       totalCookTime: "${totalCookTimeController.text} $cookTimeUnit",
       difficulty: difficultyLevel,
       preparationTips: preparationTipsController.text,
-      nutritionalParagraph: nutritionalParagraphController.text,
+      nutritionalParagraph: nutritionalParagraphController.text.isNotEmpty
+          ? nutritionalParagraphController.text
+          : null, // Optional
     );
 
     try {
       final recipeResponse = await _apiService.createRecipe(recipe);
 
       if (recipeResponse != null) {
-        // Extracting the recipe ID for use in the next view
         final createdRecipeId = recipeResponse.recipe.id;
 
-        // Debugging extracted ID
-        print('Extracted Recipe ID: $createdRecipeId');
-
-        // Show success message
         _snackbarService.showSnackbar(
           message: 'Recipe created successfully! Recipe ID: $createdRecipeId',
           duration: const Duration(seconds: 3),
         );
 
-        // Debugging navigation
-        print(
-            'Navigating to UploadRecipeImageView with Recipe ID: $createdRecipeId');
-
-        // Navigate to UploadRecipeImageView, passing the recipe ID if needed
         _navigationService.navigateTo(
           Routes.uploadRecipeImageView,
           arguments: UploadRecipeImageViewArguments(recipeId: createdRecipeId),
         );
 
-        // Optionally, clear all fields after successful creation
         resetForm();
       } else {
         _snackbarService.showSnackbar(
@@ -232,15 +160,11 @@ class CreateRecipeViewModel extends AppBaseViewModel {
         message: 'An error occurred: $e',
         duration: const Duration(seconds: 3),
       );
-
-      // Debugging the exception
-      print('Error during recipe creation: $e');
     } finally {
       setBusy(false);
     }
   }
 
-  /// Resets all form fields after successful recipe creation
   void resetForm() {
     foodNameController.clear();
     descriptionController.clear();
@@ -248,12 +172,11 @@ class CreateRecipeViewModel extends AppBaseViewModel {
     categoryController.clear();
     totalCookTimeController.clear();
     preparationTipsController.clear();
-    nutritionalParagraphController.clear();
+    nutritionalParagraphController.clear(); // Added
 
     ingredients = [""];
     quantities = [""];
     instructions = [""];
-    nutritionalContent = [];
 
     cookTimeUnit = "Minutes";
     difficultyLevel = "Easy";
@@ -261,7 +184,6 @@ class CreateRecipeViewModel extends AppBaseViewModel {
     notifyListeners();
   }
 
-  /// Dispose controllers when ViewModel is destroyed
   @override
   void dispose() {
     foodNameController.dispose();
@@ -270,7 +192,7 @@ class CreateRecipeViewModel extends AppBaseViewModel {
     categoryController.dispose();
     totalCookTimeController.dispose();
     preparationTipsController.dispose();
-    nutritionalParagraphController.dispose();
+    nutritionalParagraphController.dispose(); // Added
     super.dispose();
   }
 }

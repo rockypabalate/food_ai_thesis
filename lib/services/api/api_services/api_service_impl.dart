@@ -10,6 +10,7 @@ import 'package:food_ai_thesis/models/search_recipe_name/food_description.dart';
 import 'package:food_ai_thesis/models/single_view_created_recipe/single_view_created_recipe.dart';
 import 'package:food_ai_thesis/services/api/helpers/dio_client.dart';
 import 'package:food_ai_thesis/services/api/api_services/api_service_service.dart';
+import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiServiceImpl implements ApiServiceService {
@@ -18,6 +19,8 @@ class ApiServiceImpl implements ApiServiceService {
   }) : _dio = dio ?? DioClient().instance;
 
   final Dio _dio;
+
+  final logger = Logger();
 
   static const String bearerTokenKey = 'bearerToken';
 
@@ -367,84 +370,80 @@ class ApiServiceImpl implements ApiServiceService {
     }
   }
 
-  @override
-  Future<RecipeResponse?> createRecipe(Recipe recipe) async {
-    try {
-      // Get the user authentication token
-      final prefs = await SharedPreferences.getInstance();
-      final token = prefs.getString(bearerTokenKey);
+@override
+Future<RecipeResponse?> createRecipe(Recipe recipe) async {
+  try {
+    // Get the user authentication token
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString(bearerTokenKey);
 
-      if (token == null) {
-        print('Unauthorized: No Bearer token');
-        return null;
-      }
-
-      // Prepare the payload for the request
-      final data = {
-        "food_name": recipe.foodName,
-        "description": recipe.description,
-        "servings": recipe.servings,
-        "category": recipe.category,
-        "ingredients": recipe.ingredients,
-        "quantities": recipe.quantities,
-        "instructions": recipe.instructions,
-        "nutritional_content": recipe.nutritionalContent
-            .map((e) => {
-                  "name": e.name,
-                  "amount": e.amount,
-                })
-            .toList(),
-        "total_cook_time": recipe.totalCookTime,
-        "difficulty": recipe.difficulty,
-        "preparation_tips": recipe.preparationTips,
-        "nutritional_paragraph": recipe.nutritionalParagraph,
-      };
-
-      // Debugging the payload
-      print('Creating recipe with data: $data');
-
-      // Make the POST request
-      final response = await _dio.post(
-        '/recipes/user-recipe/create-recipe',
-        data: data,
-        options: Options(
-          headers: {
-            'Authorization': 'Bearer $token',
-            'accept': 'application/json',
-          },
-        ),
-      );
-
-      // Debugging the response
-      print('API Response Status Code: ${response.statusCode}');
-      print('API Response Data: ${response.data}');
-
-      // Parse the response
-      if (response.statusCode == 200) {
-        final recipeResponse = RecipeResponse.fromJson(response.data);
-
-        // Debugging the parsed response
-        print('Parsed Recipe Response: ${recipeResponse.toJson()}');
-        print('Extracted Recipe ID: ${recipeResponse.recipe.id}');
-
-        return recipeResponse;
-      } else {
-        print(
-            'Failed to create recipe: ${response.statusCode} - ${response.data}');
-        return null;
-      }
-    } on DioException catch (e) {
-      if (e.response != null) {
-        print('Dio Error: ${e.response?.statusCode} - ${e.response?.data}');
-      } else {
-        print('Dio Error: ${e.message}');
-      }
-      return null;
-    } catch (e) {
-      print('Unexpected Error: ${e.toString()}');
+    if (token == null) {
+      logger.e('Unauthorized: No Bearer token'); // 🔴 Error logging
       return null;
     }
+
+    // Prepare the payload for the request
+   final data = {
+  "food_name": recipe.foodName,
+  "description": recipe.description,
+  "servings": recipe.servings,
+  "category": recipe.category,
+  "ingredients": recipe.ingredients,
+  "quantities": recipe.quantities,
+  "instructions": recipe.instructions,
+  "total_cook_time": recipe.totalCookTime,
+  "difficulty": recipe.difficulty,
+  "preparation_tips": recipe.preparationTips,
+  if (recipe.nutritionalParagraph?.isNotEmpty ?? false) 
+    "nutritional_paragraph": recipe.nutritionalParagraph,
+};
+
+
+    logger.i('Creating recipe with data: $data'); // 🟢 Info logging
+
+    // Make the POST request
+    final response = await _dio.post(
+      '/recipes/user-recipe/create-recipe',
+      data: data,
+      options: Options(
+        headers: {
+          'Authorization': 'Bearer $token',
+          'accept': 'application/json',
+        },
+      ),
+    );
+
+    // Debugging the response
+    logger.d('API Response Status Code: ${response.statusCode}');
+    logger.d('API Response Data: ${response.data}');
+
+    // Parse the response
+    if (response.statusCode == 200) {
+      final recipeResponse = RecipeResponse.fromJson(response.data);
+
+      // Debugging the parsed response
+      logger.i('Parsed Recipe Response: ${recipeResponse.toJson()}');
+      logger.i('Extracted Recipe ID: ${recipeResponse.recipe.id}');
+
+      return recipeResponse;
+    } else {
+      logger.w('Failed to create recipe: ${response.statusCode} - ${response.data}'); // 🟡 Warning logging
+      return null;
+    }
+  } on DioException catch (e) {
+    if (e.response != null) {
+      logger.e('Dio Error: ${e.response?.statusCode} - ${e.response?.data}');
+    } else {
+      logger.e('Dio Error: ${e.message}');
+    }
+    return null;
+  } catch (e) {
+    logger.e('Unexpected Error: ${e.toString()}');
+    return null;
   }
+}
+
+
 
   Future<String?> uploadRecipeImage(int recipeId, File imageFile) async {
     try {

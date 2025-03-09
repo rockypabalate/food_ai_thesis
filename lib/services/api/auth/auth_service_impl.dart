@@ -2,12 +2,15 @@ import 'package:dio/dio.dart';
 import 'package:food_ai_thesis/models/user/user_auth.dart';
 import 'package:food_ai_thesis/services/api/auth/auth_api_service.dart';
 import 'package:food_ai_thesis/services/api/helpers/dio_client.dart';
+import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthServiceImpl implements AuthApiService {
   AuthServiceImpl({Dio? dio}) : _dio = dio ?? DioClient().instance;
 
   final Dio _dio;
+
+  final logger = Logger();
 
   static const String bearerTokenKey = 'bearerToken';
 
@@ -102,6 +105,7 @@ class AuthServiceImpl implements AuthApiService {
       final token = prefs.getString(bearerTokenKey);
 
       if (token == null) {
+        logger.w('User not logged in. Token not found.'); // 🟡 Warning log
         return Response(
           requestOptions: RequestOptions(path: ''),
           statusCode: 401,
@@ -109,6 +113,8 @@ class AuthServiceImpl implements AuthApiService {
           data: {'error': 'Token not found'},
         );
       }
+
+      logger.i('Fetching current user details...'); // 🟢 Info log
 
       // Send GET request with the Bearer token
       final response = await _dio.get(
@@ -121,8 +127,12 @@ class AuthServiceImpl implements AuthApiService {
         ),
       );
 
+      logger.d('Current user response: ${response.data}'); // 🔵 Debug log
+
       return response;
     } on DioException catch (e) {
+      logger.e(
+          'Dio Error: ${e.response?.statusCode} - ${e.response?.data}'); // 🔴 Error log
       return e.response ??
           Response(
             requestOptions: RequestOptions(path: ''),
@@ -131,6 +141,7 @@ class AuthServiceImpl implements AuthApiService {
             data: {'error': e.message},
           );
     } catch (e) {
+      logger.e('Unexpected error occurred: ${e.toString()}'); // 🔴 Error log
       return Response(
         requestOptions: RequestOptions(path: ''),
         statusCode: 500,
@@ -188,62 +199,57 @@ class AuthServiceImpl implements AuthApiService {
     }
   }
 
-@override
-Future<bool> updateUserProfile(User user) async {
-  try {
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString(bearerTokenKey);
+  @override
+  Future<bool> updateUserProfile(User user) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString(bearerTokenKey);
 
-    if (token == null || token.isEmpty) {
-      throw Exception('Unauthorized: No Bearer token found');
-    }
+      if (token == null || token.isEmpty) {
+        throw Exception('Unauthorized: No Bearer token found');
+      }
 
-   
-    final formData = FormData.fromMap({
-      'username': user.username,
-   
-      if (user.profileImage != null && !user.profileImage!.startsWith('http'))
-        'profileImage': await MultipartFile.fromFile(
-          user.profileImage!,
-          filename: user.profileImage!.split('/').last,
+      final formData = FormData.fromMap({
+        'username': user.username,
+        if (user.profileImage != null && !user.profileImage!.startsWith('http'))
+          'profileImage': await MultipartFile.fromFile(
+            user.profileImage!,
+            filename: user.profileImage!.split('/').last,
+          ),
+      });
+
+      // Perform the PUT request to update profile
+      final response = await _dio.put(
+        '/auth/update-profile',
+        data: formData,
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Accept': 'application/json',
+            'Content-Type': 'multipart/form-data',
+          },
         ),
-    });
+      );
 
-    // Perform the PUT request to update profile
-    final response = await _dio.put(
-      '/auth/update-profile',
-      data: formData,
-      options: Options(
-        headers: {
-          'Authorization': 'Bearer $token',
-          'Accept': 'application/json',
-          'Content-Type': 'multipart/form-data',
-        },
-      ),
-    );
-
-    if (response.statusCode == 200) {
-      print('Profile updated successfully: ${response.data}');
-      return true;
-    } else {
-      print('Failed to update profile: ${response.statusMessage}');
+      if (response.statusCode == 200) {
+        print('Profile updated successfully: ${response.data}');
+        return true;
+      } else {
+        print('Failed to update profile: ${response.statusMessage}');
+        return false;
+      }
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 401) {
+        print('Unauthorized: Invalid or expired token');
+      } else if (e.response != null) {
+        print('Dio Error: ${e.response?.data}');
+      } else {
+        print('Dio Error: ${e.message}');
+      }
+      return false;
+    } catch (e) {
+      print('Unexpected Error: ${e.toString()}');
       return false;
     }
-  } on DioException catch (e) {
-   
-    if (e.response?.statusCode == 401) {
-      print('Unauthorized: Invalid or expired token');
-    } else if (e.response != null) {
-      print('Dio Error: ${e.response?.data}');
-    } else {
-      print('Dio Error: ${e.message}');
-    }
-    return false;
-  } catch (e) {
- 
-    print('Unexpected Error: ${e.toString()}');
-    return false;
   }
-}
-
 }
