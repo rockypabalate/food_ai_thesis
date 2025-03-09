@@ -11,7 +11,7 @@ class ProfileHeader extends ViewModelWidget<UserDashboardViewModel> {
   Widget build(BuildContext context, UserDashboardViewModel viewModel) {
     return Container(
       width: double.infinity,
-      height: 165.0,
+      height: 170.0,
       decoration: const BoxDecoration(
         color: Colors.orange,
       ),
@@ -23,22 +23,28 @@ class ProfileHeader extends ViewModelWidget<UserDashboardViewModel> {
         ),
         child: Column(
           children: [
-            const Row(
-              mainAxisAlignment: MainAxisAlignment.start,
+            Row(
               children: [
-                Padding(
-                  padding: EdgeInsets.only(left: 3.0),
-                  child: Text(
-                    'My Dashboard',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 23,
-                    ),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Icon(
+                    Icons.arrow_back,
+                    color: Colors.white,
+                  ),
+                ),
+                const SizedBox(width: 15.0),
+                const Text(
+                  'My Dashboard',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 23,
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 12.0),
+            const SizedBox(height: 16.0),
             Padding(
               padding: const EdgeInsets.only(left: 0),
               child: Row(

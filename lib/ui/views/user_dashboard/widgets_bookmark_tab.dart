@@ -117,7 +117,9 @@ class _BookmarkedRecipesTabState extends State<BookmarkedRecipesTab> {
                                     ),
                                     const SizedBox(height: 8),
                                     ElevatedButton(
-                                      onPressed: () {},
+                                      onPressed: () {
+                                        viewModel.navigateToSearchRecipes();
+                                      },
                                       style: ElevatedButton.styleFrom(
                                         foregroundColor: Colors.white,
                                         backgroundColor: Colors.green,

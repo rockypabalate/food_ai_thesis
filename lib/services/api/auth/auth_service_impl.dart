@@ -188,63 +188,62 @@ class AuthServiceImpl implements AuthApiService {
     }
   }
 
-  @override
-  Future<bool> updateUserProfile(User user) async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      final token = prefs.getString(bearerTokenKey);
+@override
+Future<bool> updateUserProfile(User user) async {
+  try {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString(bearerTokenKey);
 
-      if (token == null || token.isEmpty) {
-        throw Exception('Unauthorized: No Bearer token found');
-      }
+    if (token == null || token.isEmpty) {
+      throw Exception('Unauthorized: No Bearer token found');
+    }
 
-      // Prepare FormData for the update request
-      final formData = FormData.fromMap({
-        'username': user.username,
-        'address': user.address,
-        'role': user.role,
-        // Only include profile_image if it's a valid local file path
-        if (user.profileImage != null && !user.profileImage!.startsWith('http'))
-          'profileImage': await MultipartFile.fromFile(
-            user.profileImage!,
-            filename: user.profileImage!.split('/').last,
-          ),
-      });
-
-      // Perform the PUT request to update profile
-      final response = await _dio.put(
-        '/auth/update-profile',
-        data: formData,
-        options: Options(
-          headers: {
-            'Authorization': 'Bearer $token',
-            'Accept': 'application/json',
-            'Content-Type': 'multipart/form-data',
-          },
+   
+    final formData = FormData.fromMap({
+      'username': user.username,
+   
+      if (user.profileImage != null && !user.profileImage!.startsWith('http'))
+        'profileImage': await MultipartFile.fromFile(
+          user.profileImage!,
+          filename: user.profileImage!.split('/').last,
         ),
-      );
+    });
 
-      if (response.statusCode == 200) {
-        print('Profile updated successfully: ${response.data}');
-        return true;
-      } else {
-        print('Failed to update profile: ${response.statusMessage}');
-        return false;
-      }
-    } on DioException catch (e) {
-      // Handle Dio-specific errors
-      if (e.response?.statusCode == 401) {
-        print('Unauthorized: Invalid or expired token');
-      } else if (e.response != null) {
-        print('Dio Error: ${e.response?.data}');
-      } else {
-        print('Dio Error: ${e.message}');
-      }
-      return false;
-    } catch (e) {
-      // Handle unexpected errors
-      print('Unexpected Error: ${e.toString()}');
+    // Perform the PUT request to update profile
+    final response = await _dio.put(
+      '/auth/update-profile',
+      data: formData,
+      options: Options(
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Accept': 'application/json',
+          'Content-Type': 'multipart/form-data',
+        },
+      ),
+    );
+
+    if (response.statusCode == 200) {
+      print('Profile updated successfully: ${response.data}');
+      return true;
+    } else {
+      print('Failed to update profile: ${response.statusMessage}');
       return false;
     }
+  } on DioException catch (e) {
+   
+    if (e.response?.statusCode == 401) {
+      print('Unauthorized: Invalid or expired token');
+    } else if (e.response != null) {
+      print('Dio Error: ${e.response?.data}');
+    } else {
+      print('Dio Error: ${e.message}');
+    }
+    return false;
+  } catch (e) {
+ 
+    print('Unexpected Error: ${e.toString()}');
+    return false;
   }
+}
+
 }
