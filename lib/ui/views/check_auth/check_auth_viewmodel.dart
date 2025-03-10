@@ -35,7 +35,7 @@ class CheckAuthViewModel extends AppBaseViewModel {
       if (response.statusCode == 200 && response.data != null) {
         _navigationService.navigateTo(Routes.mainpageView);
       } else {
-        _navigationService.clearStackAndShow(Routes.loginView);
+        _navigationService.clearStackAndShow(Routes.loginregisterView);
       }
     } catch (e) {
       print('Error during authentication: $e');

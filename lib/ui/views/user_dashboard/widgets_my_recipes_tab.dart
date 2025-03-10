@@ -70,6 +70,7 @@ class MyRecipesTab extends StatelessWidget {
                   ),
                 ),
               ),
+              const SizedBox(height: 8),
               Expanded(
                 child: viewModel.isBusy
                     ? const Center(child: ShimmerLoadingWidget())
@@ -100,7 +101,7 @@ class MyRecipesTab extends StatelessWidget {
                           )
                         : GridView.builder(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 10.0, vertical: 10.0),
+                                horizontal: 10.0, vertical: 2.0),
                             shrinkWrap: true,
                             gridDelegate:
                                 SliverGridDelegateWithFixedCrossAxisCount(

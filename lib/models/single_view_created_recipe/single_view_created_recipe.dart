@@ -7,7 +7,6 @@ class SingleDisplayRecipe {
   final List<String> ingredients;
   final List<String> quantities;
   final List<String> instructions;
-  final List<NutritionalContent> nutritionalContent;
   final String totalCookTime;
   final String difficulty;
   final String preparationTips;
@@ -23,7 +22,6 @@ class SingleDisplayRecipe {
     required this.ingredients,
     required this.quantities,
     required this.instructions,
-    required this.nutritionalContent,
     required this.totalCookTime,
     required this.difficulty,
     required this.preparationTips,
@@ -31,41 +29,31 @@ class SingleDisplayRecipe {
     required this.images,
   });
 
-  factory SingleDisplayRecipe.fromJson(Map<String, dynamic> json) {
-    return SingleDisplayRecipe(
-      id: json['id'].toString(), // ✅ Convert ID to string to avoid type errors
-      foodName: json['food_name'] ?? '',
-      description: json['description'] ?? '',
-      servings: json['servings'] ?? 0,
-      category: json['category'] ?? '',
-      ingredients: List<String>.from(json['ingredients'] ?? []),
-      quantities: List<String>.from(json['quantities'] ?? []),
-      instructions: List<String>.from(json['instructions'] ?? []),
-      nutritionalContent: (json['nutritional_content'] as List<dynamic>? ?? [])
-          .map((e) => NutritionalContent.fromJson(e))
-          .toList(),
-      totalCookTime: json['total_cook_time'] ?? '',
-      difficulty: json['difficulty'] ?? '',
-      preparationTips: json['preparation_tips'] ?? '',
-      nutritionalParagraph: json['nutritional_paragraph'] ?? '',
-      images: List<String>.from(json['images'] ?? []),
-    );
-  }
+ factory SingleDisplayRecipe.fromJson(Map<String, dynamic> json) {
+  List<Map<String, dynamic>> parsedIngredients =
+      (json['ingredients'] as List<dynamic>? ?? [])
+          .map((e) => e as Map<String, dynamic>)
+          .toList();
+
+  return SingleDisplayRecipe(
+    id: json['id'].toString(),
+    foodName: json['food_name'] ?? '',
+    description: json['description'] ?? '',
+    servings: json['servings'] ?? 0,
+    category: json['category'] ?? '',
+    ingredients: parsedIngredients.map((e) => e['name'].toString()).toList(),
+    quantities: parsedIngredients.map((e) => e['quantity'].toString()).toList(),
+    instructions: (json['instructions'] as List<dynamic>? ?? [])
+        .map((e) => e.toString())
+        .toList(),
+    totalCookTime: json['total_cook_time'] ?? '',
+    difficulty: json['difficulty'] ?? '',
+    preparationTips: json['preparation_tips'] ?? '',
+    nutritionalParagraph: json['nutritional_paragraph'] ?? '',
+    images: (json['images'] as List<dynamic>? ?? [])
+        .map((e) => e.toString())
+        .toList(),
+  );
 }
 
-class NutritionalContent {
-  final String name;
-  final String amount;
-
-  NutritionalContent({
-    required this.name,
-    required this.amount,
-  });
-
-  factory NutritionalContent.fromJson(Map<String, dynamic> json) {
-    return NutritionalContent(
-      name: json['name'] ?? '',
-      amount: json['amount'] ?? '',
-    );
-  }
 }
