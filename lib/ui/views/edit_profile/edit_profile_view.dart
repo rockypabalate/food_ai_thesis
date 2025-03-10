@@ -41,7 +41,7 @@ class EditProfileView extends StackedView<EditProfileViewModel> {
           children: [
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.symmetric(vertical: 20),
+              padding: const EdgeInsets.symmetric(vertical: 13),
               decoration: const BoxDecoration(
                 gradient: LinearGradient(
                   colors: [Colors.orange, Colors.orange],
@@ -55,7 +55,7 @@ class EditProfileView extends StackedView<EditProfileViewModel> {
                     alignment: Alignment.center,
                     children: [
                       CircleAvatar(
-                        radius: 70,
+                        radius: 110,
                         backgroundImage: viewModel.profileImage != null
                             ? FileImage(viewModel.profileImage!)
                                 as ImageProvider
@@ -68,8 +68,8 @@ class EditProfileView extends StackedView<EditProfileViewModel> {
                             color: Colors.white),
                       ),
                       Positioned(
-                        bottom: 5,
-                        right: 5,
+                        bottom: 10,
+                        right: 25,
                         child: GestureDetector(
                           onTap: () => viewModel.selectImage(context),
                           child: Container(

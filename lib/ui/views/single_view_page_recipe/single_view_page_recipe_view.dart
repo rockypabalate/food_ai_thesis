@@ -33,35 +33,32 @@ class SingleViewPageRecipeView
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.orange, // ✅ Set AppBar color to orange
+        backgroundColor: Colors.orange,
         title: Text(
           recipe.foodName,
-          style: const TextStyle(color: Colors.white), // ✅ White text
+          style: const TextStyle(color: Colors.white),
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.edit, color: Colors.white), // ✅ Edit Icon
+            icon: const Icon(Icons.edit, color: Colors.white),
             onPressed: () {
               // TODO: Implement edit functionality
             },
           ),
           IconButton(
-            icon:
-                const Icon(Icons.delete, color: Colors.white), // ✅ Delete Icon
+            icon: const Icon(Icons.delete, color: Colors.white),
             onPressed: () {
               viewModel.deleteRecipe(recipe.id);
             },
           ),
         ],
-        iconTheme: const IconThemeData(
-            color: Colors.white), // ✅ White back button icon
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 25.0, vertical: 16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ✅ Display Images or Show Upload Container
             SizedBox(
               height: 200,
               child: recipe.images.isNotEmpty
@@ -84,7 +81,6 @@ class SingleViewPageRecipeView
                     )
                   : GestureDetector(
                       onTap: () {
-                        // Navigate to upload image screen and pass recipeId
                         viewModel.navigateToUploadImage(recipe.id);
                       },
                       child: Container(
@@ -123,16 +119,22 @@ class SingleViewPageRecipeView
             const SizedBox(height: 16),
 
             // Ingredients Section
+            // Ingredients Section
             _buildSectionTitle('Ingredients'),
-            ..._buildListItems(
-              recipe.ingredients.asMap().entries.map((entry) {
-                int index = entry.key;
-                String quantity = (index < recipe.quantities.length)
-                    ? recipe.quantities[index]
-                    : 'Unknown';
-                return '- ${entry.value}: $quantity';
-              }).toList(),
-            ),
+            ...List.generate(recipe.ingredients.length, (index) {
+              String ingredient = recipe.ingredients[index];
+              String quantity = (index < recipe.quantities.length)
+                  ? recipe.quantities[index]
+                  : 'N/A'; // Default to "N/A" instead of "Unknown"
+
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4.0),
+                child: Text(
+                  '- $ingredient: $quantity',
+                  style: const TextStyle(fontSize: 16),
+                ),
+              );
+            }),
 
             const SizedBox(height: 16),
 
@@ -149,29 +151,6 @@ class SingleViewPageRecipeView
                   .map((instruction) => ' $instruction')
                   .toList(),
             ),
-
-            const SizedBox(height: 16),
-
-            // Nutritional Content Section
-            _buildSectionTitle('Nutritional Content'),
-            if (recipe.nutritionalContent.isNotEmpty)
-              ..._buildListItems(
-                recipe.nutritionalContent
-                    .map((item) => '- ${item.name}: ${item.amount}')
-                    .toList(),
-              )
-            else
-              const Padding(
-                padding: EdgeInsets.symmetric(vertical: 4.0),
-                child: Text(
-                  'No Nutritional Content',
-                  style: TextStyle(
-                      fontSize: 16,
-                      fontStyle: FontStyle.italic,
-                      color: Colors.grey),
-                ),
-              ),
-
             const SizedBox(height: 16),
 
             // Nutritional Paragraph
