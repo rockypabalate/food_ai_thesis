@@ -370,80 +370,78 @@ class ApiServiceImpl implements ApiServiceService {
     }
   }
 
-@override
-Future<RecipeResponse?> createRecipe(Recipe recipe) async {
-  try {
-    // Get the user authentication token
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString(bearerTokenKey);
+  @override
+  Future<RecipeResponse?> createRecipe(Recipe recipe) async {
+    try {
+      // Get the user authentication token
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString(bearerTokenKey);
 
-    if (token == null) {
-      logger.e('Unauthorized: No Bearer token'); // 🔴 Error logging
+      if (token == null) {
+        logger.e('Unauthorized: No Bearer token'); // 🔴 Error logging
+        return null;
+      }
+
+      // Prepare the payload for the request
+      final data = {
+        "food_name": recipe.foodName,
+        "description": recipe.description,
+        "servings": recipe.servings,
+        "category": recipe.category,
+        "ingredients": recipe.ingredients,
+        "quantities": recipe.quantities,
+        "instructions": recipe.instructions,
+        "total_cook_time": recipe.totalCookTime,
+        "difficulty": recipe.difficulty,
+        "preparation_tips": recipe.preparationTips,
+        if (recipe.nutritionalParagraph?.isNotEmpty ?? false)
+          "nutritional_paragraph": recipe.nutritionalParagraph,
+      };
+
+      logger.i('Creating recipe with data: $data'); // 🟢 Info logging
+
+      // Make the POST request
+      final response = await _dio.post(
+        '/recipes/user-recipe/create-recipe',
+        data: data,
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'accept': 'application/json',
+          },
+        ),
+      );
+
+      // Debugging the response
+      logger.d('API Response Status Code: ${response.statusCode}');
+      logger.d('API Response Data: ${response.data}');
+
+      // Parse the response
+      if (response.statusCode == 200) {
+        final recipeResponse = RecipeResponse.fromJson(response.data);
+
+        // Debugging the parsed response
+        logger.i('Parsed Recipe Response: ${recipeResponse.toJson()}');
+        logger.i('Extracted Recipe ID: ${recipeResponse.recipe.id}');
+
+        return recipeResponse;
+      } else {
+        logger.w(
+            'Failed to create recipe: ${response.statusCode} - ${response.data}'); // 🟡 Warning logging
+        return null;
+      }
+    } on DioException catch (e) {
+      if (e.response != null) {
+        logger.e('Dio Error: ${e.response?.statusCode} - ${e.response?.data}');
+      } else {
+        logger.e('Dio Error: ${e.message}');
+      }
+      return null;
+    } catch (e) {
+      logger.e('Unexpected Error: ${e.toString()}');
       return null;
     }
-
-    // Prepare the payload for the request
-   final data = {
-  "food_name": recipe.foodName,
-  "description": recipe.description,
-  "servings": recipe.servings,
-  "category": recipe.category,
-  "ingredients": recipe.ingredients,
-  "quantities": recipe.quantities,
-  "instructions": recipe.instructions,
-  "total_cook_time": recipe.totalCookTime,
-  "difficulty": recipe.difficulty,
-  "preparation_tips": recipe.preparationTips,
-  if (recipe.nutritionalParagraph?.isNotEmpty ?? false) 
-    "nutritional_paragraph": recipe.nutritionalParagraph,
-};
-
-
-    logger.i('Creating recipe with data: $data'); // 🟢 Info logging
-
-    // Make the POST request
-    final response = await _dio.post(
-      '/recipes/user-recipe/create-recipe',
-      data: data,
-      options: Options(
-        headers: {
-          'Authorization': 'Bearer $token',
-          'accept': 'application/json',
-        },
-      ),
-    );
-
-    // Debugging the response
-    logger.d('API Response Status Code: ${response.statusCode}');
-    logger.d('API Response Data: ${response.data}');
-
-    // Parse the response
-    if (response.statusCode == 200) {
-      final recipeResponse = RecipeResponse.fromJson(response.data);
-
-      // Debugging the parsed response
-      logger.i('Parsed Recipe Response: ${recipeResponse.toJson()}');
-      logger.i('Extracted Recipe ID: ${recipeResponse.recipe.id}');
-
-      return recipeResponse;
-    } else {
-      logger.w('Failed to create recipe: ${response.statusCode} - ${response.data}'); // 🟡 Warning logging
-      return null;
-    }
-  } on DioException catch (e) {
-    if (e.response != null) {
-      logger.e('Dio Error: ${e.response?.statusCode} - ${e.response?.data}');
-    } else {
-      logger.e('Dio Error: ${e.message}');
-    }
-    return null;
-  } catch (e) {
-    logger.e('Unexpected Error: ${e.toString()}');
-    return null;
   }
-}
-
-
 
   Future<String?> uploadRecipeImage(int recipeId, File imageFile) async {
     try {

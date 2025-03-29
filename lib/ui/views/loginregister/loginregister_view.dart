@@ -7,7 +7,7 @@ import 'loginregister_viewmodel.dart';
 class LoginregisterView extends StackedView<LoginregisterViewModel> {
   const LoginregisterView({Key? key}) : super(key: key);
 
- @override
+  @override
   Widget builder(
     BuildContext context,
     LoginregisterViewModel viewModel,

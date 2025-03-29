@@ -49,13 +49,12 @@ class CreateRecipeViewModel extends AppBaseViewModel {
     }
   }
 
- void addIngredient() {
-  ingredients.add("");
-  quantities.add(""); // Ensure a corresponding quantity is added
-  units.add("kg"); // Default unit
-  notifyListeners();
-}
-
+  void addIngredient() {
+    ingredients.add("");
+    quantities.add(""); // Ensure a corresponding quantity is added
+    units.add("kg"); // Default unit
+    notifyListeners();
+  }
 
   void updateIngredient(int index, String value) {
     if (index < ingredients.length) {
@@ -86,6 +85,7 @@ class CreateRecipeViewModel extends AppBaseViewModel {
       notifyListeners();
     }
   }
+
   void addInstruction() {
     instructions.add("");
     notifyListeners();
@@ -124,66 +124,65 @@ class CreateRecipeViewModel extends AppBaseViewModel {
   }
 
   Future<void> createRecipe() async {
-  if (!validateInputs()) return;
+    if (!validateInputs()) return;
 
-  setBusy(true);
+    setBusy(true);
 
-  // Combine quantities and units
-  List<String> formattedQuantities = List.generate(
-    quantities.length,
-    (index) => "${quantities[index]} ${units[index]}",
-  );
-
-  final recipe = Recipe(
-    id: 0, // Temporary ID
-    foodName: foodNameController.text,
-    description: descriptionController.text,
-    servings: int.tryParse(servingsController.text) ?? 1,
-    category: categoryController.text,
-    ingredients: ingredients,
-    quantities: formattedQuantities, // Use formatted quantities
-    instructions: instructions,
-    totalCookTime: "${totalCookTimeController.text} $cookTimeUnit",
-    difficulty: difficultyLevel,
-    preparationTips: preparationTipsController.text,
-    nutritionalParagraph: nutritionalParagraphController.text.isNotEmpty
-        ? nutritionalParagraphController.text
-        : null, // Optional
-  );
-
-  try {
-    final recipeResponse = await _apiService.createRecipe(recipe);
-
-    if (recipeResponse != null) {
-      final createdRecipeId = recipeResponse.recipe.id;
-
-      _snackbarService.showSnackbar(
-        message: 'Recipe created successfully! Recipe ID: $createdRecipeId',
-        duration: const Duration(seconds: 3),
-      );
-
-      _navigationService.navigateTo(
-        Routes.uploadRecipeImageView,
-        arguments: UploadRecipeImageViewArguments(recipeId: createdRecipeId),
-      );
-
-      resetForm();
-    } else {
-      _snackbarService.showSnackbar(
-        message: 'Failed to create recipe. Please try again.',
-        duration: const Duration(seconds: 3),
-      );
-    }
-  } catch (e) {
-    _snackbarService.showSnackbar(
-      message: 'An error occurred: $e',
-      duration: const Duration(seconds: 3),
+    // Combine quantities and units
+    List<String> formattedQuantities = List.generate(
+      quantities.length,
+      (index) => "${quantities[index]} ${units[index]}",
     );
-  } finally {
-    setBusy(false);
-  }
-}
 
+    final recipe = Recipe(
+      id: 0, // Temporary ID
+      foodName: foodNameController.text,
+      description: descriptionController.text,
+      servings: int.tryParse(servingsController.text) ?? 1,
+      category: categoryController.text,
+      ingredients: ingredients,
+      quantities: formattedQuantities, // Use formatted quantities
+      instructions: instructions,
+      totalCookTime: "${totalCookTimeController.text} $cookTimeUnit",
+      difficulty: difficultyLevel,
+      preparationTips: preparationTipsController.text,
+      nutritionalParagraph: nutritionalParagraphController.text.isNotEmpty
+          ? nutritionalParagraphController.text
+          : null, // Optional
+    );
+
+    try {
+      final recipeResponse = await _apiService.createRecipe(recipe);
+
+      if (recipeResponse != null) {
+        final createdRecipeId = recipeResponse.recipe.id;
+
+        _snackbarService.showSnackbar(
+          message: 'Recipe created successfully! Recipe ID: $createdRecipeId',
+          duration: const Duration(seconds: 3),
+        );
+
+        _navigationService.navigateTo(
+          Routes.uploadRecipeImageView,
+          arguments: UploadRecipeImageViewArguments(recipeId: createdRecipeId),
+        );
+
+        resetForm();
+      } else {
+        _snackbarService.showSnackbar(
+          message: 'Failed to create recipe. Please try again.',
+          duration: const Duration(seconds: 3),
+        );
+      }
+    } catch (e) {
+      _snackbarService.showSnackbar(
+        message: 'An error occurred: $e',
+        duration: const Duration(seconds: 3),
+      );
+    } finally {
+      setBusy(false);
+    }
+  }
 
   void resetForm() {
     foodNameController.clear();
@@ -192,7 +191,7 @@ class CreateRecipeViewModel extends AppBaseViewModel {
     categoryController.clear();
     totalCookTimeController.clear();
     preparationTipsController.clear();
-    nutritionalParagraphController.clear(); 
+    nutritionalParagraphController.clear();
 
     ingredients = [""];
     quantities = [""];

@@ -79,38 +79,33 @@ class DashboardRecipesViewModel extends AppBaseViewModel {
         .toSet();
   }
 
-  /// Retrieve all food information
   Future<void> getAllFoodInfo() async {
-    _isLoading = true;
-    _errorMessage = null;
-    notifyListeners();
+  _isLoading = true;
+  _errorMessage = null;
+  notifyListeners();
 
-    try {
-      final foodInfoList = await _apiService.getAllFoodInfo();
+  try {
+    final foodInfoList = await _apiService.getAllFoodInfo();
 
-      if (foodInfoList.isNotEmpty) {
-        _foodInfos = foodInfoList;
-        _filteredFoodInfos = []; // Reset filtered list to show all foods
+    if (foodInfoList.isNotEmpty) {
+      _foodInfos = foodInfoList;
+      _filteredFoodInfos = [];
 
-        // Log the response to the debug console
-        for (var food in _foodInfos) {
-          print(
-              'Food Name: ${food.foodName}, Description: ${food.description}');
-        }
+      // Introduce a delay before displaying the content to create a fade-in effect
+      await Future.delayed(const Duration(milliseconds: 500));  
 
-        print('Number of food infos: ${_foodInfos.length}');
-      } else {
-        _errorMessage = 'No food information available';
-        print(_errorMessage); // Log the error message
-      }
-    } catch (e) {
-      _errorMessage = 'Failed to fetch food information: $e';
-      print(_errorMessage); // Log the error message
-    } finally {
-      _isLoading = false;
-      notifyListeners();
+      notifyListeners(); // Trigger UI update after delay
+    } else {
+      _errorMessage = 'No food information available';
     }
+  } catch (e) {
+    _errorMessage = 'Failed to fetch food information: $e';
+  } finally {
+    _isLoading = false;
+    notifyListeners();
   }
+}
+
 
   /// Filter food items by category
   void filterByCategory(String category) {
@@ -163,7 +158,11 @@ class DashboardRecipesViewModel extends AppBaseViewModel {
     }
   }
 
-   void navigateToProfile() {
+  void navigateToProfile() {
     _navigationService.navigateTo(Routes.userDashboardView);
+  }
+
+    void navigateToImageProcessing() {
+    _navigationService.navigateTo(Routes.imageProcessingView);
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:stacked/stacked.dart';
 import 'edit_profile_viewmodel.dart';
@@ -13,7 +14,31 @@ class EditProfileView extends StackedView<EditProfileViewModel> {
     Widget? child,
   ) {
     if (viewModel.isBusy) {
-      return const Center(child: CircularProgressIndicator());
+      return const Scaffold(
+        backgroundColor: Colors.white, // Set background to white
+        body: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              SpinKitThreeBounce(
+                color: Colors.orange,
+                size: 40.0,
+              ),
+              SizedBox(height: 10),
+              Text(
+                'Loading profile...',
+                style: TextStyle(
+                  fontSize: 18.0,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.orange,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
     }
 
     if (viewModel.user == null) {

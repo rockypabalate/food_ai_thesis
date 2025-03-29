@@ -157,7 +157,7 @@ class SignInView extends StackedView<SignInViewModel> {
           ),
           //  Shows the loading indicator when logging in
           if (viewModel.isLoading)
-            const LoadingIndicatorSignUp(isLoading: true),
+            const LoadingIndicator(isLoading: true),
         ],
       ),
     );

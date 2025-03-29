@@ -1,8 +1,9 @@
 import 'dart:ui';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:food_ai_thesis/ui/views/create_recipe/create_recipe_view.dart';
 import 'package:food_ai_thesis/ui/views/single_view_page_recipe/single_view_page_recipe_view.dart';
-import 'package:food_ai_thesis/utils/shimmer_loading_widget.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:lottie/lottie.dart';
 import 'package:stacked/stacked.dart';
 import 'package:food_ai_thesis/ui/views/user_dashboard/user_dashboard_viewmodel.dart';
@@ -32,11 +33,10 @@ class MyRecipesTab extends StatelessWidget {
                 padding: const EdgeInsets.only(top: 17.0),
                 child: Center(
                   child: SizedBox(
-                    width: 330, // Adjust the width as needed
+                    width: 330,
                     child: TextFormField(
                       onChanged: (query) => viewModel.userfilterRecipes(query),
-                      enabled: viewModel
-                          .allUserRecipes.isNotEmpty, // Use the original list
+                      enabled: viewModel.allUserRecipes.isNotEmpty,
                       decoration: InputDecoration(
                         labelText: 'Search Recipes',
                         labelStyle: TextStyle(
@@ -44,21 +44,11 @@ class MyRecipesTab extends StatelessWidget {
                               ? Colors.black
                               : Colors.grey,
                         ),
-                        hintStyle: const TextStyle(color: Colors.black),
                         prefixIcon: const Icon(Icons.search),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10.0),
-                          borderSide: const BorderSide(
-                            color: Color.fromARGB(255, 0, 0, 0),
-                            width: 1.0,
-                          ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                          borderSide: const BorderSide(
-                            color: Color.fromARGB(255, 0, 0, 0),
-                            width: 1.0,
-                          ),
+                          borderSide:
+                              const BorderSide(color: Colors.black, width: 1.0),
                         ),
                         filled: true,
                         fillColor: Colors.white,
@@ -70,10 +60,30 @@ class MyRecipesTab extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 7),
               Expanded(
                 child: viewModel.isBusy
-                    ? const Center(child: ShimmerLoadingWidget())
+                    ? const Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            SpinKitThreeBounce(
+                              color: Colors.orange,
+                              size: 30.0,
+                            ),
+                            SizedBox(
+                                height: 12), // Space between loader and text
+                            Text(
+                              'Loading created recipes...',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.orange,
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
                     : viewModel.userRecipes.isEmpty
                         ? Column(
                             children: [
@@ -83,18 +93,15 @@ class MyRecipesTab extends StatelessWidget {
                                   child: SizedBox(
                                     height: 320,
                                     child: Lottie.asset(
-                                      'lib/assets/not_found.json',
-                                      fit: BoxFit.cover,
-                                    ),
+                                        'lib/assets/not_found.json',
+                                        fit: BoxFit.cover),
                                   ),
                                 ),
                               ),
                               const Text(
                                 "No recipes found",
                                 style: TextStyle(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                                    fontSize: 15, fontWeight: FontWeight.bold),
                               ),
                               const Spacer(flex: 1),
                             ],
@@ -103,6 +110,7 @@ class MyRecipesTab extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 10.0, vertical: 2.0),
                             shrinkWrap: true,
+                            cacheExtent: 500, // Improves scrolling performance
                             gridDelegate:
                                 SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: getCrossAxisCount(context),
@@ -132,27 +140,25 @@ class MyRecipesTab extends StatelessWidget {
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(16),
                                     border: Border.all(
-                                      color: Colors.grey.shade300,
-                                      width: .8,
-                                    ),
+                                        color: Colors.grey.shade300, width: .8),
                                   ),
                                   child: Stack(
                                     children: [
-                                      // Recipe Image or Placeholder
+                                      // Recipe Image with Caching
                                       ClipRRect(
                                         borderRadius: BorderRadius.circular(16),
-                                        child: recipe.images.isNotEmpty
-                                            ? Image.network(
-                                                recipe.images.first,
-                                                width: double.infinity,
-                                                height: double.infinity,
-                                                fit: BoxFit.cover,
-                                                errorBuilder: (context, error,
-                                                    stackTrace) {
-                                                  return noImageWidget();
-                                                },
-                                              )
-                                            : noImageWidget(),
+                                        child: CachedNetworkImage(
+                                          imageUrl: recipe.images.isNotEmpty
+                                              ? recipe.images.first
+                                              : '',
+                                          width: double.infinity,
+                                          height: double.infinity,
+                                          fit: BoxFit.cover,
+                                          placeholder: (context, url) =>
+                                              noImageWidget(),
+                                          errorWidget: (context, url, error) =>
+                                              noImageWidget(),
+                                        ),
                                       ),
 
                                       // Recipe Details Overlay
@@ -163,8 +169,7 @@ class MyRecipesTab extends StatelessWidget {
                                         child: ClipRRect(
                                           borderRadius:
                                               const BorderRadius.vertical(
-                                            bottom: Radius.circular(16),
-                                          ),
+                                                  bottom: Radius.circular(16)),
                                           child: BackdropFilter(
                                             filter: ImageFilter.blur(
                                                 sigmaX: 7, sigmaY: 7),
@@ -172,9 +177,8 @@ class MyRecipesTab extends StatelessWidget {
                                               padding:
                                                   const EdgeInsets.all(8.0),
                                               decoration: BoxDecoration(
-                                                color: Colors.black
-                                                    .withOpacity(0.2),
-                                              ),
+                                                  color: Colors.black
+                                                      .withOpacity(0.2)),
                                               child: Column(
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.start,
@@ -202,10 +206,9 @@ class MyRecipesTab extends StatelessWidget {
                                                   Row(
                                                     children: [
                                                       const Icon(
-                                                        Icons.access_time,
-                                                        size: 10,
-                                                        color: Colors.orange,
-                                                      ),
+                                                          Icons.access_time,
+                                                          size: 10,
+                                                          color: Colors.orange),
                                                       const SizedBox(width: 4),
                                                       Flexible(
                                                         child: Text(
@@ -240,11 +243,9 @@ class MyRecipesTab extends StatelessWidget {
           floatingActionButton: FloatingActionButton(
             onPressed: () {
               Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const CreateRecipeView(),
-                ),
-              );
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const CreateRecipeView()));
             },
             backgroundColor: Colors.orange,
             shape: const CircleBorder(),
@@ -256,6 +257,7 @@ class MyRecipesTab extends StatelessWidget {
   }
 }
 
+// Widget for handling cases where no image is available
 Widget noImageWidget() {
   return Container(
     width: double.infinity,
@@ -267,16 +269,9 @@ Widget noImageWidget() {
     child: const Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Icon(
-          Icons.image_not_supported,
-          size: 50,
-          color: Colors.grey,
-        ),
+        Icon(Icons.image_not_supported, size: 50, color: Colors.grey),
         SizedBox(height: 8),
-        Text(
-          "No Image",
-          style: TextStyle(fontSize: 14, color: Colors.grey),
-        ),
+        Text("No Image", style: TextStyle(fontSize: 14, color: Colors.grey)),
       ],
     ),
   );

@@ -107,6 +107,14 @@ class _LoginViewState extends State<LoginView> {
                                       delay: 400,
                                       child: TextField(
                                         controller: emailController,
+                                        keyboardType: TextInputType
+                                            .emailAddress, // Email keyboard
+                                        autofillHints:
+                                            null, // Disables email suggestions
+                                        enableSuggestions:
+                                            false, // Prevents predictions
+                                        autocorrect:
+                                            false, // No auto-correction
                                         style:
                                             GoogleFonts.poppins(fontSize: 16),
                                         decoration: InputDecoration(
@@ -141,6 +149,14 @@ class _LoginViewState extends State<LoginView> {
                                         controller: passwordController,
                                         obscureText:
                                             !viewModel.isPasswordVisible,
+                                        keyboardType: TextInputType
+                                            .visiblePassword, // Password input type
+                                        autofillHints:
+                                            null, // Disables password autofill
+                                        enableSuggestions:
+                                            false, // Disables predictive input
+                                        autocorrect:
+                                            false, // Prevents autocorrect
                                         style:
                                             GoogleFonts.poppins(fontSize: 16),
                                         decoration: InputDecoration(

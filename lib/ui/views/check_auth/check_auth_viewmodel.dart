@@ -33,7 +33,7 @@ class CheckAuthViewModel extends AppBaseViewModel {
       // Call the getCurrentUser API
       Response response = await _authApiService.getCurrentUser();
       if (response.statusCode == 200 && response.data != null) {
-        _navigationService.navigateTo(Routes.mainpageView);
+        _navigationService.navigateTo(Routes.dashboardRecipesView);
       } else {
         _navigationService.clearStackAndShow(Routes.loginregisterView);
       }

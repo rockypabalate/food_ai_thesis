@@ -51,7 +51,6 @@ class UploadRecipeImageViewModel extends AppBaseViewModel {
     );
   }
 
-  // Pick an image from the selected source
   Future<void> pickImage(ImageSource source) async {
     try {
       final XFile? image = await _picker.pickImage(source: source);

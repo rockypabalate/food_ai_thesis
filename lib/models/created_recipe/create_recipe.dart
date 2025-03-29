@@ -34,7 +34,7 @@ class Recipe {
   final String totalCookTime;
   final String difficulty;
   final String preparationTips;
-  final String? nutritionalParagraph; // Made optional
+  final String? nutritionalParagraph;
 
   Recipe({
     required this.id,
@@ -68,22 +68,21 @@ class Recipe {
     );
   }
 
-Map<String, dynamic> toJson() {
-  return {
-    'id': id,
-    'food_name': foodName,
-    'description': description,
-    'servings': servings,
-    'category': category,
-    'ingredients': ingredients,
-    'quantities': quantities,
-    'instructions': instructions,
-    'total_cook_time': totalCookTime,
-    'difficulty': difficulty,
-    'preparation_tips': preparationTips,
-    if (nutritionalParagraph != null) 
-      'nutritional_paragraph': nutritionalParagraph,
-  };
-}
-
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'food_name': foodName,
+      'description': description,
+      'servings': servings,
+      'category': category,
+      'ingredients': ingredients,
+      'quantities': quantities,
+      'instructions': instructions,
+      'total_cook_time': totalCookTime,
+      'difficulty': difficulty,
+      'preparation_tips': preparationTips,
+      if (nutritionalParagraph != null)
+        'nutritional_paragraph': nutritionalParagraph,
+    };
+  }
 }

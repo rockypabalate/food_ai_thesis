@@ -168,7 +168,7 @@ class SignUpView extends StackedView<SignUpViewModel> {
             ),
           ),
           if (viewModel.isLoading) // ✅ Show loading overlay
-            const LoadingIndicatorSignUp(isLoading: true),
+            const LoadingIndicator(isLoading: true),
         ],
       ),
     );

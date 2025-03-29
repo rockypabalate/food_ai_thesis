@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:food_ai_thesis/ui/views/widget_search_allrecipes/wg_all_recipes.dart';
 import 'package:food_ai_thesis/utils/shimmer_loading_widget.dart';
+import 'package:food_ai_thesis/utils/widgets_fade_effect.dart';
 import 'package:stacked/stacked.dart';
-
 import 'widget_search_allrecipes_viewmodel.dart';
 
 class WidgetSearchAllrecipesView
@@ -18,6 +18,7 @@ class WidgetSearchAllrecipesView
     final searchController = viewModel.searchController;
 
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -180,9 +181,12 @@ class WidgetSearchAllrecipesView
                               ),
                             ),
                           )
-                        : AllRecipesWidget(
-                            foodInfos: viewModel.filteredFoodInfos,
-                            isLoading: viewModel.isTyping,
+                        : FadeEffectRecipe(
+                            delay: 200, // Delay before animation starts
+                            child: AllRecipesWidget(
+                              foodInfos: viewModel.filteredFoodInfos,
+                              isLoading: viewModel.isTyping,
+                            ),
                           ),
               ),
             ),
