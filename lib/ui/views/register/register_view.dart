@@ -183,7 +183,7 @@ class _RegisterViewState extends State<RegisterView> {
                 ),
               ),
               // Loading overlay
-              LoadingIndicatorSignUp(isLoading: viewModel.isLoading),
+              LoadingIndicator(isLoading: viewModel.isLoading),
             ],
           ),
         );

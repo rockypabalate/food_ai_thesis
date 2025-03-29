@@ -3,18 +3,22 @@ import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:food_ai_thesis/app/app.locator.dart';
+import 'package:food_ai_thesis/app/app.router.dart';
 import 'package:food_ai_thesis/app/app_base_viewmodel.dart';
+import 'package:food_ai_thesis/models/display_created_recipe/display_user_recipe.dart';
 import 'package:food_ai_thesis/models/saved_recipe_by_user/saved_recipe_by_user.dart';
+
 import 'package:food_ai_thesis/models/user/user_auth.dart';
 import 'package:food_ai_thesis/services/api/api_services/api_service_service.dart';
 import 'package:food_ai_thesis/services/api/auth/auth_api_service.dart';
-import 'package:stacked/stacked.dart';
+
 import 'package:stacked_services/stacked_services.dart';
 
 class UserDashboardViewModel extends AppBaseViewModel {
   final AuthApiService _authApiService = locator<AuthApiService>();
   final SnackbarService _snackbarService = locator<SnackbarService>();
   final ApiServiceService _apiService = locator<ApiServiceService>();
+  final NavigationService _navigationService = locator<NavigationService>();
 
   FocusNode searchFieldFocusNode = FocusNode();
 
@@ -29,6 +33,13 @@ class UserDashboardViewModel extends AppBaseViewModel {
 
   List<SavedFood> _foodInfos = [];
 
+  // List to store all user recipes
+  List<UserRecipe> _userRecipes = [];
+  List<UserRecipe> get userRecipes => _filteredUserRecipes;
+  List<UserRecipe> get allUserRecipes => _userRecipes;
+
+  List<UserRecipe> _filteredUserRecipes = [];
+
   // Add selectedTab to manage the active view
   int selectedTab = 0;
 
@@ -36,6 +47,29 @@ class UserDashboardViewModel extends AppBaseViewModel {
   void setSelectedTab(int tab) {
     selectedTab = tab;
     notifyListeners();
+  }
+
+  void userfilterRecipes(String query) {
+    setBusy(true); // Indicate the view is loading (this will trigger shimmer)
+
+    if (_debounce?.isActive ?? false) {
+      _debounce!.cancel(); // Cancel any ongoing debounce timer
+    }
+
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      if (query.isEmpty) {
+        _filteredUserRecipes =
+            List.from(_userRecipes); // Ensure a fresh list copy
+      } else {
+        _filteredUserRecipes = _userRecipes
+            .where((recipe) =>
+                recipe.foodName.toLowerCase().contains(query.toLowerCase()))
+            .toList();
+      }
+
+      setBusy(false); // Stop shimmer/loading
+      notifyListeners(); // Notify UI of changes
+    });
   }
 
   Future<void> getCurrentUser() async {
@@ -68,6 +102,25 @@ class UserDashboardViewModel extends AppBaseViewModel {
     } catch (e) {
       _snackbarService.showSnackbar(
         message: 'Error fetching saved recipes: ${e.toString()}',
+      );
+    }
+    setBusy(false);
+  }
+
+  // Function to fetch all user recipes
+  Future<void> getAllUserRecipes() async {
+    setBusy(true);
+    try {
+      final recipes = await _apiService.fetchAllRecipes();
+      if (recipes != null) {
+        _userRecipes = recipes;
+        _filteredUserRecipes = List.from(
+            _userRecipes); // Ensure filtered list starts with all recipes
+        notifyListeners();
+      }
+    } catch (e) {
+      _snackbarService.showSnackbar(
+        message: 'Error fetching user recipes: ${e.toString()}',
       );
     }
     setBusy(false);
@@ -123,5 +176,30 @@ class UserDashboardViewModel extends AppBaseViewModel {
     } finally {
       setBusy(false); // Set the ViewModel state back to idle
     }
+  }
+
+  Future<void> logout() async {
+    final response = await _authApiService.logoutUser();
+
+    if (response.statusCode == 200) {
+      _navigationService.navigateTo(Routes.loginView);
+      _snackbarService.showSnackbar(message: 'Logged out successfully');
+    } else {
+      _snackbarService.showSnackbar(
+          message: 'Logout failed: ${response.data['error']}');
+    }
+  }
+
+  Future<void> navigateToEditProfile() async {
+    _navigationService.navigateTo(Routes.editProfileView);
+  }
+
+  Future<void> navigateToSearchRecipes() async {
+    _navigationService.navigateTo(Routes.widgetSearchAllrecipesView);
+  }
+
+  void navigateBack() {
+    _navigationService
+        .navigateTo(Routes.dashboardRecipesView); // Change to the desired route
   }
 }

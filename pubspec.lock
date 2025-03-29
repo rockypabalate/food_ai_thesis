@@ -331,6 +331,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "7.0.0"
+  flutter_spinkit:
+    dependency: "direct main"
+    description:
+      name: flutter_spinkit
+      sha256: d2696eed13732831414595b98863260e33e8882fc069ee80ec35d4ac9ddb0472
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.2.1"
   flutter_svg:
     dependency: "direct main"
     description:
@@ -582,13 +590,13 @@ packages:
     source: hosted
     version: "2.1.1"
   logger:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: logger
-      sha256: "7ad7215c15420a102ec687bb320a7312afd449bac63bfb1c60d9787c27b9767f"
+      sha256: be4b23575aac7ebf01f225a241eb7f6b5641eeaf43c6a8613510fc2f8cf187d1
       url: "https://pub.dev"
     source: hosted
-    version: "1.4.0"
+    version: "2.5.0"
   logging:
     dependency: transitive
     description:
@@ -998,10 +1006,10 @@ packages:
     dependency: "direct dev"
     description:
       name: stacked_generator
-      sha256: eaa6447e3fd4d4010b746629b5518364d7fa7f6453ffb6416ad449fd352d1181
+      sha256: "0f2daf05a237111881566177952c897441dbd0124a6276d8cd012b253667e8aa"
       url: "https://pub.dev"
     source: hosted
-    version: "1.6.1"
+    version: "1.6.1-pre.1"
   stacked_services:
     dependency: "direct main"
     description:

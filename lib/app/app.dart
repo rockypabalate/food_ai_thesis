@@ -30,6 +30,12 @@ import 'package:food_ai_thesis/ui/views/user_dashboard/user_dashboard_view.dart'
 import 'package:food_ai_thesis/ui/views/edit_profile/edit_profile_view.dart';
 import 'package:food_ai_thesis/ui/views/image_classification/image_classification_view.dart';
 import 'package:food_ai_thesis/ui/views/sign_in/sign_in_view.dart';
+import 'package:food_ai_thesis/ui/views/create_recipe/create_recipe_view.dart';
+import 'package:food_ai_thesis/ui/views/upload_recipe_image/upload_recipe_image_view.dart';
+
+import 'package:food_ai_thesis/ui/views/single_view_page_recipe/single_view_page_recipe_view.dart';
+import 'package:food_ai_thesis/ui/views/loginregister/loginregister_view.dart';
+import 'package:food_ai_thesis/ui/views/ai_processing/ai_processing_view.dart';
 // @stacked-import
 
 @StackedApp(
@@ -66,7 +72,17 @@ import 'package:food_ai_thesis/ui/views/sign_in/sign_in_view.dart';
     MaterialRoute(page: EditProfileView),
     MaterialRoute(page: ImageClassificationView),
     MaterialRoute(page: SignInView),
-     MaterialRoute(page: SignUpView),
+    MaterialRoute(page: SignUpView),
+    MaterialRoute(page: CreateRecipeView),
+    MaterialRoute(page: UploadRecipeImageView),
+
+    MaterialRoute(page: SingleViewPageRecipeView),
+    CustomRoute(
+      page: LoginregisterView,
+      transitionsBuilder: TransitionsBuilders.zoomIn,
+      durationInMilliseconds: 500,
+    ),
+    MaterialRoute(page: AiProcessingView),
 // @stacked-route
   ],
   dependencies: [

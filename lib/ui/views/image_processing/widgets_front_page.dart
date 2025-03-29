@@ -63,6 +63,13 @@ class _FrontPageState extends State<FrontPage>
       backgroundColor: Colors.white,
       appBar: AppBar(
         automaticallyImplyLeading: false, // Removes the default back icon
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back,
+              color: Colors.white), // White back button
+          onPressed: () {
+            Navigator.of(context).pop(); // Navigate back
+          },
+        ),
         title: Text(
           'Image Processing',
           style: GoogleFonts.poppins(

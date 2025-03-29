@@ -45,7 +45,7 @@ class LoginViewModel extends AppBaseViewModel {
           title: 'Success',
         );
 
-        _navigationService.navigateTo(Routes.mainpageView);
+        _navigationService.navigateTo(Routes.dashboardRecipesView);
       } else {
         // Handle API error
         final error = response.data['error'] ?? 'Unknown error occurred';

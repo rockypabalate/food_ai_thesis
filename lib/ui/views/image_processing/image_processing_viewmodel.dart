@@ -1,46 +1,44 @@
 import 'dart:io';
-
-import 'package:flutter/services.dart';
+import 'dart:typed_data';
+import 'package:image/image.dart' as img;
 import 'package:food_ai_thesis/app/app.locator.dart';
 import 'package:food_ai_thesis/app/app_base_viewmodel.dart';
 import 'package:food_ai_thesis/models/search_recipe_name/food_description.dart';
-import 'package:image/image.dart' as img;
 import 'package:food_ai_thesis/services/api/api_services/api_service_service.dart';
+import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:tflite_flutter/tflite_flutter.dart';
 
 class ImageProcessingViewModel extends AppBaseViewModel {
   final ApiServiceService _apiService = locator<ApiServiceService>();
+
   bool isFrontPageVisible = true;
   bool isBusy = false;
-  File? filePath;
-
-  String _searchQuery = '';
-  String get searchQuery => _searchQuery;
+  File? selectedImage;
+  String? result;
 
   List<FoodInformation> _searchResults = [];
   List<FoodInformation> get searchResults => _searchResults;
 
-  File? selectedImage;
-  String? result;
+  final GenerativeModel _generativeModel;
 
-  late final Interpreter _interpreter;
-  final List<String> _labels = [];
-
-  ImageProcessingViewModel() {
-    _initializeModel();
-  }
+  ImageProcessingViewModel()
+      : _generativeModel = GenerativeModel(
+          model: 'gemini-1.5-flash-latest',
+          apiKey: 'AIzaSyAxbZ36P5_Q4liCHXZ_n2T9Ird77_mr1KI',
+        );
 
   void updateSearchQuery(String value) {
-    _searchQuery = value;
+    result = value;
     notifyListeners();
   }
 
   Future<void> fetchSearchResults() async {
-    if (result == null || result!.isEmpty) return; // Ensure result is valid
+    if (result == null || result!.isEmpty) return;
     setBusy(true);
     try {
+      result = result!.trim();
       _searchResults = await _apiService.searchRecipesByName(result!);
+      notifyListeners();
     } catch (e) {
       _searchResults = [];
       print('Error fetching search results: $e');
@@ -48,124 +46,84 @@ class ImageProcessingViewModel extends AppBaseViewModel {
     setBusy(false);
   }
 
-  Future<void> _initializeModel() async {
-    try {
-      _interpreter = await Interpreter.fromAsset(
-          'lib/assets/food_classification_model_v3.tflite');
-      await _loadLabels();
-    } catch (e) {
-      result = 'Error initializing model: $e';
-      notifyListeners();
-    }
-  }
-
-  Future<void> _loadLabels() async {
-    try {
-      final labelData = await rootBundle.loadString('lib/assets/labels.txt');
-      _labels.addAll(labelData.split('\n'));
-    } catch (e) {
-      result = 'Error loading labels: $e';
-      notifyListeners();
-    }
-  }
-
   Future<void> pickImageGallery() async {
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-
     if (pickedFile != null) {
       selectedImage = File(pickedFile.path);
-      isFrontPageVisible = false; // Switch to the result view
-      notifyListeners(); // Notify UI of the change
-      await _processImageAndSearch(selectedImage!);
+      isFrontPageVisible = false;
+      notifyListeners();
+      await processImageWithGenerativeAI(selectedImage!);
     }
   }
 
   Future<void> pickImageCamera() async {
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(source: ImageSource.camera);
-
     if (pickedFile != null) {
       selectedImage = File(pickedFile.path);
-      isFrontPageVisible = false; // Switch to the result view
-      notifyListeners(); // Notify UI of the change
-      await _processImageAndSearch(selectedImage!);
+      isFrontPageVisible = false;
+      notifyListeners();
+      await processImageWithGenerativeAI(selectedImage!);
     }
   }
 
-  Future<void> _processImageAndSearch(File image) async {
+  Future<void> processImageWithGenerativeAI(File image) async {
     try {
-      await _classifyImage(image);
-      await fetchSearchResults();
-    } catch (e) {
-      print('Error processing image and fetching search results: $e');
-    }
-  }
+      isBusy = true;
+      notifyListeners(); // Ensure UI updates
 
-  Future<void> _classifyImage(File image) async {
-    try {
-      final input = await _preprocessImage(image);
+      setBusy(true); // Call Stacked's setBusy
 
-      final outputShape = _interpreter.getOutputTensor(0).shape;
-      final output = List.filled(outputShape.reduce((a, b) => a * b), 0.0)
-          .reshape(outputShape);
+      // Read the image as bytes
+      final Uint8List imageBytes = await image.readAsBytes();
+      img.Image? originalImage = img.decodeImage(imageBytes);
 
-      _interpreter.run(input, output);
-
-      if (output.isNotEmpty && output[0] is List) {
-        final List<double> outputList = (output[0] as List).cast<double>();
-        final outputIndex = outputList.indexWhere(
-            (value) => value == outputList.reduce((a, b) => a > b ? a : b));
-        result = _labels[outputIndex].replaceAll(RegExp(r'^\d+\s*'), '');
-      } else {
-        throw Exception('Output tensor format is invalid or empty.');
+      if (originalImage == null) {
+        result = "Error: Unable to decode image.";
+        notifyListeners();
+        return;
       }
 
+      // Resize the image to reduce dimensions (max width/height of 600px)
+      final img.Image resizedImage = img.copyResize(originalImage, width: 600);
+
+      // Compress the image to reduce file size (JPEG, quality 50%)
+      final Uint8List compressedBytes =
+          img.encodeJpg(resizedImage, quality: 50);
+
+      // Determine MIME type
+      String mimeType = 'image/jpeg';
+
+      final response = await _generativeModel.generateContent([
+        Content.multi([
+          TextPart(
+            'Identify this Filipino food item image. '
+            'State only the full name of the identified food. '
+            'If the identified food is not Filipino, please state that it is not a Filipino food item.',
+          ),
+          DataPart(mimeType, compressedBytes), // Use compressed image
+        ]),
+      ]);
+
+      result = response.text?.trim() ?? "No response from AI";
       notifyListeners();
+
+      await fetchSearchResults();
     } catch (e) {
-      result = 'Error during classification: $e';
-      print('Error stack trace: $e');
+      result = 'Error processing image: $e';
       notifyListeners();
+      print('Error processing image with Generative AI: $e');
+    } finally {
+      isBusy = false;
+      notifyListeners(); // Ensure UI updates when process is done
+      setBusy(false);
     }
-  }
-
-  Future<List<List<List<List<double>>>>> _preprocessImage(File image) async {
-    final imageBytes = await image.readAsBytes();
-    final decodedImage = img.decodeImage(imageBytes);
-
-    if (decodedImage == null) {
-      throw Exception('Failed to decode image.');
-    }
-
-    final resizedImage = img.copyResize(decodedImage, width: 224, height: 224);
-
-    final input = List.generate(
-      224,
-      (y) => List.generate(
-        224,
-        (x) {
-          final pixel = resizedImage.getPixel(x, y);
-          final r = pixel.r / 255.0;
-          final g = pixel.g / 255.0;
-          final b = pixel.b / 255.0;
-          return [r, g, b];
-        },
-      ),
-    );
-
-    return [input];
   }
 
   void resetViewState() {
     selectedImage = null;
-    searchResults.clear();
+    _searchResults.clear();
     result = null;
-  }
-
-  @override
-  void dispose() {
-    _interpreter.close();
-    resetViewState();
-    super.dispose();
   }
 }

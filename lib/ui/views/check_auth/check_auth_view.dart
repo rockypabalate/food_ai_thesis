@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lottie/lottie.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:stacked/stacked.dart';
 
 import 'check_auth_viewmodel.dart';
@@ -50,13 +50,11 @@ class _AnimatedLoaderState extends State<AnimatedLoader>
   void initState() {
     super.initState();
 
-    // Initialize the AnimationController with a valid vsync
     _scaleController = AnimationController(
       duration: const Duration(milliseconds: 300),
       vsync: this,
     );
 
-    // Start the logo animation
     Future.delayed(const Duration(milliseconds: 500), () {
       _scaleController.forward().then((_) {
         Future.delayed(const Duration(seconds: 2), () {
@@ -92,28 +90,22 @@ class _AnimatedLoaderState extends State<AnimatedLoader>
                 );
               },
             )
-          : Column(
-              mainAxisSize: MainAxisSize.min, // Use min to reduce space
-              mainAxisAlignment: MainAxisAlignment.center,
+          : const Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                SizedBox(
-                  height:
-                      200, // Set your desired height for the Lottie animation
-                  child: Lottie.asset(
-                    'lib/assets/loads.json', // Update with your Lottie file path
-                    fit: BoxFit.fill,
+                SpinKitChasingDots(
+                  color: Colors.orange,
+                  size: 80.0,
+                ),
+                SizedBox(height: 40),
+                Text(
+                  'Loading, please wait...',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.orange,
                   ),
                 ),
-                const SizedBox(
-                    height: 8), // Reduce space between Lottie and text
-                // const Text(
-                //   'Loading...',
-                //   style: TextStyle(
-                //     fontSize: 30,
-                //     fontWeight: FontWeight.w500,
-                //     color: Colors.black54,
-                //   ),
-                // ),
               ],
             ),
     );
@@ -121,8 +113,7 @@ class _AnimatedLoaderState extends State<AnimatedLoader>
 
   @override
   void dispose() {
-    _scaleController
-        .dispose(); // MyRecipesTab Dispose of the controller to free resources
+    _scaleController.dispose();
     super.dispose();
   }
 }

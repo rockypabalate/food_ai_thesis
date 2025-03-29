@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:food_ai_thesis/app/app.locator.dart';
@@ -17,10 +16,8 @@ class EditProfileViewModel extends AppBaseViewModel {
   User? user;
   File? profileImage;
 
-  // Add TextEditingControllers for editable fields
+  // TextEditingController for editable fields
   final usernameController = TextEditingController();
-  final addressController = TextEditingController();
-  final roleController = TextEditingController();
 
   Future<void> getCurrentUser() async {
     setBusy(true);
@@ -29,10 +26,8 @@ class EditProfileViewModel extends AppBaseViewModel {
       if (response.statusCode == 200 && response.data['user'] != null) {
         user = User.fromJson(response.data['user']);
 
-        // Initialize controllers with the current user data
+        // Initialize controllers with user data
         usernameController.text = user?.username ?? '';
-        addressController.text = user?.address ?? '';
-        roleController.text = user?.role ?? '';
       } else {
         _snackbarService.showSnackbar(message: 'Failed to load user data');
       }
@@ -46,7 +41,7 @@ class EditProfileViewModel extends AppBaseViewModel {
     final imageSource = await showDialog<ImageSource>(
       context: context,
       builder: (BuildContext context) => AlertDialog(
-        title: const Text("Choose image source"),
+        title: const Text("Choose Image Source"),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, ImageSource.camera),
@@ -82,8 +77,6 @@ class EditProfileViewModel extends AppBaseViewModel {
       user = user!.copyWith(
         profileImage: profileImage?.path,
         username: usernameController.text,
-        address: addressController.text,
-        role: roleController.text,
       );
 
       bool isUpdated = await _authApiService.updateUserProfile(user!);
@@ -91,7 +84,7 @@ class EditProfileViewModel extends AppBaseViewModel {
       if (isUpdated) {
         _snackbarService.showSnackbar(message: 'Profile updated successfully');
         notifyListeners();
-        Navigator.pop(context, true); // Pass a true result to indicate success
+        Navigator.pop(context, true); // Return success result
       } else {
         _snackbarService.showSnackbar(message: 'Failed to update profile');
       }
