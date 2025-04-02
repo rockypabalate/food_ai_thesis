@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:lottie/lottie.dart';
 
 class FeaturesContainer extends StatelessWidget {
   final String title;
   final String description;
-  final String assetPath;
+  final IconData icon;
   final double scale;
   final MainAxisAlignment alignment;
 
@@ -13,9 +12,9 @@ class FeaturesContainer extends StatelessWidget {
     Key? key,
     required this.title,
     required this.description,
-    required this.assetPath,
+    required this.icon,
     required this.scale,
-    required this.alignment, // Added constructor parameter
+    required this.alignment,
   }) : super(key: key);
 
   @override
@@ -44,13 +43,10 @@ class FeaturesContainer extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Center(
-            child: Lottie.asset(
-              assetPath,
-              fit: BoxFit.contain,
-              width: MediaQuery.of(context).size.width * 0.5 * scale,
-              height: MediaQuery.of(context).size.width * 0.5 * scale,
-              errorBuilder: (context, error, stackTrace) =>
-                  const Icon(Icons.error, size: 100),
+            child: Icon(
+              icon,
+              size: MediaQuery.of(context).size.width * 0.5 * scale,
+              color: Colors.blueAccent,
             ),
           ),
           const SizedBox(height: 20),

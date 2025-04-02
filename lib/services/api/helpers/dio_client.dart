@@ -4,14 +4,21 @@ import 'package:food_ai_thesis/utils/constants.dart';
 class DioClient {
   static DioClient? _singleton;
   static late Dio _dio;
+  static late Dio _flaskDio; // Add Dio instance for Flask API
+
   DioClient._() {
-    _dio = createDioClient();
+    _dio = createDioClient(Constants.baseUrl);
+    _flaskDio = createDioClient(Constants.flaskBaseUrl); // New Dio instance
   }
+
   factory DioClient() => _singleton ?? DioClient._();
+
   Dio get instance => _dio;
-  Dio createDioClient() {
+  Dio get flaskInstance => _flaskDio; // Getter for Flask API
+
+  Dio createDioClient(String baseUrl) {
     final Dio dio = Dio(BaseOptions(
-        baseUrl: Constants.baseUrl,
+        baseUrl: baseUrl,
         receiveTimeout: const Duration(seconds: 15),
         connectTimeout: const Duration(seconds: 15),
         sendTimeout: const Duration(seconds: 15),
@@ -21,7 +28,8 @@ class DioClient {
         }))
       ..options
           .headers
-          .addEntries([const MapEntry('acccept', 'application/json')]);
+          .addEntries([const MapEntry('accept', 'application/json')]);
+
     dio.interceptors.addAll([
       LogInterceptor(
           requestHeader: true,
@@ -29,8 +37,8 @@ class DioClient {
           responseBody: true,
           responseHeader: true,
           error: true),
-      // AppInterceptors(),
     ]);
+
     return dio;
   }
 }

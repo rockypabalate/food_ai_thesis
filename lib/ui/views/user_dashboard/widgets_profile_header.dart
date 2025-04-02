@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:food_ai_thesis/ui/views/user_dashboard/user_dashboard_viewmodel.dart';
-import 'package:food_ai_thesis/ui/views/user_dashboard/widgets_fade_effect.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:stacked/stacked.dart';
 
@@ -63,46 +62,42 @@ class _ProfileHeaderState extends State<ProfileHeader> {
                         children: [
                           GestureDetector(
                             onTap: () => viewModel.navigateToEditProfile(),
-                            child: FadeEffect(
-                              delay: 300,
-                              isHorizontalSlide: false,
-                              child: viewModel.user?.profileImage != null
-                                  ? Container(
-                                      padding: const EdgeInsets.all(0),
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        border: Border.all(
-                                          color: Colors.white,
-                                          width: 1.0,
-                                        ),
-                                      ),
-                                      child: CircleAvatar(
-                                        radius: 30,
-                                        backgroundImage: NetworkImage(
-                                          viewModel.user!.profileImage!,
-                                        ),
-                                      ),
-                                    )
-                                  : Container(
-                                      padding: const EdgeInsets.all(2),
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        border: Border.all(
-                                          color: Colors.white,
-                                          width: 1.0,
-                                        ),
-                                      ),
-                                      child: const CircleAvatar(
-                                        radius: 24,
-                                        backgroundColor: Colors.white,
-                                        child: Icon(
-                                          Icons.person,
-                                          color: Colors.red,
-                                          size: 30,
-                                        ),
+                            child: viewModel.user?.profileImage != null
+                                ? Container(
+                                    padding: const EdgeInsets.all(0),
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                        color: Colors.white,
+                                        width: 1.0,
                                       ),
                                     ),
-                            ),
+                                    child: CircleAvatar(
+                                      radius: 30,
+                                      backgroundImage: NetworkImage(
+                                        viewModel.user!.profileImage!,
+                                      ),
+                                    ),
+                                  )
+                                : Container(
+                                    padding: const EdgeInsets.all(2),
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                        color: Colors.white,
+                                        width: 1.0,
+                                      ),
+                                    ),
+                                    child: const CircleAvatar(
+                                      radius: 29,
+                                      backgroundColor: Colors.white,
+                                      child: Icon(
+                                        Icons.person,
+                                        color: Colors.red,
+                                        size: 30,
+                                      ),
+                                    ),
+                                  ),
                           ),
                           Positioned(
                             top: -1,
@@ -130,27 +125,19 @@ class _ProfileHeaderState extends State<ProfileHeader> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            FadeEffect(
-                              delay: 400,
-                              isHorizontalSlide: true,
-                              child: Text(
-                                viewModel.user?.username ?? 'N/A',
-                                style: GoogleFonts.poppins(
-                                  fontSize: 15,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                            Text(
+                              viewModel.user?.username ?? 'N/A',
+                              style: GoogleFonts.poppins(
+                                fontSize: 15,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
-                            FadeEffect(
-                              delay: 500,
-                              isHorizontalSlide: true,
-                              child: Text(
-                                viewModel.user?.email ?? 'No email',
-                                style: GoogleFonts.poppins(
-                                  fontSize: 10,
-                                  color: Colors.white,
-                                ),
+                            Text(
+                              viewModel.user?.email ?? 'No email',
+                              style: GoogleFonts.poppins(
+                                fontSize: 10,
+                                color: Colors.white,
                               ),
                             ),
                           ],
@@ -161,14 +148,14 @@ class _ProfileHeaderState extends State<ProfileHeader> {
                         height: 35.0,
                         width: 35.0,
                         child: ElevatedButton(
-                          onPressed: () => viewModel.logout(),
+                          onPressed: () => viewModel.navigateToSettingsPage(),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.white,
                             shape: const CircleBorder(),
                             padding: EdgeInsets.zero,
                           ),
                           child: const Icon(
-                            Icons.logout,
+                            Icons.settings, // Changed from logout to settings
                             color: Colors.orange,
                             size: 19.0,
                           ),

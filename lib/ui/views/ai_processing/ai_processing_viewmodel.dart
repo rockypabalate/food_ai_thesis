@@ -8,7 +8,6 @@ import 'package:food_ai_thesis/services/api/api_services/api_service_service.dar
 import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:image_picker/image_picker.dart';
 
-
 class AiProcessingViewModel extends AppBaseViewModel {
   final ApiServiceService _apiService = locator<ApiServiceService>();
 
@@ -66,37 +65,37 @@ class AiProcessingViewModel extends AppBaseViewModel {
     }
   }
 
-Future<void> processImageWithGenerativeAI(File image) async {
-  try {
-    setBusy(true);
-    final Uint8List imageBytes = await image.readAsBytes();
+  Future<void> processImageWithGenerativeAI(File image) async {
+    try {
+      setBusy(true);
+      final Uint8List imageBytes = await image.readAsBytes();
 
-    // 🔥 Determine the correct MIME type based on the file extension
-    String mimeType = image.path.toLowerCase().endsWith('.png') 
-        ? 'image/png' 
-        : 'image/jpeg'; // Default to JPEG if not PNG
+      // 🔥 Determine the correct MIME type based on the file extension
+      String mimeType = image.path.toLowerCase().endsWith('.png')
+          ? 'image/png'
+          : 'image/jpeg'; // Default to JPEG if not PNG
 
-    final response = await _generativeModel.generateContent([
-      Content.multi([
-        TextPart(
-          'Identify this Filipino food item image. '
-          'State only the full name of the identified food. '
-          'If the identified food is not Filipino, please state that it is not a Filipino food item.',
-        ),
-        DataPart(mimeType, imageBytes), // ✅ Dynamically use the correct MIME type
-      ]),
-    ]);
+      final response = await _generativeModel.generateContent([
+        Content.multi([
+          TextPart(
+            'Identify this Filipino food item image. '
+            'State only the full name of the identified food. '
+            'If the identified food is not Filipino, please state that it is not a Filipino food item.',
+          ),
+          DataPart(
+              mimeType, imageBytes), // ✅ Dynamically use the correct MIME type
+        ]),
+      ]);
 
-    // ✅ Store AI's full response
-    result = response.text ?? "No response from AI";
-    notifyListeners();
-  } catch (e) {
-    result = 'Error processing image: $e';
-    notifyListeners();
-    print('Error processing image with Generative AI: $e');
-  } finally {
-    setBusy(false);
+      // ✅ Store AI's full response
+      result = response.text ?? "No response from AI";
+      notifyListeners();
+    } catch (e) {
+      result = 'Error processing image: $e';
+      notifyListeners();
+      print('Error processing image with Generative AI: $e');
+    } finally {
+      setBusy(false);
+    }
   }
-}
-
 }

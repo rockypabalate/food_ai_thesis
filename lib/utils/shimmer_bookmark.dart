@@ -12,7 +12,8 @@ class _ShimmerBookmark extends State<ShimmerBookmark> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      physics: const NeverScrollableScrollPhysics(), // Prevents unwanted scrolling
+      physics:
+          const NeverScrollableScrollPhysics(), // Prevents unwanted scrolling
       child: Shimmer.fromColors(
         baseColor: Colors.grey[300]!,
         highlightColor: Colors.grey[100]!,
@@ -64,9 +65,11 @@ class _ShimmerBookmark extends State<ShimmerBookmark> {
                             // Cooking Time & Difficulty
                             Row(
                               children: [
-                                _buildShimmerBlock(10, 10, radius: 4), // Icon Placeholder
+                                _buildShimmerBlock(10, 10,
+                                    radius: 4), // Icon Placeholder
                                 const SizedBox(width: 4),
-                                _buildShimmerBlock(80, 10, radius: 4), // Text Placeholder
+                                _buildShimmerBlock(80, 10,
+                                    radius: 4), // Text Placeholder
                               ],
                             ),
                           ],

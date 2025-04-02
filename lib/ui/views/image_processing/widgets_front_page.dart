@@ -190,7 +190,7 @@ class _FrontPageState extends State<FrontPage>
                             title: 'Food Identification using CNN',
                             description:
                                 'Our app identifies food items using a Convolutional Neural Network (CNN). Capture or upload an image of food and let the AI analyze it.',
-                            assetPath: 'lib/assets/AI_Icon.json',
+                            icon: Icons.fastfood,
                             scale: 0.98,
                             alignment: MainAxisAlignment.start,
                           ),
@@ -198,7 +198,7 @@ class _FrontPageState extends State<FrontPage>
                             title: 'How to Use the App',
                             description:
                                 'Simply capture an image or upload one from your gallery. The app will process the image to identify the food item.',
-                            assetPath: 'lib/assets/person.json',
+                            icon: Icons.camera_alt,
                             scale: 1.05,
                             alignment: MainAxisAlignment.center,
                           ),
@@ -206,7 +206,7 @@ class _FrontPageState extends State<FrontPage>
                             title: 'Food Information and Recipes',
                             description:
                                 'After identification, the app provides detailed food recipes, instructions, and nutritional content for the identified food item.',
-                            assetPath: 'lib/assets/Info.json',
+                            icon: Icons.info,
                             scale: 1.05,
                             alignment: MainAxisAlignment.start,
                           ),

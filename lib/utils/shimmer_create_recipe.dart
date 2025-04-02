@@ -12,7 +12,8 @@ class ShimmerCreateRecipe extends StatelessWidget {
       child: GridView.builder(
         padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 2.0),
         shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(), // Prevents scrolling issues
+        physics:
+            const NeverScrollableScrollPhysics(), // Prevents scrolling issues
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
           crossAxisSpacing: 10,

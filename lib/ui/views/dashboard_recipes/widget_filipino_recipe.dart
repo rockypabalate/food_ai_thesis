@@ -24,7 +24,7 @@ class _FilipinoRecipeListWidgetState extends State<FilipinoRecipeListWidget> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 180,
+      // Remove fixed height to allow vertical list to expand
       child: widget.isLoading
           ? _buildShimmerList()
           : widget.foodInfos.isEmpty
@@ -41,12 +41,14 @@ class _FilipinoRecipeListWidgetState extends State<FilipinoRecipeListWidget> {
   /// **Shimmer Loading Effect**
   Widget _buildShimmerList() {
     return ListView.separated(
-      padding: const EdgeInsets.symmetric(horizontal: 10.0),
-      scrollDirection: Axis.horizontal,
+      padding: const EdgeInsets.symmetric(vertical: 0.0),
+      scrollDirection: Axis.vertical, // Changed to vertical scrolling
       physics: const BouncingScrollPhysics(),
       itemCount: 4, // Limit shimmer items to prevent excessive memory usage
-      separatorBuilder: (_, __) => const SizedBox(width: 10),
+      separatorBuilder: (_, __) =>
+          const SizedBox(height: 10), // Changed width to height
       itemBuilder: (context, index) => _buildShimmerCard(),
+      shrinkWrap: true, // Added to ensure proper sizing
     );
   }
 
@@ -56,8 +58,8 @@ class _FilipinoRecipeListWidgetState extends State<FilipinoRecipeListWidget> {
       baseColor: Colors.grey[300]!,
       highlightColor: Colors.grey[100]!,
       child: Container(
-        width: 323,
-        margin: const EdgeInsets.symmetric(horizontal: 7.0, vertical: 4.0),
+        height: 150, // Set height instead of width for vertical cards
+        margin: const EdgeInsets.symmetric(horizontal: 13.0, vertical: 4.0),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
           color: Colors.white,
@@ -70,14 +72,16 @@ class _FilipinoRecipeListWidgetState extends State<FilipinoRecipeListWidget> {
   Widget _buildRecipeList() {
     return ListView.separated(
       key: const PageStorageKey<String>('filipino_recipes_list'),
-      padding: const EdgeInsets.symmetric(horizontal: 10.0),
-      scrollDirection: Axis.horizontal,
+      padding: const EdgeInsets.symmetric(vertical: 0.0),
+      scrollDirection: Axis.vertical, // Changed to vertical scrolling
       physics: const BouncingScrollPhysics(),
       itemCount: widget.foodInfos.length,
-      separatorBuilder: (_, __) => const SizedBox(width: 10),
+      separatorBuilder: (_, __) =>
+          const SizedBox(height: 10), // Changed width to height
       cacheExtent: 300, // Reduce memory usage
       itemBuilder: (context, index) =>
           _buildRecipeCard(widget.foodInfos[index], context),
+      shrinkWrap: true, // Added to ensure proper sizing
     );
   }
 
@@ -94,8 +98,8 @@ class _FilipinoRecipeListWidgetState extends State<FilipinoRecipeListWidget> {
         );
       },
       child: Container(
-        width: 323,
-        margin: const EdgeInsets.symmetric(horizontal: 7.0, vertical: 4.0),
+        height: 140, // Set a fixed height for the card
+        margin: const EdgeInsets.symmetric(horizontal: 13.0, vertical: 4.0),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
@@ -107,112 +111,115 @@ class _FilipinoRecipeListWidgetState extends State<FilipinoRecipeListWidget> {
             ),
           ],
         ),
-        child: Stack(
+        child: Row(
+          // Changed from Stack to Row for horizontal card layout
           children: [
+            // Image on the left
             ClipRRect(
-              borderRadius: BorderRadius.circular(16),
-              child: CachedNetworkImage(
-                imageUrl: foodInfo.imageUrl ?? '',
-                height: double.infinity,
-                width: double.infinity,
-                fit: BoxFit.cover,
-                maxHeightDiskCache: 200, // Reduce memory footprint
-                maxWidthDiskCache: 200, // Reduce memory footprint
-                placeholder: (context, url) => _buildShimmerCard(),
-                errorWidget: (context, url, error) =>
-                    const Icon(Icons.error, color: Colors.red),
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(16),
+                bottomLeft: Radius.circular(16),
+              ),
+              child: SizedBox(
+                width: 150, // Fixed width for the image section
+                child: CachedNetworkImage(
+                  imageUrl: (foodInfo.imageUrls.isNotEmpty)
+                      ? foodInfo.imageUrls.first // Always take the first image
+                      : '', // Fallback if no images exist
+                  height: double.infinity,
+                  width: 150,
+                  fit: BoxFit.cover,
+                  placeholder: (context, url) => Shimmer.fromColors(
+                    baseColor: Colors.grey[300]!,
+                    highlightColor: Colors.grey[100]!,
+                    child: Container(color: Colors.white),
+                  ),
+                  errorWidget: (context, url, error) =>
+                      const Icon(Icons.error, color: Colors.red),
+                ),
               ),
             ),
-            Positioned(
-              top: 8,
-              right: 8,
-              child: Row(
-                children: [
-                  _infoContainer(
-                    icon: Icons.remove_red_eye,
-                    text: '${foodInfo.views} Views',
-                    iconColor: Colors.orange,
+            // Details on the right
+            Expanded(
+              child: Container(
+                padding: const EdgeInsets.all(12.0),
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                    topRight: Radius.circular(16),
+                    bottomRight: Radius.circular(16),
                   ),
-                  const SizedBox(width: 8),
-                  _infoContainer(
-                    icon: Icons.favorite,
-                    text: '${foodInfo.likes} Likes',
-                    iconColor: Colors.red,
-                  ),
-                ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Recipe name
+                    Row(
+                      children: [
+                        const Icon(Icons.emoji_food_beverage,
+                            size: 16, color: Colors.orange),
+                        const SizedBox(width: 4),
+                        Flexible(
+                          child: Text(
+                            foodInfo.foodName,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.poppins(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.orange,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    // Cooking time, difficulty, and author
+                    Row(
+                      children: [
+                        const Icon(Icons.access_time,
+                            size: 12, color: Colors.orange),
+                        const SizedBox(width: 4),
+                        Text(
+                          foodInfo.totalCookTime ?? 'N/A',
+                          style: GoogleFonts.poppins(
+                            fontSize: 12,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      '${foodInfo.difficulty ?? 'N/A'} · ${foodInfo.author ?? 'Unknown'}',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.poppins(
+                        fontSize: 12,
+                        color: Colors.black,
+                      ),
+                    ),
+                    const Spacer(),
+                    // Stats (views and likes)
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        _infoContainer(
+                          icon: Icons.remove_red_eye,
+                          text: '${foodInfo.views} Views',
+                          iconColor: Colors.orange,
+                        ),
+                        const SizedBox(width: 8),
+                        _infoContainer(
+                          icon: Icons.favorite,
+                          text: '${foodInfo.likes} Likes',
+                          iconColor: Colors.red,
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            ),
-            Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
-              child: _buildRecipeDetails(foodInfo),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  /// **Recipe Details at Bottom of Card**
-  Widget _buildRecipeDetails(FoodInfo foodInfo) {
-    return ClipRRect(
-      borderRadius: const BorderRadius.only(
-        topLeft: Radius.circular(6),
-        topRight: Radius.circular(6),
-        bottomLeft: Radius.circular(16),
-        bottomRight: Radius.circular(16),
-      ),
-      child: Container(
-        padding: const EdgeInsets.all(8.0),
-        color: Colors.white,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                const Icon(Icons.emoji_food_beverage,
-                    size: 14, color: Colors.orange),
-                const SizedBox(width: 4),
-                Flexible(
-                  child: Text(
-                    foodInfo.foodName,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.poppins(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.orange,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 5),
-            Row(
-              children: [
-                const Icon(Icons.access_time, size: 10, color: Colors.orange),
-                const SizedBox(width: 4),
-                Text(
-                  foodInfo.totalCookTime ?? 'N/A',
-                  style: GoogleFonts.poppins(
-                    fontSize: 10,
-                    color: Colors.black,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    '· ${foodInfo.difficulty ?? 'N/A'} · ${foodInfo.author ?? 'Unknown'}',
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.poppins(
-                      fontSize: 10,
-                      color: Colors.black,
-                    ),
-                  ),
-                ),
-              ],
             ),
           ],
         ),
