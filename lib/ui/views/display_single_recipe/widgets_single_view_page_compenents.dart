@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:food_ai_thesis/models/list_recipes/single_display_recipe.dart';
 import 'package:food_ai_thesis/ui/views/display_single_recipe/display_single_recipe_viewmodel.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -390,91 +391,85 @@ class RecipeWidgets {
     );
   }
 
-  static Widget buildCardContent(
-      List<String> ingredients, List<String> quantities) {
-    return Card(
-      elevation: 4,
-      color: Colors.white,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Ingredients header
-            Padding(
-              padding: const EdgeInsets.only(bottom: 16.0),
-              child: Text(
-                'Ingredients',
-                style: GoogleFonts.poppins(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 23,
-                  color: Colors.black87,
-                ),
+ static Widget buildCardContent(List<Ingredient> ingredients) {
+  return Card(
+    elevation: 4,
+    color: Colors.white,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(16),
+    ),
+    child: Padding(
+      padding: const EdgeInsets.all(20.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(bottom: 16.0),
+            child: Text(
+              'Ingredients',
+              style: GoogleFonts.poppins(
+                fontWeight: FontWeight.w600,
+                fontSize: 23,
+                color: Colors.black87,
               ),
             ),
-            // List of ingredients with quantities
-            Column(
-              children: List.generate(ingredients.length, (index) {
-                return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: Row(
-                    crossAxisAlignment:
-                        CrossAxisAlignment.center, // Center aligns vertically
-                    children: [
-                      // Orange bullet point
-                      Container(
-                        width: 5, // Slightly larger for better visibility
-                        height: 5,
-                        decoration: const BoxDecoration(
-                          color: Colors.orangeAccent,
-                          shape: BoxShape.circle,
-                        ),
+          ),
+          Column(
+            children: ingredients.map((ingredient) {
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Container(
+                      width: 5,
+                      height: 5,
+                      decoration: const BoxDecoration(
+                        color: Colors.orangeAccent,
+                        shape: BoxShape.circle,
                       ),
-                      const SizedBox(width: 16),
-                      // Ingredient and quantity
-                      Expanded(
-                        child: RichText(
-                          text: TextSpan(
-                            style: GoogleFonts.poppins(
-                              fontSize: 12,
-                              color: Colors.black87,
-                              height: 1.5,
-                            ),
-                            children: [
-                              TextSpan(
-                                text: '${ingredients[index]} -  ',
-                                style: GoogleFonts.poppins(
-                                  fontWeight: FontWeight
-                                      .w600, // Reduced stroke for lighter appearance
-                                  fontSize: 12,
-                                  color: Colors.black87,
-                                ),
-                              ),
-                              TextSpan(
-                                text: quantities[index],
-                                style: GoogleFonts.poppins(
-                                  fontWeight: FontWeight.normal,
-                                  fontSize: 12,
-                                  color: Colors.black87,
-                                ),
-                              ),
-                            ],
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: RichText(
+                        text: TextSpan(
+                          style: GoogleFonts.poppins(
+                            fontSize: 12,
+                            color: Colors.black87,
+                            height: 1.5,
                           ),
+                          children: [
+                            TextSpan(
+                              text: '${ingredient.name} - ',
+                              style: GoogleFonts.poppins(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 12,
+                                color: Colors.black87,
+                              ),
+                            ),
+                            TextSpan(
+                              text: ingredient.quantity,
+                              style: GoogleFonts.poppins(
+                                fontWeight: FontWeight.normal,
+                                fontSize: 12,
+                                color: Colors.black87,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                    ],
-                  ),
-                );
-              }),
-            ),
-          ],
-        ),
+                    ),
+                  ],
+                ),
+              );
+            }).toList(),
+          ),
+        ],
       ),
-    );
-  }
+    ),
+  );
+}
+
 
   static Widget buildCardInstructions(List<String> instructions) {
     return Card(

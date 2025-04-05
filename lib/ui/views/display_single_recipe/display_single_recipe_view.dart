@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:food_ai_thesis/ui/views/display_single_recipe/widgest_delayed_fadein.dart';
 import 'package:food_ai_thesis/ui/views/display_single_recipe/widgets_single_view_page_compenents.dart';
 import 'package:stacked/stacked.dart';
@@ -19,7 +20,26 @@ class DisplaySingleRecipeView
       backgroundColor: Colors.white,
       body: viewModel.isBusy
           ? const Center(
-              child: CircularProgressIndicator(),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SpinKitThreeBounce(
+                    color: Colors.orange,
+                    size: 40.0,
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    'Fetching recipes...',
+                    style: TextStyle(
+                      fontSize: 18.0,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black54,
+                    ),
+                  ),
+                ],
+              ),
             )
           : viewModel.foodInfoById != null
               ? CustomScrollView(
@@ -97,12 +117,10 @@ class DisplaySingleRecipeView
                                 child: RecipeWidgets.buildSectionTitle(''),
                               ),
                               DelayedFadeIn(
-                                delay: 1000,
-                                child: RecipeWidgets.buildCardContent(
-                                  viewModel.foodInfoById!.ingredients,
-                                  viewModel.foodInfoById!.ingredientQuantities,
-                                ),
-                              ),
+                                  delay: 1000,
+                                  child: RecipeWidgets.buildCardContent(
+                                    viewModel.foodInfoById!.ingredients,
+                                  )),
                               const DelayedFadeIn(
                                 delay: 1100,
                                 child: SizedBox(height: 20),

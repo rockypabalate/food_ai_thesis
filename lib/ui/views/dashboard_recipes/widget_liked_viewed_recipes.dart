@@ -25,7 +25,8 @@ class _MostViewedAndLikedRecipesWidgetState
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 15.0),
+      padding: const EdgeInsets.fromLTRB(
+          15.0, 8.0, 15.0, 0), // Add top padding (8.0)
       child: widget.isPopularLoading
           ? _buildShimmerEffect()
           : widget.popularRecipes.isEmpty
@@ -36,18 +37,19 @@ class _MostViewedAndLikedRecipesWidgetState
                   ),
                 )
               : GridView.builder(
+                  padding: const EdgeInsets.only(
+                      top: 5.0), // Add small space at the top
                   key: const PageStorageKey<String>(
                       'MostViewedAndLikedRecipesList'),
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
-                    childAspectRatio: 0.9,
+                    childAspectRatio: 0.8,
                     crossAxisSpacing: 10.0,
                     mainAxisSpacing: 10.0,
                   ),
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
                   itemCount: widget.popularRecipes.length,
-                  cacheExtent: 500, // Prevent excessive memory usage
                   itemBuilder: (context, index) {
                     return _buildRecipeCard(
                         widget.popularRecipes[index], context);
@@ -120,8 +122,6 @@ class _MostViewedAndLikedRecipesWidgetState
                 height: double.infinity,
                 width: double.infinity,
                 fit: BoxFit.cover,
-                memCacheHeight: 300,
-                memCacheWidth: 300,
                 placeholder: (context, url) => _buildShimmerCard(),
                 errorWidget: (context, url, error) =>
                     const Icon(Icons.error, color: Colors.red),

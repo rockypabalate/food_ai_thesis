@@ -108,7 +108,7 @@ class DashboardRecipesViewModel extends AppBaseViewModel {
     try {
       final popularList = await _apiService.getPopularRecipes();
       if (popularList.isNotEmpty) {
-        _popularRecipes = popularList;
+        _popularRecipes = popularList.take(10).toList();
       } else {
         _popularErrorMessage = 'No popular recipes available';
       }

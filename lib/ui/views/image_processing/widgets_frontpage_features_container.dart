@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lottie/lottie.dart';
 
 class FeaturesContainer extends StatelessWidget {
   final String title;
   final String description;
-  final IconData icon;
+  final String assetPath;
   final double scale;
   final MainAxisAlignment alignment;
 
@@ -12,9 +13,9 @@ class FeaturesContainer extends StatelessWidget {
     Key? key,
     required this.title,
     required this.description,
-    required this.icon,
+    required this.assetPath,
     required this.scale,
-    required this.alignment,
+    required this.alignment, // Added constructor parameter
   }) : super(key: key);
 
   @override
@@ -43,13 +44,18 @@ class FeaturesContainer extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Center(
-            child: Icon(
-              icon,
-              size: MediaQuery.of(context).size.width * 0.5 * scale,
-              color: Colors.blueAccent,
+            child: RepaintBoundary(
+              child: Lottie.asset(
+                assetPath,
+                fit: BoxFit.contain,
+                width: MediaQuery.of(context).size.width * 0.5 * scale,
+                height: MediaQuery.of(context).size.width * 0.5 * scale,
+                errorBuilder: (context, error, stackTrace) =>
+                    const Icon(Icons.error, size: 100),
+              ),
             ),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 50),
           Text(
             title,
             style: GoogleFonts.poppins(

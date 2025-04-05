@@ -27,14 +27,6 @@ class DashboardRecipesView extends StackedView<DashboardRecipesViewModel> {
         floatingActionButton: TiltingFab(
           onPressed: viewModel.navigateToImageProcessing,
         ),
-
-        //           floatingActionButton: TiltingFab(
-        // onPressed: () {
-        //   Navigator.push(
-        //     context,
-        //     MaterialPageRoute(builder: (context) => const QRCodePage()),
-        //   );
-        // },
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -70,20 +62,21 @@ class DashboardRecipesView extends StackedView<DashboardRecipesViewModel> {
                       padding:
                           EdgeInsets.symmetric(horizontal: screenWidth * 0.00),
                       children: [
-                        _SectionTitle(
+                          _SectionTitle(
                             title: 'Filipino Recipes', onSeeAllTap: () {}),
                         FilipinoRecipeListWidget(
                           foodInfos: viewModel.foodInfos,
                           isLoading: viewModel.isLoading,
                         ),
-                        SizedBox(height: screenHeight * 0.01),
+                           SizedBox(height: screenHeight * 0.02),
                         _SectionTitle(
                             title: 'Featured Recipes', onSeeAllTap: () {}),
                         FeaturedRecipeListWidget(
                           featuredRecipes: viewModel.featuredRecipes,
                           isFeaturedLoading: viewModel.isFeaturedLoading,
                         ),
-                        SizedBox(height: screenHeight * 0.01),
+                        SizedBox(height: screenHeight * 0.02),
+                      
                         // _SectionTitle(
                         //     title: 'Most Liked & Viewed Recipes',
                         //     onSeeAllTap: () {}),
@@ -137,7 +130,7 @@ class _SectionTitle extends StatelessWidget {
           Text(
             title,
             style: TextStyle(
-              fontSize: screenWidth * 0.05,
+              fontSize: screenWidth * 0.06,
               fontWeight: FontWeight.bold,
               color: Colors.black,
             ),

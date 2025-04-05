@@ -13,6 +13,8 @@ class SingleViewPageRecipeViewModel extends AppBaseViewModel {
 
   SingleDisplayRecipe? singleRecipe;
 
+  bool isDeleting = false;
+
   void navigateToUploadImage(String recipeId) {
     int parsedRecipeId =
         int.tryParse(recipeId) ?? 0; // Convert String to int safely
@@ -51,6 +53,11 @@ class SingleViewPageRecipeViewModel extends AppBaseViewModel {
   }
 
   Future<void> deleteRecipe(String recipeId) async {
+    isDeleting = true; // Set deleting state to true
+    setBusy(true); // Show busy state for spinner
+    notifyListeners();
+
+    // Show confirmation dialog
     var response = await _dialogService.showConfirmationDialog(
       title: 'Delete Recipe',
       description: 'Are you sure you want to delete this recipe?',
@@ -59,27 +66,23 @@ class SingleViewPageRecipeViewModel extends AppBaseViewModel {
     );
 
     if (response?.confirmed == true) {
-      setBusy(true);
       try {
         bool success = await _apiService.deleteRecipe(recipeId);
         if (success) {
           _snackbarService.showSnackbar(
-            message: 'Recipe deleted successfully.',
-          );
-
-          // Clears the navigation stack and replaces it with UserDashboardView
+              message: 'Recipe deleted successfully.');
           _navigationService.clearStackAndShow(Routes.userDashboardView);
         } else {
-          _snackbarService.showSnackbar(
-            message: 'Failed to delete recipe. Try again.',
-          );
+          _snackbarService.showSnackbar(message: 'Failed to delete recipe.');
         }
       } catch (e) {
         _snackbarService.showSnackbar(
-          message: 'Error deleting recipe: ${e.toString()}',
-        );
+            message: 'Error deleting recipe: ${e.toString()}');
       }
-      setBusy(false);
     }
+
+    isDeleting = false; // Reset deleting state
+    setBusy(false); // Hide busy state
+    notifyListeners();
   }
 }

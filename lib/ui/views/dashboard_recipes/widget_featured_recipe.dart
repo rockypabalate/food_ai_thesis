@@ -23,31 +23,30 @@ class FeaturedRecipeListWidget extends StatefulWidget {
 class _FeaturedRecipeListWidgetState extends State<FeaturedRecipeListWidget> {
   @override
   Widget build(BuildContext context) {
-    return widget.isFeaturedLoading
-        ? _buildShimmerGrid()
-        : widget.featuredRecipes.isEmpty
-            ? const Center(
-                child: Text(
-                  'No Featured Recipes Available',
-                  style: TextStyle(fontSize: 16.0),
-                ),
-              )
-            : _buildRecipeGrid();
+    return Padding(
+      padding:
+          const EdgeInsets.only(top: 10.0), // Adds space above the whole widget
+      child: widget.isFeaturedLoading
+          ? _buildShimmerList()
+          : widget.featuredRecipes.isEmpty
+              ? const Center(
+                  child: Text(
+                    'No Featured Recipes Available',
+                    style: TextStyle(fontSize: 16.0),
+                  ),
+                )
+              : _buildRecipeList(),
+    );
   }
 
-  /// **Shimmer Loading Effect Grid**
-  Widget _buildShimmerGrid() {
-    return GridView.builder(
-      padding: const EdgeInsets.all(15.0),
+  /// **Shimmer Loading Effect List**
+  Widget _buildShimmerList() {
+    return ListView.separated(
+      padding: const EdgeInsets.symmetric(horizontal: 15),
       physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        childAspectRatio: 0.90,
-        crossAxisSpacing: 12,
-        mainAxisSpacing: 12,
-      ),
-      itemCount: 6, // Show 6 shimmer items (3 rows)
+      itemCount: 4,
+      separatorBuilder: (_, __) => const SizedBox(height: 12),
       itemBuilder: (context, index) => _buildShimmerCard(),
     );
   }
@@ -58,6 +57,7 @@ class _FeaturedRecipeListWidgetState extends State<FeaturedRecipeListWidget> {
       baseColor: Colors.grey[300]!,
       highlightColor: Colors.grey[100]!,
       child: Container(
+        height: 190,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
           color: Colors.white,
@@ -66,26 +66,22 @@ class _FeaturedRecipeListWidgetState extends State<FeaturedRecipeListWidget> {
     );
   }
 
-  /// **Recipe Grid View**
-  Widget _buildRecipeGrid() {
-    return GridView.builder(
-      key: const PageStorageKey<String>('featured_recipes_grid'),
-      padding: const EdgeInsets.all(15.0),
+  /// **Recipe List View**
+  Widget _buildRecipeList() {
+    return ListView.separated(
+      key: const PageStorageKey<String>('featured_recipes_list'),
+      padding: const EdgeInsets.symmetric(horizontal: 15),
       physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        childAspectRatio: 0.79,
-        crossAxisSpacing: 12,
-        mainAxisSpacing: 12,
-      ),
       itemCount: widget.featuredRecipes.length,
+      separatorBuilder: (_, __) => const SizedBox(height: 12),
       itemBuilder: (context, index) {
         return _buildRecipeCard(widget.featuredRecipes[index]);
       },
     );
   }
 
+  /// **Recipe Card UI**
   Widget _buildRecipeCard(FeaturedRecipe featuredRecipe) {
     return InkWell(
       onTap: () {
@@ -118,12 +114,12 @@ class _FeaturedRecipeListWidgetState extends State<FeaturedRecipeListWidget> {
                 imageUrl: (featuredRecipe.images.isNotEmpty)
                     ? featuredRecipe.images.first.imageUrl
                     : '',
-                height: double.infinity,
+                height: 190,
                 width: double.infinity,
                 fit: BoxFit.cover,
                 placeholder: (context, url) => _buildShimmerCard(),
                 errorWidget: (context, url, error) =>
-                    const Icon(Icons.error, color: Colors.red),
+                    const Icon(Icons.image_not_supported, color: Colors.grey),
               ),
             ),
 
@@ -254,12 +250,10 @@ class _FeaturedRecipeListWidgetState extends State<FeaturedRecipeListWidget> {
             const SizedBox(height: 4),
             Row(
               children: [
-                const Icon(Icons.access_time, size: 10, color: Colors.orange),
-                const SizedBox(width: 4),
                 Expanded(
                   child: Text(
-                    '${featuredRecipe.totalCookTime ?? 'N/A'} · ${featuredRecipe.difficulty ?? 'N/A'} · ${featuredRecipe.author ?? 'Unknown'}',
-                    maxLines: 1,
+                    featuredRecipe.description,
+                    maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style:
                         GoogleFonts.poppins(fontSize: 10, color: Colors.black),
