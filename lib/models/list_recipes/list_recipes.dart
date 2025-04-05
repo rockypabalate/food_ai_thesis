@@ -12,7 +12,7 @@ class FoodInfo {
   final String? nutritionalParagraph;
   final String? author;
   final int recipeFeatured;
-  final String? imageUrl;
+  final List<String> imageUrls; // Changed from a single image to a list
 
   FoodInfo({
     required this.id,
@@ -28,7 +28,7 @@ class FoodInfo {
     this.nutritionalParagraph,
     this.author,
     this.recipeFeatured = 0,
-    this.imageUrl,
+    this.imageUrls = const [], // Default empty list
   });
 
   // Factory method for JSON deserialization
@@ -47,25 +47,22 @@ class FoodInfo {
       nutritionalParagraph: json['nutritional_paragraph'],
       author: json['author'],
       recipeFeatured: _parseRecipeFeatured(json['recipe_featured']),
-      imageUrl: json['image_url'],
+      imageUrls: (json['images'] as List<dynamic>?)
+              ?.map((image) => image['image_url'] as String)
+              .toList() ??
+          [],
     );
   }
 
   // Helper method to safely parse recipeFeatured to an integer
   static int _parseRecipeFeatured(dynamic value) {
-    if (value == null) {
-      return 0;
-    }
-    if (value is String) {
-      return int.tryParse(value) ?? 0;
-    }
-    if (value is int) {
-      return value;
-    }
+    if (value == null) return 0;
+    if (value is String) return int.tryParse(value) ?? 0;
+    if (value is int) return value;
     return 0; // Default to 0 for any unexpected types
   }
 
-  // Method for JSON serialization (optional, in case you need it)
+  // Method for JSON serialization
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -81,7 +78,7 @@ class FoodInfo {
       'nutritional_paragraph': nutritionalParagraph,
       'author': author,
       'recipe_featured': recipeFeatured,
-      'image_url': imageUrl,
+      'images': imageUrls.map((url) => {'image_url': url}).toList(),
     };
   }
 }

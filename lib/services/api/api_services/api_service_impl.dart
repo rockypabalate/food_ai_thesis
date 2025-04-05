@@ -3,7 +3,9 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:food_ai_thesis/models/created_recipe/create_recipe.dart';
 import 'package:food_ai_thesis/models/display_created_recipe/display_user_recipe.dart';
+import 'package:food_ai_thesis/models/list_recipes/featured_recipe_model.dart';
 import 'package:food_ai_thesis/models/list_recipes/list_recipes.dart';
+import 'package:food_ai_thesis/models/list_recipes/popular_recipe_model.dart';
 import 'package:food_ai_thesis/models/list_recipes/single_display_recipe.dart';
 import 'package:food_ai_thesis/models/saved_recipe_by_user/saved_recipe_by_user.dart';
 import 'package:food_ai_thesis/models/search_recipe_name/food_description.dart';
@@ -16,10 +18,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 class ApiServiceImpl implements ApiServiceService {
   ApiServiceImpl({
     Dio? dio,
-  }) : _dio = dio ?? DioClient().instance;
+    Dio? flaskDio, 
+  })  : _dio = dio ?? DioClient().instance,
+        _flaskDio = flaskDio ?? DioClient().flaskInstance;
 
   final Dio _dio;
-
+  final Dio _flaskDio; 
   final logger = Logger();
 
   static const String bearerTokenKey = 'bearerToken';
@@ -49,6 +53,59 @@ class ApiServiceImpl implements ApiServiceService {
         // Log Dio error without server response
         print('Dio Error: ${e.message}');
       }
+      return [];
+    } catch (e) {
+      print('Unexpected Error: ${e.toString()}');
+      return [];
+    }
+  }
+
+  // New method for fetching featured recipes
+  @override
+  Future<List<FeaturedRecipe>> getFeaturedRecipes() async {
+    try {
+      final response = await _dio.get(
+        '/recipes/featured',
+        options: Options(
+          headers: {'accept': 'application/json'},
+        ),
+      );
+
+      List<dynamic> data = response.data;
+      return data.map((json) => FeaturedRecipe.fromJson(json)).toList();
+    } on DioException catch (e) {
+      print('Dio Error: ${e.response?.statusCode} - ${e.response?.data}');
+      return [];
+    } catch (e) {
+      print('Unexpected Error: ${e.toString()}');
+      return [];
+    }
+  }
+
+
+// Fetch Popular Recipes
+  @override
+  Future<List<PopularRecipe>> getPopularRecipes() async {
+    try {
+      final response = await _dio.get(
+        '/recipes/popular',
+        options: Options(
+          headers: {'accept': 'application/json'},
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        List<dynamic> data = response.data;
+
+        // Ensure the response is a valid list before mapping
+        return data.map((json) => PopularRecipe.fromJson(json)).toList();
+      } else {
+        print(
+            'Failed to fetch popular recipes. Status: ${response.statusCode}');
+        return [];
+      }
+    } on DioException catch (e) {
+      print('Dio Error: ${e.response?.statusCode} - ${e.response?.data}');
       return [];
     } catch (e) {
       print('Unexpected Error: ${e.toString()}');
@@ -339,6 +396,36 @@ class ApiServiceImpl implements ApiServiceService {
     }
   }
 
+///////////////////////////////////////////////////////////////////////////////////////////////
+@override
+  Future<String?> classifyFood(File imageFile) async {
+  try {
+    FormData formData = FormData.fromMap({
+      'file': await MultipartFile.fromFile(imageFile.path),
+    });
+
+    final response = await _flaskDio.post(
+      '/predict',
+      data: formData,
+      options: Options(headers: {'accept': 'application/json'}),
+    );
+
+    if (response.statusCode == 200) {
+      // Fix: Access the 'prediction' key instead of 'food_name'
+      return response.data['prediction'];  // Extract food name from 'prediction'
+    } else {
+      logger.e('Flask API Error: ${response.data}');
+      return null;
+    }
+  } on DioException catch (e) {
+    logger.e('Dio Error (Flask): ${e.message}');
+    return null;
+  }
+}
+
+
+ 
+
   @override
   Future<List<FoodInformation>> searchRecipesByName(String foodName) async {
     try {
@@ -369,7 +456,7 @@ class ApiServiceImpl implements ApiServiceService {
       return [];
     }
   }
-
+/////////////////////////////////////////////////////////////////////////////////////////////////
   @override
   Future<RecipeResponse?> createRecipe(Recipe recipe) async {
     try {
@@ -443,6 +530,7 @@ class ApiServiceImpl implements ApiServiceService {
     }
   }
 
+  @override
   Future<String?> uploadRecipeImage(int recipeId, File imageFile) async {
     try {
       // Get the user authentication token

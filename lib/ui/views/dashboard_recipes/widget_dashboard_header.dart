@@ -23,8 +23,8 @@ class DashboardHeader extends StatelessWidget {
           decoration: const BoxDecoration(
             color: Colors.orange,
             borderRadius: BorderRadius.only(
-              bottomLeft: Radius.circular(12.0),
-              bottomRight: Radius.circular(12.0),
+              bottomLeft: Radius.circular(0.0),
+              bottomRight: Radius.circular(0.0),
             ),
             boxShadow: [
               BoxShadow(
@@ -86,12 +86,12 @@ class DashboardHeader extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 16.0),
+              const SizedBox(height: 10.0),
               Row(
                 children: [
                   Expanded(
                     child: SizedBox(
-                      height: 45.0,
+                      height: 40,
                       child: TextFormField(
                         readOnly: true,
                         decoration: InputDecoration(

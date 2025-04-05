@@ -2,7 +2,9 @@ import 'dart:io';
 
 import 'package:food_ai_thesis/models/created_recipe/create_recipe.dart';
 import 'package:food_ai_thesis/models/display_created_recipe/display_user_recipe.dart';
+import 'package:food_ai_thesis/models/list_recipes/featured_recipe_model.dart';
 import 'package:food_ai_thesis/models/list_recipes/list_recipes.dart';
+import 'package:food_ai_thesis/models/list_recipes/popular_recipe_model.dart';
 import 'package:food_ai_thesis/models/list_recipes/single_display_recipe.dart';
 import 'package:food_ai_thesis/models/saved_recipe_by_user/saved_recipe_by_user.dart';
 import 'package:food_ai_thesis/models/search_recipe_name/food_description.dart';
@@ -22,4 +24,8 @@ abstract class ApiServiceService {
   Future<List<UserRecipe>?> fetchAllRecipes();
   Future<SingleDisplayRecipe?> fetchSingleRecipe(String recipeId);
   Future<bool> deleteRecipe(String recipeId);
+  Future<List<FeaturedRecipe>> getFeaturedRecipes();
+  Future<List<PopularRecipe>> getPopularRecipes();
+
+  Future<String?> classifyFood(File imageFile);
 }

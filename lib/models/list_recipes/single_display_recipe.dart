@@ -12,11 +12,10 @@ class FoodInfoById {
   final String? nutritionalParagraph;
   final String? author;
   final String recipeFeatured;
-  final List<String> ingredients;
-  final List<String> ingredientQuantities;
+  final List<Ingredient> ingredients;
   final List<String> instructions;
   final List<String> nutritionalContent;
-  final List<Image> images;
+  final List<RecipeImage> images;
 
   FoodInfoById({
     required this.id,
@@ -33,7 +32,6 @@ class FoodInfoById {
     this.author,
     this.recipeFeatured = '0',
     required this.ingredients,
-    required this.ingredientQuantities,
     required this.instructions,
     required this.nutritionalContent,
     required this.images,
@@ -41,10 +39,10 @@ class FoodInfoById {
 
   factory FoodInfoById.fromJson(Map<String, dynamic> json) {
     return FoodInfoById(
-      id: json['id'],
-      foodName: json['food_name'],
-      description: json['description'],
-      servingSize: json['serving_size'],
+      id: json['id'] ?? 0,
+      foodName: json['food_name'] ?? '',
+      description: json['description'] ?? '',
+      servingSize: json['serving_size'] ?? '',
       totalCookTime: json['total_cook_time'],
       difficulty: json['difficulty'],
       category: json['category'],
@@ -54,28 +52,52 @@ class FoodInfoById {
       nutritionalParagraph: json['nutritional_paragraph'],
       author: json['author'],
       recipeFeatured: json['recipe_featured'] ?? '0',
-      ingredients: List<String>.from(json['ingredients']),
-      ingredientQuantities: List<String>.from(json['ingredient_quantities']),
-      instructions: List<String>.from(json['instructions']),
-      nutritionalContent: List<String>.from(json['nutritional_content']),
-      images:
-          List<Image>.from(json['images'].map((img) => Image.fromJson(img))),
+      ingredients: (json['ingredients'] as List<dynamic>?)
+              ?.map((e) => Ingredient.fromJson(e))
+              .toList() ??
+          [],
+      instructions: (json['instructions'] as List<dynamic>?)
+              ?.map((e) => e.toString())
+              .toList() ??
+          [],
+      nutritionalContent: (json['nutritional_content'] as List<dynamic>?)
+              ?.map((e) => e.toString())
+              .toList() ??
+          [],
+      images: (json['images'] as List<dynamic>?)
+              ?.map((img) => RecipeImage.fromJson(img))
+              .toList() ??
+          [],
     );
   }
 }
 
-class Image {
+class Ingredient {
+  final String name;
+  final String quantity;
+
+  Ingredient({required this.name, required this.quantity});
+
+  factory Ingredient.fromJson(Map<String, dynamic> json) {
+    return Ingredient(
+      name: json['name'] ?? '',
+      quantity: json['quantity'] ?? '',
+    );
+  }
+}
+
+class RecipeImage {
   final String imageUrl;
   final String? caption;
 
-  Image({
+  RecipeImage({
     required this.imageUrl,
     this.caption,
   });
 
-  factory Image.fromJson(Map<String, dynamic> json) {
-    return Image(
-      imageUrl: json['image_url'],
+  factory RecipeImage.fromJson(Map<String, dynamic> json) {
+    return RecipeImage(
+      imageUrl: json['image_url'] ?? '',
       caption: json['caption'],
     );
   }

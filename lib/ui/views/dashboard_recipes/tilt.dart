@@ -10,7 +10,8 @@ class TiltingFab extends StatefulWidget {
   _TiltingFabState createState() => _TiltingFabState();
 }
 
-class _TiltingFabState extends State<TiltingFab> with SingleTickerProviderStateMixin {
+class _TiltingFabState extends State<TiltingFab>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
 
@@ -48,7 +49,8 @@ class _TiltingFabState extends State<TiltingFab> with SingleTickerProviderStateM
           builder: (context, child) {
             return Transform.rotate(
               angle: _animation.value,
-              child: const Icon(Icons.camera_alt, color: Colors.white, size: 36),
+              child:
+                  const Icon(Icons.camera_alt, color: Colors.white, size: 36),
             );
           },
         ),

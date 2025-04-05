@@ -65,15 +65,15 @@ class FeaturedRecipesWidget extends StatelessWidget {
                           ),
                           child: Stack(
                             children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(16),
-                                child: Image.network(
-                                  foodInfo.imageUrl ?? '',
-                                  height: double.infinity,
-                                  width: double.infinity,
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
+                              // ClipRRect(
+                              //   borderRadius: BorderRadius.circular(16),
+                              //   child: Image.network(
+                              //     foodInfo.imageUrl ?? '',
+                              //     height: double.infinity,
+                              //     width: double.infinity,
+                              //     fit: BoxFit.cover,
+                              //   ),
+                              // ),
                               Positioned(
                                 top: 8,
                                 left: 8,

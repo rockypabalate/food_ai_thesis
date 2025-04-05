@@ -5,7 +5,6 @@ import 'package:food_ai_thesis/ui/views/dashboard_recipes/widget_dashboard_heade
 import 'package:food_ai_thesis/ui/views/dashboard_recipes/widget_featured_recipe.dart';
 import 'package:food_ai_thesis/ui/views/dashboard_recipes/widget_filipino_recipe.dart';
 import 'package:food_ai_thesis/ui/views/dashboard_recipes/widget_liked_viewed_recipes.dart';
-
 import 'package:stacked/stacked.dart';
 import 'dashboard_recipes_viewmodel.dart';
 
@@ -18,43 +17,39 @@ class DashboardRecipesView extends StackedView<DashboardRecipesViewModel> {
     DashboardRecipesViewModel viewModel,
     Widget? child,
   ) {
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final double screenHeight = MediaQuery.of(context).size.height;
+
     return WillPopScope(
-      onWillPop: () async {
-        // Prevent back navigation
-        return false;
-      },
+      onWillPop: () async => false,
       child: Scaffold(
         backgroundColor: Colors.white,
         floatingActionButton: TiltingFab(
-          onPressed: () {
-            viewModel.navigateToImageProcessing();
-          },
+          onPressed: viewModel.navigateToImageProcessing,
         ),
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header Section (No animation)
             DashboardHeader(
               profileImage: viewModel.profileImage,
               username: viewModel.username,
             ),
-            const SizedBox(height: 8),
-            // Main Scrollable Content
+            SizedBox(height: screenHeight * 0.01),
             Expanded(
               child: viewModel.isLoading
-                  ? const Center(
+                  ? Center(
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           SpinKitThreeBounce(
                             color: Colors.orange,
-                            size: 30.0,
+                            size: screenWidth * 0.08,
                           ),
-                          SizedBox(height: 16),
+                          SizedBox(height: screenHeight * 0.02),
                           Text(
                             'Fetching recipes...',
                             style: TextStyle(
-                              fontSize: 16,
+                              fontSize: screenWidth * 0.045,
                               fontWeight: FontWeight.w600,
                               color: Colors.orange,
                             ),
@@ -64,31 +59,32 @@ class DashboardRecipesView extends StackedView<DashboardRecipesViewModel> {
                     )
                   : ListView(
                       physics: const BouncingScrollPhysics(),
-                      padding: const EdgeInsets.all(0),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: screenWidth * 0.00),
                       children: [
-                        _SectionTitle(
+                          _SectionTitle(
                             title: 'Filipino Recipes', onSeeAllTap: () {}),
                         FilipinoRecipeListWidget(
                           foodInfos: viewModel.foodInfos,
                           isLoading: viewModel.isLoading,
                         ),
-                        const SizedBox(height: 5),
+                           SizedBox(height: screenHeight * 0.02),
                         _SectionTitle(
                             title: 'Featured Recipes', onSeeAllTap: () {}),
                         FeaturedRecipeListWidget(
                           featuredRecipes: viewModel.featuredRecipes,
-                          isLoading: viewModel.isLoading,
+                          isFeaturedLoading: viewModel.isFeaturedLoading,
                         ),
-                        const SizedBox(height: 5),
-                        _SectionTitle(
-                            title: 'Most Liked & Viewed Recipes',
-                            onSeeAllTap: () {}),
-                        MostViewedAndLikedRecipesWidget(
-                          mostViewedAndLikedRecipes:
-                              viewModel.mostViewedAndLikedRecipes,
-                          isLoading: viewModel.isLoading,
-                        ),
-                        const SizedBox(height: 12),
+                        SizedBox(height: screenHeight * 0.02),
+                      
+                        // _SectionTitle(
+                        //     title: 'Most Liked & Viewed Recipes',
+                        //     onSeeAllTap: () {}),
+                        // MostViewedAndLikedRecipesWidget(
+                        //   popularRecipes: viewModel.popularRecipes,
+                        //   isPopularLoading: viewModel.isPopularLoading,
+                        // ),
+                        SizedBox(height: screenHeight * 0.015),
                       ],
                     ),
             ),
@@ -105,11 +101,12 @@ class DashboardRecipesView extends StackedView<DashboardRecipesViewModel> {
   @override
   void onViewModelReady(DashboardRecipesViewModel viewModel) {
     super.onViewModelReady(viewModel);
-    viewModel.getAllFoodInfo(); // Fetch food information when the view is ready
+    viewModel.getAllFoodInfo();
+    viewModel.getFeaturedRecipes();
+    viewModel.getPopularRecipes();
   }
 }
 
-// Custom Widget for Section Titles with See All Button
 class _SectionTitle extends StatelessWidget {
   final String title;
   final VoidCallback onSeeAllTap;
@@ -122,15 +119,18 @@ class _SectionTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final double screenWidth = MediaQuery.of(context).size.width;
+
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 2.0),
+      padding:
+          EdgeInsets.symmetric(horizontal: screenWidth * 0.04, vertical: 2.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
             title,
-            style: const TextStyle(
-              fontSize: 18.0,
+            style: TextStyle(
+              fontSize: screenWidth * 0.06,
               fontWeight: FontWeight.bold,
               color: Colors.black,
             ),

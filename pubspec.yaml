@@ -31,6 +31,8 @@ dependencies:
   image: ^4.0.15
   logger: ^2.5.0
   flutter_spinkit: ^5.2.0
+  qr_flutter: ^4.1.0 
+
 
 dev_dependencies:
   build_runner: ^2.4.5
@@ -39,11 +41,19 @@ dev_dependencies:
   flutter_lints: ^2.0.0
   mockito: ^5.4.1
   stacked_generator: ^1.3.3
+  flutter_launcher_icons: ^0.13.1
+
+flutter_icons:
+   android: true
+   ios: true
+   image_path: "assets/foodlogo.png"
+
+
 
 flutter:
   uses-material-design: true
   assets:
    - lib/assets/
-   - lib/assets/food_classification_model_v3.tflite
+  #  - lib/assets/food_classification_model_v3.tflite
    - lib/assets/labels.txt
 

@@ -44,7 +44,8 @@ class AiProcessingView extends StackedView<AiProcessingViewModel> {
               child: Text(
                 viewModel.result ?? "Select an image to process",
                 textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                style:
+                    const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
             ),
 

@@ -44,16 +44,18 @@ class FeaturesContainer extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Center(
-            child: Lottie.asset(
-              assetPath,
-              fit: BoxFit.contain,
-              width: MediaQuery.of(context).size.width * 0.5 * scale,
-              height: MediaQuery.of(context).size.width * 0.5 * scale,
-              errorBuilder: (context, error, stackTrace) =>
-                  const Icon(Icons.error, size: 100),
+            child: RepaintBoundary(
+              child: Lottie.asset(
+                assetPath,
+                fit: BoxFit.contain,
+                width: MediaQuery.of(context).size.width * 0.5 * scale,
+                height: MediaQuery.of(context).size.width * 0.5 * scale,
+                errorBuilder: (context, error, stackTrace) =>
+                    const Icon(Icons.error, size: 100),
+              ),
             ),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 50),
           Text(
             title,
             style: GoogleFonts.poppins(

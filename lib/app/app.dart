@@ -36,6 +36,7 @@ import 'package:food_ai_thesis/ui/views/upload_recipe_image/upload_recipe_image_
 import 'package:food_ai_thesis/ui/views/single_view_page_recipe/single_view_page_recipe_view.dart';
 import 'package:food_ai_thesis/ui/views/loginregister/loginregister_view.dart';
 import 'package:food_ai_thesis/ui/views/ai_processing/ai_processing_view.dart';
+import 'package:food_ai_thesis/ui/views/setting_page/setting_page_view.dart';
 // @stacked-import
 
 @StackedApp(
@@ -83,6 +84,7 @@ import 'package:food_ai_thesis/ui/views/ai_processing/ai_processing_view.dart';
       durationInMilliseconds: 500,
     ),
     MaterialRoute(page: AiProcessingView),
+    MaterialRoute(page: SettingPageView),
 // @stacked-route
   ],
   dependencies: [

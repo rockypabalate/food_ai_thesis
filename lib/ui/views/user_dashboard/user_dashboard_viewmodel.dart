@@ -202,4 +202,8 @@ class UserDashboardViewModel extends AppBaseViewModel {
     _navigationService
         .navigateTo(Routes.dashboardRecipesView); // Change to the desired route
   }
+
+   Future<void> navigateToSettingsPage() async {
+    _navigationService.navigateTo(Routes.settingPageView);
+  }
 }

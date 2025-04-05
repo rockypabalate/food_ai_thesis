@@ -19,8 +19,6 @@ class _FrontPageState extends State<FrontPage>
     with SingleTickerProviderStateMixin {
   late PageController _pageController;
   late AnimationController _animationController;
-  late Timer _timer;
-  int _currentPage = 0;
 
   @override
   void initState() {
@@ -32,27 +30,14 @@ class _FrontPageState extends State<FrontPage>
       vsync: this,
     );
 
-    _timer = Timer.periodic(const Duration(seconds: 8), (Timer timer) {
-      if (_currentPage < 2) {
-        _currentPage++;
-      } else {
-        _currentPage = 0;
-      }
-      _pageController.animateToPage(
-        _currentPage,
-        duration: const Duration(milliseconds: 400),
-        curve: Curves.easeIn,
-      );
-    });
-
     _animationController.forward();
   }
 
   @override
   void dispose() {
-    _timer.cancel();
-    _pageController.dispose();
     _animationController.dispose();
+    _pageController.dispose();
+
     super.dispose();
   }
 
@@ -62,12 +47,11 @@ class _FrontPageState extends State<FrontPage>
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        automaticallyImplyLeading: false, // Removes the default back icon
+        automaticallyImplyLeading: false,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back,
-              color: Colors.white), // White back button
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
-            Navigator.of(context).pop(); // Navigate back
+            Navigator.of(context).pop();
           },
         ),
         title: Text(
@@ -79,11 +63,6 @@ class _FrontPageState extends State<FrontPage>
         ),
         backgroundColor: Colors.orange,
         elevation: 0,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(
-            bottom: Radius.circular(10), // Rounded corners for bottom
-          ),
-        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.info_outline, color: Colors.white),
@@ -96,10 +75,8 @@ class _FrontPageState extends State<FrontPage>
                     content: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        // Centered Icon
                         const Icon(Icons.info, color: Colors.orange, size: 60),
                         const SizedBox(height: 10),
-                        // Centered "Note" Text
                         Text(
                           'Note',
                           style: GoogleFonts.poppins(
@@ -110,7 +87,6 @@ class _FrontPageState extends State<FrontPage>
                           textAlign: TextAlign.center,
                         ),
                         const SizedBox(height: 10),
-                        // Description Text
                         Text(
                           'The image processing functions optimally when applied to a single food item captured by the camera. For improved accuracy, please ensure the food is photographed clearly.',
                           style: GoogleFonts.poppins(
@@ -182,37 +158,44 @@ class _FrontPageState extends State<FrontPage>
                   FadeEffectSettings(
                     delay: 200,
                     child: SizedBox(
-                      height: 350,
-                      child: PageView(
-                        controller: _pageController,
-                        children: const [
-                          FeaturesContainer(
-                            title: 'Food Identification using CNN',
-                            description:
-                                'Our app identifies food items using a Convolutional Neural Network (CNN). Capture or upload an image of food and let the AI analyze it.',
-                            assetPath: 'lib/assets/AI_Icon.json',
-                            scale: 0.98,
-                            alignment: MainAxisAlignment.start,
-                          ),
-                          FeaturesContainer(
-                            title: 'How to Use the App',
-                            description:
-                                'Simply capture an image or upload one from your gallery. The app will process the image to identify the food item.',
-                            assetPath: 'lib/assets/person.json',
-                            scale: 1.05,
-                            alignment: MainAxisAlignment.center,
-                          ),
-                          FeaturesContainer(
-                            title: 'Food Information and Recipes',
-                            description:
-                                'After identification, the app provides detailed food recipes, instructions, and nutritional content for the identified food item.',
-                            assetPath: 'lib/assets/Info.json',
-                            scale: 1.05,
-                            alignment: MainAxisAlignment.start,
-                          ),
-                        ],
-                      ),
-                    ),
+                        height: 380,
+                        child: PageView.builder(
+                          physics: const BouncingScrollPhysics(),
+                          controller: _pageController,
+                          itemCount: 3,
+                          itemBuilder: (context, index) {
+                            switch (index) {
+                              case 0:
+                                return const FeaturesContainer(
+                                  title: 'Food Identification using CNN',
+                                  description:
+                                      'Our app identifies food items using a Convolutional Neural Network (CNN). Capture or upload an image of food and let the AI analyze it.',
+                                  assetPath: 'lib/assets/AI_Icon.json',
+                                  scale: 0.95,
+                                  alignment: MainAxisAlignment.start,
+                                );
+                              case 1:
+                                return const FeaturesContainer(
+                                  title: 'How to Use the App',
+                                  description:
+                                      'Simply capture an image or upload one from your gallery. The app will process the image to identify the food item.',
+                                  assetPath: 'lib/assets/person.json',
+                                  scale: 1.0,
+                                  alignment: MainAxisAlignment.center,
+                                );
+                              case 2:
+                              default:
+                                return const FeaturesContainer(
+                                  title: 'Food Information and Recipes',
+                                  description:
+                                      'After identification, the app provides detailed food recipes, instructions, and nutritional content for the identified food item.',
+                                  assetPath: 'lib/assets/Info.json',
+                                  scale: 1.0,
+                                  alignment: MainAxisAlignment.start,
+                                );
+                            }
+                          },
+                        )),
                   ),
                   const SizedBox(height: 5),
                   FadeEffectSettings(

@@ -79,10 +79,17 @@ class AllRecipesWidget extends StatelessWidget {
                               ClipRRect(
                                 borderRadius: BorderRadius.circular(16),
                                 child: Image.network(
-                                  foodInfo.imageUrl ?? '',
+                                  (foodInfo.imageUrls.isNotEmpty)
+                                      ? foodInfo.imageUrls
+                                          .first // Always take the first image
+                                      : '', // Fallback if no images exist
                                   height: double.infinity,
                                   width: double.infinity,
                                   fit: BoxFit.cover,
+
+                                  errorBuilder: (context, error, stackTrace) =>
+                                      const Icon(Icons.error,
+                                          color: Colors.red),
                                 ),
                               ),
                               Positioned(

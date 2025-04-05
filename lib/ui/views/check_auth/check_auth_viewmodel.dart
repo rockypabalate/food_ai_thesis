@@ -21,7 +21,7 @@ class CheckAuthViewModel extends AppBaseViewModel {
       _isLoading = true;
       notifyListeners();
 
-      await Future.delayed(const Duration(seconds: 6));
+      await Future.delayed(const Duration(seconds: 5));
 
       // Retrieve the Bearer token instead of session ID
       String? bearerToken = await _sharedPreferenceService.getBearerToken();
@@ -33,7 +33,7 @@ class CheckAuthViewModel extends AppBaseViewModel {
       // Call the getCurrentUser API
       Response response = await _authApiService.getCurrentUser();
       if (response.statusCode == 200 && response.data != null) {
-        _navigationService.navigateTo(Routes.dashboardRecipesView);
+        _navigationService.clearStackAndShow(Routes.dashboardRecipesView);
       } else {
         _navigationService.clearStackAndShow(Routes.loginregisterView);
       }
