@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:food_ai_thesis/ui/views/dashboard_recipes/dashboard_recipes_viewmodel.dart';
+import 'package:lottie/lottie.dart';
 import 'package:stacked/stacked.dart';
 import 'package:food_ai_thesis/ui/views/widget_search_allrecipes/widget_search_allrecipes_view.dart';
 
@@ -45,16 +46,33 @@ class DashboardHeader extends StatelessWidget {
                       CircleAvatar(
                         radius: 22.0,
                         backgroundColor: Colors.grey.shade300,
-                        backgroundImage: profileImage.isNotEmpty
-                            ? NetworkImage(profileImage)
-                            : null,
-                        child: profileImage.isEmpty
-                            ? const Icon(
-                                Icons.person,
-                                size: 22.0,
-                                color: Colors.white,
-                              )
-                            : null,
+                        child: ClipOval(
+                          child: profileImage.isNotEmpty
+                              ? Image.network(
+                                  profileImage,
+                                  width: 50,
+                                  height: 50,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return SizedBox(
+                                      width: 60,
+                                      height: 60,
+                                      child: Lottie.asset(
+                                        'lib/assets/profile.json',
+                                        fit: BoxFit.cover,
+                                      ),
+                                    );
+                                  },
+                                )
+                              : SizedBox(
+                                  width: 60,
+                                  height: 60,
+                                  child: Lottie.asset(
+                                    'lib/assets/profile.json',
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                        ),
                       ),
                       const SizedBox(width: 12.0),
                       Column(

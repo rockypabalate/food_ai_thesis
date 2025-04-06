@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:food_ai_thesis/ui/views/image_processing/image_processing_viewmodel.dart';
+import 'package:food_ai_thesis/ui/views/image_processing/note_dialog.dart';
 import 'package:food_ai_thesis/ui/views/image_processing/widgets_frontpage_features_container.dart';
 import 'package:food_ai_thesis/ui/views/image_processing/widgets_settings_fade_effect.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -67,60 +68,7 @@ class _FrontPageState extends State<FrontPage>
           IconButton(
             icon: const Icon(Icons.info_outline, color: Colors.white),
             onPressed: () {
-              showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return AlertDialog(
-                    contentPadding: const EdgeInsets.all(20),
-                    content: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(Icons.info, color: Colors.orange, size: 60),
-                        const SizedBox(height: 10),
-                        Text(
-                          'Note',
-                          style: GoogleFonts.poppins(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                        const SizedBox(height: 10),
-                        Text(
-                          'The image processing functions optimally when applied to a single food item captured by the camera. For improved accuracy, please ensure the food is photographed clearly.',
-                          style: GoogleFonts.poppins(
-                            fontSize: 14,
-                            color: Colors.grey[800],
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ],
-                    ),
-                    actions: [
-                      Center(
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.orangeAccent,
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 24, vertical: 8),
-                          ),
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                          child: Text(
-                            'Close',
-                            style: GoogleFonts.poppins(
-                              color: Colors.white,
-                              fontSize: 16,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  );
-                },
-              );
+              showImageProcessingNoteDialog(context);
             },
           ),
         ],
@@ -139,7 +87,7 @@ class _FrontPageState extends State<FrontPage>
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 17.0),
                       child: Align(
-                        alignment: Alignment.centerLeft,
+                        alignment: Alignment.center,
                         child: Text(
                           'Here\'s the feature !',
                           style: GoogleFonts.poppins(
@@ -158,7 +106,7 @@ class _FrontPageState extends State<FrontPage>
                   FadeEffectSettings(
                     delay: 200,
                     child: SizedBox(
-                        height: 380,
+                        height: 360,
                         child: PageView.builder(
                           physics: const BouncingScrollPhysics(),
                           controller: _pageController,
@@ -170,17 +118,17 @@ class _FrontPageState extends State<FrontPage>
                                   title: 'Food Identification using CNN',
                                   description:
                                       'Our app identifies food items using a Convolutional Neural Network (CNN). Capture or upload an image of food and let the AI analyze it.',
-                                  assetPath: 'lib/assets/AI_Icon.json',
-                                  scale: 0.95,
+                                  assetPath: 'lib/assets/cnn.png',
+                                  scale: 1.5,
                                   alignment: MainAxisAlignment.start,
                                 );
                               case 1:
                                 return const FeaturesContainer(
-                                  title: 'How to Use the App',
+                                  title: '\nHow to Use the App',
                                   description:
                                       'Simply capture an image or upload one from your gallery. The app will process the image to identify the food item.',
-                                  assetPath: 'lib/assets/person.json',
-                                  scale: 1.0,
+                                  assetPath: 'lib/assets/captured.png',
+                                  scale: 1.47,
                                   alignment: MainAxisAlignment.center,
                                 );
                               case 2:
@@ -189,8 +137,8 @@ class _FrontPageState extends State<FrontPage>
                                   title: 'Food Information and Recipes',
                                   description:
                                       'After identification, the app provides detailed food recipes, instructions, and nutritional content for the identified food item.',
-                                  assetPath: 'lib/assets/Info.json',
-                                  scale: 1.0,
+                                  assetPath: 'lib/assets/result.png',
+                                  scale: 1.7,
                                   alignment: MainAxisAlignment.start,
                                 );
                             }

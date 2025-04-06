@@ -3,7 +3,6 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:food_ai_thesis/ui/views/display_single_recipe/widgest_delayed_fadein.dart';
 import 'package:food_ai_thesis/ui/views/display_single_recipe/widgets_single_view_page_compenents.dart';
 import 'package:stacked/stacked.dart';
-
 import 'display_single_recipe_viewmodel.dart';
 
 class DisplaySingleRecipeView
@@ -52,6 +51,20 @@ class DisplaySingleRecipeView
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
+                              /// 📌 Icons aligned to the right above the food title
+                              DelayedFadeIn(
+                                delay: 100,
+                                child: Align(
+                                  alignment: Alignment.centerRight,
+                                  child: RecipeWidgets
+                                      .buildFavoriteAndBookmarkIcons(context,
+                                          viewModel), // Pass context here
+                                ),
+                              ),
+
+                              const SizedBox(height: 5),
+
+                              /// 🥘 Food Title
                               if (viewModel.foodInfoById!.images.isNotEmpty)
                                 DelayedFadeIn(
                                   delay: 150,
@@ -59,6 +72,8 @@ class DisplaySingleRecipeView
                                     viewModel.foodInfoById!.foodName,
                                   ),
                                 ),
+
+                              /// 👤 Author
                               DelayedFadeIn(
                                 delay: 200,
                                 child: RecipeWidgets.buildAuthor(
@@ -66,22 +81,32 @@ class DisplaySingleRecipeView
                                 ),
                               ),
                               const SizedBox(height: 15),
+
+                              /// ❤️ Views & Likes Box
                               DelayedFadeIn(
-                                delay: 100,
+                                delay: 250,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(top: 8.0),
+                                  child: RecipeWidgets.buildViewsAndLikes(
+                                    viewModel.foodInfoById!.views,
+                                    viewModel.foodInfoById!.likes,
+                                  ),
+                                ),
+                              ),
+
+                              const SizedBox(height: 10),
+
+                              /// 🖼️ Food Images
+                              DelayedFadeIn(
+                                delay: 300,
                                 child: RecipeWidgets.buildFoodImagesSection(
                                     viewModel),
                               ),
                               const SizedBox(height: 20),
-                              // DelayedFadeIn(
-                              //   delay: 200,
-                              //   child: RecipeWidgets.buildViewsAndLikes(
-                              //     viewModel.foodInfoById!.views,
-                              //     viewModel.foodInfoById!.likes,
-                              //   ),
-                              // ),
 
+                              /// 📝 Details
                               DelayedFadeIn(
-                                delay: 200,
+                                delay: 400,
                                 child: RecipeWidgets.buildFoodDetails(
                                   servingSize:
                                       viewModel.foodInfoById!.servingSize,
@@ -92,67 +117,86 @@ class DisplaySingleRecipeView
                                   category: viewModel.foodInfoById!.category,
                                 ),
                               ),
+
                               const DelayedFadeIn(
-                                delay: 250,
+                                delay: 450,
                                 child: SizedBox(height: 20),
                               ),
+
+                              /// 📃 Description
                               DelayedFadeIn(
-                                  delay: 250,
-                                  child: RecipeWidgets.buildFoodDescription(
-                                    viewModel.foodInfoById!.description,
-                                  )),
-                              const DelayedFadeIn(
-                                delay: 350,
-                                child: SizedBox(height: 20),
+                                delay: 500,
+                                child: RecipeWidgets.buildFoodDescription(
+                                  viewModel.foodInfoById!.description,
+                                ),
                               ),
-                              DelayedFadeIn(
+
+                              const DelayedFadeIn(
                                 delay: 600,
+                                child: SizedBox(height: 20),
+                              ),
+
+                              /// 💡 Tips
+                              DelayedFadeIn(
+                                delay: 700,
                                 child: RecipeWidgets.buildPreparationTips(
                                   viewModel.foodInfoById!.preparationTips,
                                 ),
                               ),
+
                               const SizedBox(height: 15),
                               DelayedFadeIn(
                                 delay: 800,
                                 child: RecipeWidgets.buildSectionTitle(''),
                               ),
+
+                              /// 🧂 Ingredients
                               DelayedFadeIn(
-                                  delay: 1000,
-                                  child: RecipeWidgets.buildCardContent(
-                                    viewModel.foodInfoById!.ingredients,
-                                  )),
+                                delay: 900,
+                                child: RecipeWidgets.buildCardContent(
+                                  viewModel.foodInfoById!.ingredients,
+                                ),
+                              ),
+
                               const DelayedFadeIn(
-                                delay: 1100,
+                                delay: 1000,
                                 child: SizedBox(height: 20),
                               ),
+
                               DelayedFadeIn(
-                                delay: 1200,
+                                delay: 1100,
                                 child: RecipeWidgets.buildSectionTitle(''),
                               ),
                               const DelayedFadeIn(
-                                delay: 1300,
+                                delay: 1200,
                                 child: SizedBox(height: 10),
                               ),
+
+                              /// 🔪 Instructions
                               DelayedFadeIn(
-                                delay: 1400,
+                                delay: 1300,
                                 child: RecipeWidgets.buildCardInstructions(
                                   viewModel.foodInfoById!.instructions,
                                 ),
                               ),
+
                               const DelayedFadeIn(
-                                delay: 1500,
+                                delay: 1400,
                                 child: SizedBox(height: 20),
                               ),
+
                               DelayedFadeIn(
-                                delay: 1600,
+                                delay: 1500,
                                 child: RecipeWidgets.buildSectionTitle(''),
                               ),
                               const DelayedFadeIn(
-                                delay: 1700,
+                                delay: 1600,
                                 child: SizedBox(height: 10),
                               ),
+
+                              /// 🔬 Nutritional Info
                               DelayedFadeIn(
-                                delay: 1800,
+                                delay: 1700,
                                 child: RecipeWidgets.buildCardNutrients(
                                   viewModel.foodInfoById!.nutritionalContent,
                                   viewModel.foodInfoById!.nutritionalParagraph,
@@ -165,9 +209,7 @@ class DisplaySingleRecipeView
                     ),
                   ],
                 )
-              : const Center(
-                  child: Text('No food information found'),
-                ),
+              : const Center(child: Text('No food information found')),
     );
   }
 

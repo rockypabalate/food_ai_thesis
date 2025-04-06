@@ -26,7 +26,7 @@ class FoodInfoById {
     this.difficulty,
     this.category,
     this.views = 0,
-    this.likes = 0,
+    this.likes  = 0,
     this.preparationTips,
     this.nutritionalParagraph,
     this.author,
