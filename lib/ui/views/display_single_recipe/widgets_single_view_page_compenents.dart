@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:food_ai_thesis/models/list_recipes/single_display_recipe.dart';
 import 'package:food_ai_thesis/ui/views/display_single_recipe/display_single_recipe_viewmodel.dart';
+import 'package:food_ai_thesis/ui/views/display_single_recipe/export_pdf_UI.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class RecipeWidgets {
@@ -32,64 +33,6 @@ class RecipeWidgets {
                     ),
                   )
                 : Container(),
-            // Views and Likes Container
-            Positioned(
-              bottom: 16.0,
-              right: 16.0,
-              child: buildViewsAndLikes(
-                viewModel.foodInfoById!.views,
-                viewModel.foodInfoById!.likes,
-              ),
-            ),
-            // Favorite and Bookmark Icons
-            Positioned(
-              top: 40.0,
-              right: 16.0,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // Favorite Icon
-                  GestureDetector(
-                    onTap: () {
-                      viewModel.likeFoodById(viewModel.foodInfoById!.id);
-                    },
-                    child: Container(
-                      width: 40,
-                      height: 40,
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        Icons.favorite,
-                        size: 22,
-                        color: Colors.grey,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 15),
-                  // Bookmark Icon
-                  GestureDetector(
-                    onTap: () {
-                      viewModel.saveFoodById(viewModel.foodInfoById!.id);
-                    },
-                    child: Container(
-                      width: 40,
-                      height: 40,
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        Icons.bookmark,
-                        size: 22,
-                        color: Colors.grey,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
           ],
         ),
       ),
@@ -168,6 +111,104 @@ class RecipeWidgets {
     );
   }
 
+static Widget buildFavoriteAndBookmarkIcons(
+    BuildContext context, // Add context as a parameter
+    DisplaySingleRecipeViewModel viewModel) {
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.end, // Aligns to the right
+    children: [
+      // Favorite Icon
+      GestureDetector(
+        onTap: () {
+          viewModel.likeFoodById(viewModel.foodInfoById!.id);
+        },
+        child: Container(
+          width: 35,
+          height: 35,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            shape: BoxShape.circle,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                blurRadius: 6,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: const Icon(
+            Icons.favorite,
+            size: 22,
+            color: Colors.grey,
+          ),
+        ),
+      ),
+      const SizedBox(width: 10),
+
+      // Bookmark Icon
+      GestureDetector(
+        onTap: () {
+          viewModel.saveFoodById(viewModel.foodInfoById!.id);
+        },
+        child: Container(
+          width: 35,
+          height: 35,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            shape: BoxShape.circle,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                blurRadius: 6,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: const Icon(
+            Icons.bookmark,
+            size: 22,
+            color: Colors.grey,
+          ),
+        ),
+      ),
+      const SizedBox(width: 10),
+
+      // PDF Export Icon
+      GestureDetector(
+        onTap: () {
+          final recipe = viewModel.foodInfoById;
+          if (recipe != null) {
+            Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => PdfExportPage(recipe: recipe),
+            ));
+          }
+        },
+        child: Container(
+          width: 35,
+          height: 35,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            shape: BoxShape.circle,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                blurRadius: 6,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: const Icon(
+            Icons.picture_as_pdf,
+            size: 22,
+            color: Colors.grey,
+          ),
+        ),
+      ),
+    ],
+  );
+}
+
+
   static Widget buildFoodTitle(String foodName) {
     return Text(
       foodName,
@@ -181,7 +222,7 @@ class RecipeWidgets {
 
   static Widget buildViewsAndLikes(int views, int likes) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 10),
+      padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 10),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(8),
@@ -391,85 +432,84 @@ class RecipeWidgets {
     );
   }
 
- static Widget buildCardContent(List<Ingredient> ingredients) {
-  return Card(
-    elevation: 4,
-    color: Colors.white,
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(16),
-    ),
-    child: Padding(
-      padding: const EdgeInsets.all(20.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(bottom: 16.0),
-            child: Text(
-              'Ingredients',
-              style: GoogleFonts.poppins(
-                fontWeight: FontWeight.w600,
-                fontSize: 23,
-                color: Colors.black87,
+  static Widget buildCardContent(List<Ingredient> ingredients) {
+    return Card(
+      elevation: 4,
+      color: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(bottom: 16.0),
+              child: Text(
+                'Ingredients',
+                style: GoogleFonts.poppins(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 23,
+                  color: Colors.black87,
+                ),
               ),
             ),
-          ),
-          Column(
-            children: ingredients.map((ingredient) {
-              return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Container(
-                      width: 5,
-                      height: 5,
-                      decoration: const BoxDecoration(
-                        color: Colors.orangeAccent,
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: RichText(
-                        text: TextSpan(
-                          style: GoogleFonts.poppins(
-                            fontSize: 12,
-                            color: Colors.black87,
-                            height: 1.5,
-                          ),
-                          children: [
-                            TextSpan(
-                              text: '${ingredient.name} - ',
-                              style: GoogleFonts.poppins(
-                                fontWeight: FontWeight.w600,
-                                fontSize: 12,
-                                color: Colors.black87,
-                              ),
-                            ),
-                            TextSpan(
-                              text: ingredient.quantity,
-                              style: GoogleFonts.poppins(
-                                fontWeight: FontWeight.normal,
-                                fontSize: 12,
-                                color: Colors.black87,
-                              ),
-                            ),
-                          ],
+            Column(
+              children: ingredients.map((ingredient) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Container(
+                        width: 5,
+                        height: 5,
+                        decoration: const BoxDecoration(
+                          color: Colors.orangeAccent,
+                          shape: BoxShape.circle,
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              );
-            }).toList(),
-          ),
-        ],
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: RichText(
+                          text: TextSpan(
+                            style: GoogleFonts.poppins(
+                              fontSize: 12,
+                              color: Colors.black87,
+                              height: 1.5,
+                            ),
+                            children: [
+                              TextSpan(
+                                text: '${ingredient.name} - ',
+                                style: GoogleFonts.poppins(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 12,
+                                  color: Colors.black87,
+                                ),
+                              ),
+                              TextSpan(
+                                text: ingredient.quantity,
+                                style: GoogleFonts.poppins(
+                                  fontWeight: FontWeight.normal,
+                                  fontSize: 12,
+                                  color: Colors.black87,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }).toList(),
+            ),
+          ],
+        ),
       ),
-    ),
-  );
-}
-
+    );
+  }
 
   static Widget buildCardInstructions(List<String> instructions) {
     return Card(

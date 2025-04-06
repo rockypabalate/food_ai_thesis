@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:food_ai_thesis/utils/about_us_page.dart';
 import 'package:food_ai_thesis/utils/qr_code.dart';
 import 'package:stacked/stacked.dart';
-
 import 'setting_page_viewmodel.dart';
 
 class SettingPageView extends StackedView<SettingPageViewModel> {
@@ -22,7 +21,7 @@ class SettingPageView extends StackedView<SettingPageViewModel> {
           style: TextStyle(color: Colors.white),
         ),
         backgroundColor: Colors.orange,
-        iconTheme: const IconThemeData(color: Colors.white), // Make icons white
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: ListView(
         children: [
@@ -47,6 +46,13 @@ class SettingPageView extends StackedView<SettingPageViewModel> {
             },
           ),
           ListTile(
+            leading: const Icon(Icons.person, color: Colors.orange),
+            title: const Text('Update Profile'),
+            onTap: () {
+              viewModel.navigateToEditProfile();
+            },
+          ),
+          ListTile(
             leading: const Icon(Icons.logout, color: Colors.orange),
             title: const Text('Logout'),
             onTap: () => _showLogoutDialog(context, viewModel),
@@ -62,7 +68,6 @@ class SettingPageView extends StackedView<SettingPageViewModel> {
   ) =>
       SettingPageViewModel();
 
-  // Logout Confirmation Dialog
   void _showLogoutDialog(BuildContext context, SettingPageViewModel viewModel) {
     showDialog(
       context: context,
@@ -85,13 +90,13 @@ class SettingPageView extends StackedView<SettingPageViewModel> {
           ),
           actions: [
             TextButton(
-              onPressed: () => Navigator.pop(context), // Close dialog
+              onPressed: () => Navigator.pop(context),
               child: const Text("Cancel", style: TextStyle(color: Colors.grey)),
             ),
             ElevatedButton(
               onPressed: () {
-                Navigator.pop(context); // Close dialog
-                viewModel.logout(); // Call logout function
+                Navigator.pop(context);
+                viewModel.logout();
               },
               style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
               child:

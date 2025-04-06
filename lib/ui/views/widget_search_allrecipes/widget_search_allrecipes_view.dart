@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:food_ai_thesis/ui/views/widget_search_allrecipes/category_modal.dart';
 import 'package:food_ai_thesis/ui/views/widget_search_allrecipes/wg_all_recipes.dart';
 import 'package:food_ai_thesis/utils/shimmer_loading_widget.dart';
 import 'package:food_ai_thesis/utils/widgets_fade_effect.dart';
@@ -22,9 +23,8 @@ class WidgetSearchAllrecipesView
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Custom header with back icon, title, search bar, and filter
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 8.0),
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
             decoration: BoxDecoration(
               color: Colors.orange,
               borderRadius: const BorderRadius.only(
@@ -45,11 +45,9 @@ class WidgetSearchAllrecipesView
                 const SizedBox(height: 35.0),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Row(
                       children: [
-                        // Back navigation icon
                         IconButton(
                           icon:
                               const Icon(Icons.arrow_back, color: Colors.white),
@@ -58,7 +56,6 @@ class WidgetSearchAllrecipesView
                             Navigator.pop(context);
                           },
                         ),
-                        // Title header
                         const Text(
                           'Search Recipes',
                           style: TextStyle(
@@ -69,42 +66,27 @@ class WidgetSearchAllrecipesView
                         ),
                       ],
                     ),
-                    // Filter icon with dropdown
-                    PopupMenuButton<String>(
+                    IconButton(
                       icon: const Icon(Icons.filter_list, color: Colors.white),
-                      onSelected: (String selectedCategory) {
-                        if (selectedCategory == 'Clear Filter') {
-                          viewModel.clearCategoryFilter();
-                        } else {
-                          viewModel.filterByCategory(selectedCategory);
-                        }
-                      },
-                      itemBuilder: (BuildContext context) {
-                        return [
-                          const PopupMenuItem<String>(
-                            value: 'Clear Filter',
-                            child: Text('Clear Filter'),
-                          ),
-                          ...viewModel.uniqueCategories.map(
-                            (category) => PopupMenuItem<String>(
-                              value: category,
-                              child: Text(category),
-                            ),
-                          ),
-                        ];
+                      onPressed: () {
+                        // Hide keyboard before opening modal
+                        FocusScope.of(context).unfocus();
+
+                        showCategoryFilterModal(
+                          context: context,
+                          categories: viewModel.uniqueCategories.toList(),
+                          selectedCategory: viewModel.selectedCategory,
+                          onCategorySelected: viewModel.filterByCategory,
+                          onClearFilter: viewModel.clearCategoryFilter,
+                        );
                       },
                     ),
                   ],
                 ),
-
-                const SizedBox(height: 12.0),
-                // Adding horizontal padding for search bar and filter
                 Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 12.0), // Add horizontal padding
+                  padding: const EdgeInsets.symmetric(horizontal: 12.0),
                   child: Row(
                     children: [
-                      // Search bar
                       Expanded(
                         child: TextField(
                           controller: searchController,
@@ -121,21 +103,17 @@ class WidgetSearchAllrecipesView
                                 ValueListenableBuilder<TextEditingValue>(
                               valueListenable: searchController,
                               builder: (context, value, child) {
-                                // Show the clear icon only if there's text
                                 return value.text.isNotEmpty
                                     ? IconButton(
                                         icon: const Icon(Icons.clear,
                                             color: Colors.grey),
                                         onPressed: () {
-                                          searchController
-                                              .clear(); // Clear the text
+                                          searchController.clear();
                                           viewModel.filterRecipes('');
-                                          FocusScope.of(context)
-                                              .unfocus(); // Optionally reset filters
+                                          FocusScope.of(context).unfocus();
                                         },
                                       )
-                                    : const SizedBox
-                                        .shrink(); // Empty widget if no text
+                                    : const SizedBox.shrink();
                               },
                             ),
                             filled: true,
@@ -151,13 +129,10 @@ class WidgetSearchAllrecipesView
                     ],
                   ),
                 ),
-
                 const SizedBox(height: 1.0),
               ],
             ),
           ),
-
-          // Scrollable content with shimmer loader
           Expanded(
             child: SingleChildScrollView(
               child: Padding(
@@ -166,9 +141,7 @@ class WidgetSearchAllrecipesView
                 child: viewModel.isLoading
                     ? Column(
                         children: List.generate(
-                          5, // Number of shimmer placeholders
-                          (index) => const ShimmerLoadingWidget(),
-                        ),
+                            5, (_) => const ShimmerLoadingWidget()),
                       )
                     : viewModel.filteredFoodInfos.isEmpty
                         ? const Center(
@@ -176,13 +149,11 @@ class WidgetSearchAllrecipesView
                               'No recipes found.',
                               textAlign: TextAlign.center,
                               style: TextStyle(
-                                fontSize: 16.0,
-                                fontWeight: FontWeight.w600,
-                              ),
+                                  fontSize: 16.0, fontWeight: FontWeight.w600),
                             ),
                           )
                         : FadeEffectRecipe(
-                            delay: 200, // Delay before animation starts
+                            delay: 200,
                             child: AllRecipesWidget(
                               foodInfos: viewModel.filteredFoodInfos,
                               isLoading: viewModel.isTyping,

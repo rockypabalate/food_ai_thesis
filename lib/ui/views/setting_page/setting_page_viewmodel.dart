@@ -25,4 +25,5 @@ class SettingPageViewModel extends AppBaseViewModel {
   Future<void> navigateToEditProfile() async {
     _navigationService.navigateTo(Routes.editProfileView);
   }
+  
 }
