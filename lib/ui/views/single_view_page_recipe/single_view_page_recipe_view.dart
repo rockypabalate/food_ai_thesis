@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart'; // Import SpinKit package
+import 'package:food_ai_thesis/ui/views/display_single_recipe/export_pdf_UI.dart';
+import 'package:food_ai_thesis/ui/views/single_view_page_recipe/created_recipe_export.dart';
 import 'package:food_ai_thesis/utils/widgets_fade_effect.dart';
 import 'package:stacked/stacked.dart';
 import 'recipe_details.dart'; // Import the new UI design file
@@ -70,9 +72,14 @@ class SingleViewPageRecipeView
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.edit, color: Colors.white),
+            icon: const Icon(Icons.picture_as_pdf, color: Colors.white),
             onPressed: () {
-              // TODO: Implement edit functionality
+              Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => CreatePdfExportPage(recipe: viewModel.singleRecipe!),
+      ),
+    );
             },
           ),
           IconButton(

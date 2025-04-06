@@ -12,6 +12,7 @@ class FoodInfoById {
   final String? nutritionalParagraph;
   final String? author;
   final String recipeFeatured;
+  final String? link; // ✅ Added link field
   final List<Ingredient> ingredients;
   final List<String> instructions;
   final List<String> nutritionalContent;
@@ -26,11 +27,12 @@ class FoodInfoById {
     this.difficulty,
     this.category,
     this.views = 0,
-    this.likes  = 0,
+    this.likes = 0,
     this.preparationTips,
     this.nutritionalParagraph,
     this.author,
     this.recipeFeatured = '0',
+    this.link, // ✅ Include in constructor
     required this.ingredients,
     required this.instructions,
     required this.nutritionalContent,
@@ -52,6 +54,7 @@ class FoodInfoById {
       nutritionalParagraph: json['nutritional_paragraph'],
       author: json['author'],
       recipeFeatured: json['recipe_featured'] ?? '0',
+      link: json['link'], // ✅ Parse from JSON
       ingredients: (json['ingredients'] as List<dynamic>?)
               ?.map((e) => Ingredient.fromJson(e))
               .toList() ??

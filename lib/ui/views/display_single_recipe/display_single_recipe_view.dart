@@ -202,6 +202,13 @@ class DisplaySingleRecipeView
                                   viewModel.foodInfoById!.nutritionalParagraph,
                                 ),
                               ),
+                              const SizedBox(height: 20),
+                              DelayedFadeIn(
+                                delay: 1800,
+                                child: RecipeWidgets.buildPlayVideoButton(
+                                    viewModel, context),
+                              ),
+                              const SizedBox(height: 10),
                             ],
                           ),
                         ),

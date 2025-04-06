@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:food_ai_thesis/models/list_recipes/single_display_recipe.dart';
 import 'package:food_ai_thesis/ui/views/display_single_recipe/display_single_recipe_viewmodel.dart';
 import 'package:food_ai_thesis/ui/views/display_single_recipe/export_pdf_UI.dart';
+import 'package:food_ai_thesis/ui/views/display_single_recipe/youtube_play.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class RecipeWidgets {
@@ -42,6 +43,48 @@ class RecipeWidgets {
         onPressed: () {
           Navigator.pop(context);
         },
+      ),
+    );
+  }
+
+  static Widget buildPlayVideoButton(
+      DisplaySingleRecipeViewModel viewModel, BuildContext context) {
+    final youtubeLink = viewModel.foodInfoById?.link;
+
+    if (youtubeLink == null || youtubeLink.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+          horizontal: 0.0), // for spacing from screen edges
+      child: SizedBox(
+        width: double.infinity, // full-width button
+        child: ElevatedButton.icon(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) =>
+                    YoutubeVideoPlayerView(youtubeUrl: youtubeLink),
+              ),
+            );
+          },
+          icon: const Icon(Icons.play_circle_fill, color: Colors.white),
+          label: const Text(
+            "Play Video",
+            style: TextStyle(color: Colors.white),
+          ),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.orange,
+            padding: const EdgeInsets.symmetric(vertical: 16),
+            textStyle:
+                const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -111,103 +154,102 @@ class RecipeWidgets {
     );
   }
 
-static Widget buildFavoriteAndBookmarkIcons(
-    BuildContext context, // Add context as a parameter
-    DisplaySingleRecipeViewModel viewModel) {
-  return Row(
-    mainAxisAlignment: MainAxisAlignment.end, // Aligns to the right
-    children: [
-      // Favorite Icon
-      GestureDetector(
-        onTap: () {
-          viewModel.likeFoodById(viewModel.foodInfoById!.id);
-        },
-        child: Container(
-          width: 35,
-          height: 35,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            shape: BoxShape.circle,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.1),
-                blurRadius: 6,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
-          child: const Icon(
-            Icons.favorite,
-            size: 22,
-            color: Colors.grey,
-          ),
-        ),
-      ),
-      const SizedBox(width: 10),
-
-      // Bookmark Icon
-      GestureDetector(
-        onTap: () {
-          viewModel.saveFoodById(viewModel.foodInfoById!.id);
-        },
-        child: Container(
-          width: 35,
-          height: 35,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            shape: BoxShape.circle,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.1),
-                blurRadius: 6,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
-          child: const Icon(
-            Icons.bookmark,
-            size: 22,
-            color: Colors.grey,
+  static Widget buildFavoriteAndBookmarkIcons(
+      BuildContext context, // Add context as a parameter
+      DisplaySingleRecipeViewModel viewModel) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end, // Aligns to the right
+      children: [
+        // Favorite Icon
+        GestureDetector(
+          onTap: () {
+            viewModel.likeFoodById(viewModel.foodInfoById!.id);
+          },
+          child: Container(
+            width: 35,
+            height: 35,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 6,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: const Icon(
+              Icons.favorite,
+              size: 22,
+              color: Colors.grey,
+            ),
           ),
         ),
-      ),
-      const SizedBox(width: 10),
+        const SizedBox(width: 10),
 
-      // PDF Export Icon
-      GestureDetector(
-        onTap: () {
-          final recipe = viewModel.foodInfoById;
-          if (recipe != null) {
-            Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => PdfExportPage(recipe: recipe),
-            ));
-          }
-        },
-        child: Container(
-          width: 35,
-          height: 35,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            shape: BoxShape.circle,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.1),
-                blurRadius: 6,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
-          child: const Icon(
-            Icons.picture_as_pdf,
-            size: 22,
-            color: Colors.grey,
+        // Bookmark Icon
+        GestureDetector(
+          onTap: () {
+            viewModel.saveFoodById(viewModel.foodInfoById!.id);
+          },
+          child: Container(
+            width: 35,
+            height: 35,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 6,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: const Icon(
+              Icons.bookmark,
+              size: 22,
+              color: Colors.grey,
+            ),
           ),
         ),
-      ),
-    ],
-  );
-}
+        const SizedBox(width: 10),
 
+        // PDF Export Icon
+        GestureDetector(
+          onTap: () {
+            final recipe = viewModel.foodInfoById;
+            if (recipe != null) {
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => PdfExportPage(recipe: recipe),
+              ));
+            }
+          },
+          child: Container(
+            width: 35,
+            height: 35,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 6,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: const Icon(
+              Icons.picture_as_pdf,
+              size: 22,
+              color: Colors.grey,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
 
   static Widget buildFoodTitle(String foodName) {
     return Text(
