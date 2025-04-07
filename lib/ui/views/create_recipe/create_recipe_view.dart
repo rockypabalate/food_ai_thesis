@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:stacked/stacked.dart';
 import 'create_recipe_viewmodel.dart';
 
@@ -12,6 +13,7 @@ class CreateRecipeView extends StackedView<CreateRecipeViewModel> {
     CreateRecipeViewModel viewModel,
     Widget? child,
   ) {
+    bool _isLoading = false;
     return WillPopScope(
         onWillPop: () async {
           bool? exitConfirmed = await showDialog(
@@ -254,53 +256,39 @@ class CreateRecipeView extends StackedView<CreateRecipeViewModel> {
                     Row(
                       children: [
                         SizedBox(
-                          width: 70,
+                          width: 200,
                           child: TextFormField(
-                              controller: viewModel.totalCookTimeController,
-                              keyboardType: TextInputType.number,
-                              style: const TextStyle(
-                                  fontSize: 14, height: 1), // Compact text
-                              decoration: InputDecoration(
-                                contentPadding: const EdgeInsets.symmetric(
-                                    vertical: 8, horizontal: 8),
-                                isDense: true, // Compact field height
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(6.0),
-                                  borderSide: const BorderSide(
-                                      color: Colors.grey,
-                                      width: 1), // Default grey
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(6.0),
-                                  borderSide: const BorderSide(
-                                      color: Colors.orange,
-                                      width: 2), // Orange when selected
-                                ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(6.0),
-                                  borderSide: const BorderSide(
-                                      color: Colors.grey,
-                                      width: 1), // Grey when not focused
-                                ),
-                                hintText: '0',
-                                hintStyle: const TextStyle(fontSize: 14),
-                              )),
-                        ),
-                        const SizedBox(
-                            width:
-                                16), // Small space between text field and dropdown
-                        DropdownButton<String>(
-                          value: viewModel.cookTimeUnit,
-                          items: ["Minute", "Hour", "Minutes", "Hours"]
-                              .map((String unit) {
-                            return DropdownMenuItem<String>(
-                              value: unit,
-                              child: Text(unit),
-                            );
-                          }).toList(),
-                          onChanged: (value) {
-                            viewModel.updateCookTimeUnit(value!);
-                          },
+                            controller: viewModel.totalCookTimeController,
+                            keyboardType: TextInputType
+                                .text, // Allow any text or characters
+                            style: const TextStyle(
+                                fontSize: 14, height: 1), // Compact text
+                            decoration: InputDecoration(
+                              contentPadding: const EdgeInsets.symmetric(
+                                  vertical: 12, horizontal: 8),
+                              isDense: true, // Compact field height
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(6.0),
+                                borderSide: const BorderSide(
+                                    color: Colors.grey,
+                                    width: 1), // Default grey
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(6.0),
+                                borderSide: const BorderSide(
+                                    color: Colors.orange,
+                                    width: 2), // Orange when selected
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(6.0),
+                                borderSide: const BorderSide(
+                                    color: Colors.grey,
+                                    width: 1), // Grey when not focused
+                              ),
+                              hintText: 'Enter time', // Generic hint
+                              hintStyle: const TextStyle(fontSize: 14),
+                            ),
+                          ),
                         ),
                       ],
                     ),
@@ -530,7 +518,7 @@ class CreateRecipeView extends StackedView<CreateRecipeViewModel> {
                                 onChanged: (value) =>
                                     viewModel.updateIngredient(index, value),
                               ),
-                              const SizedBox(height: 5),
+                              const SizedBox(height: 10),
 
                               // Quantity and Unit Row
                               Row(
@@ -557,33 +545,20 @@ class CreateRecipeView extends StackedView<CreateRecipeViewModel> {
                                   ),
                                   const SizedBox(width: 10),
 
-                                  // Unit Dropdown
+                                  // Unit TextField (Instead of Dropdown)
                                   Expanded(
-                                    child: DropdownButtonFormField<String>(
-                                      value: viewModel.units[index],
-                                      items:
-                                          viewModel.availableUnits.map((unit) {
-                                        return DropdownMenuItem(
-                                          value: unit,
-                                          child: Text(unit),
-                                        );
-                                      }).toList(),
-                                      onChanged: (value) {
-                                        if (value != null) {
-                                          viewModel.updateUnit(index, value);
-                                        }
-                                      },
+                                    child: TextFormField(
                                       decoration: InputDecoration(
-                                        contentPadding:
-                                            const EdgeInsets.symmetric(
-                                                vertical: 14.0,
-                                                horizontal:
-                                                    15.0), // Adjust height
+                                        labelText: 'Unit',
                                         border: OutlineInputBorder(
                                           borderRadius:
                                               BorderRadius.circular(10.0),
                                         ),
                                       ),
+                                      initialValue: viewModel
+                                          .units[index], // Ensure persistence
+                                      onChanged: (value) =>
+                                          viewModel.updateUnit(index, value),
                                     ),
                                   ),
 
@@ -672,6 +647,9 @@ class CreateRecipeView extends StackedView<CreateRecipeViewModel> {
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: () {
+                      // Start loading when button is pressed
+                      viewModel.setLoading(true); // Set loading to true
+
                       showDialog(
                         context: context,
                         builder: (BuildContext context) {
@@ -683,13 +661,19 @@ class CreateRecipeView extends StackedView<CreateRecipeViewModel> {
                               TextButton(
                                 onPressed: () {
                                   Navigator.pop(context); // Cancel
+                                  viewModel.setLoading(
+                                      false); // Reset loading if canceled
                                 },
                                 child: const Text('Cancel'),
                               ),
                               TextButton(
                                 onPressed: () {
                                   Navigator.pop(context); // Close dialog
-                                  viewModel.createRecipe(); // Call the method
+                                  viewModel.createRecipe().then((_) {
+                                    // After recipe creation, hide spinner
+                                    viewModel.setLoading(
+                                        false); // Set loading to false
+                                  });
                                 },
                                 child: const Text(
                                   'Yes',
@@ -717,7 +701,29 @@ class CreateRecipeView extends StackedView<CreateRecipeViewModel> {
                       ),
                     ),
                   ),
-                )
+                ),
+
+                // If loading, show the spinner and message
+                viewModel.isLoading
+                    ? const Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SpinKitThreeBounce(
+                            color: Colors.orange,
+                            size: 30.0,
+                          ),
+                          SizedBox(height: 12),
+                          Text(
+                            'Creating Recipe...',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.orange,
+                            ),
+                          ),
+                        ],
+                      )
+                    : Container(),
               ],
             ),
           ),

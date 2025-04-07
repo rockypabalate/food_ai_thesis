@@ -26,6 +26,7 @@ abstract class ApiServiceService {
   Future<bool> deleteRecipe(String recipeId);
   Future<List<FeaturedRecipe>> getFeaturedRecipes();
   Future<List<PopularRecipe>> getPopularRecipes();
-
   Future<String?> classifyFood(File imageFile);
+  Future<bool> isRecipeLiked(int foodId);
+  Future<bool> isRecipeSaved(int foodId);
 }

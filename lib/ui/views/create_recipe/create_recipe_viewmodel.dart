@@ -22,25 +22,23 @@ class CreateRecipeViewModel extends AppBaseViewModel {
   final TextEditingController nutritionalParagraphController =
       TextEditingController(); // Added
 
+  bool _isLoading = false;
+
+  bool get isLoading => _isLoading;
+
+  void setLoading(bool value) {
+    _isLoading = value;
+    notifyListeners(); // Notify listeners to update the UI
+  }
+
   // Dynamic lists for ingredients, quantities, and instructions
   List<String> ingredients = [""];
   List<String> quantities = [""];
   List<String> instructions = [""];
 
-  List<String> units = ["kg"]; // Default unit
+  List<String> units = [""]; // Default unit
 
-  List<String> availableUnits = ["kg", "g", "tbsp", "tsp", "cup", "medium"];
-
-  // Dropdown values
-  String cookTimeUnit = "Minutes"; // Default value
   String difficultyLevel = "Easy"; // Default value
-
-  void updateCookTimeUnit(String? value) {
-    if (value != null) {
-      cookTimeUnit = value;
-      notifyListeners();
-    }
-  }
 
   void updateDifficultyLevel(String? value) {
     if (value != null) {
@@ -123,66 +121,69 @@ class CreateRecipeViewModel extends AppBaseViewModel {
     return true;
   }
 
-  Future<void> createRecipe() async {
-    if (!validateInputs()) return;
+Future<void> createRecipe() async {
+  if (!validateInputs()) return;
 
-    setBusy(true);
+  // Set the loading state to true
+  setLoading(true);
 
-    // Combine quantities and units
-    List<String> formattedQuantities = List.generate(
-      quantities.length,
-      (index) => "${quantities[index]} ${units[index]}",
-    );
+  // Combine quantities and units manually
+  List<String> formattedQuantities = List.generate(
+    quantities.length,
+    (index) => "${quantities[index]} ${units[index]}", // Combine quantity and unit
+  );
 
-    final recipe = Recipe(
-      id: 0, // Temporary ID
-      foodName: foodNameController.text,
-      description: descriptionController.text,
-      servings: int.tryParse(servingsController.text) ?? 1,
-      category: categoryController.text,
-      ingredients: ingredients,
-      quantities: formattedQuantities, // Use formatted quantities
-      instructions: instructions,
-      totalCookTime: "${totalCookTimeController.text} $cookTimeUnit",
-      difficulty: difficultyLevel,
-      preparationTips: preparationTipsController.text,
-      nutritionalParagraph: nutritionalParagraphController.text.isNotEmpty
-          ? nutritionalParagraphController.text
-          : null, // Optional
-    );
+  final recipe = Recipe(
+    id: 0, // Temporary ID
+    foodName: foodNameController.text,
+    description: descriptionController.text,
+    servings: int.tryParse(servingsController.text) ?? 1,
+    category: categoryController.text,
+    ingredients: ingredients,
+    quantities: formattedQuantities, // Use formatted quantities with units
+    instructions: instructions,
+    totalCookTime: totalCookTimeController.text,
+    difficulty: difficultyLevel,
+    preparationTips: preparationTipsController.text,
+    nutritionalParagraph: nutritionalParagraphController.text.isNotEmpty
+        ? nutritionalParagraphController.text
+        : null, // Optional
+  );
 
-    try {
-      final recipeResponse = await _apiService.createRecipe(recipe);
+  try {
+    final recipeResponse = await _apiService.createRecipe(recipe);
 
-      if (recipeResponse != null) {
-        final createdRecipeId = recipeResponse.recipe.id;
+    if (recipeResponse != null) {
+      final createdRecipeId = recipeResponse.recipe.id;
 
-        _snackbarService.showSnackbar(
-          message: 'Recipe created successfully! Recipe ID: $createdRecipeId',
-          duration: const Duration(seconds: 3),
-        );
-
-        _navigationService.navigateTo(
-          Routes.uploadRecipeImageView,
-          arguments: UploadRecipeImageViewArguments(recipeId: createdRecipeId),
-        );
-
-        resetForm();
-      } else {
-        _snackbarService.showSnackbar(
-          message: 'Failed to create recipe. Please try again.',
-          duration: const Duration(seconds: 3),
-        );
-      }
-    } catch (e) {
       _snackbarService.showSnackbar(
-        message: 'An error occurred: $e',
+        message: 'Recipe created successfully! Recipe ID: $createdRecipeId',
         duration: const Duration(seconds: 3),
       );
-    } finally {
-      setBusy(false);
+
+      _navigationService.navigateTo(
+        Routes.uploadRecipeImageView,
+        arguments: UploadRecipeImageViewArguments(recipeId: createdRecipeId),
+      );
+
+      resetForm();
+    } else {
+      _snackbarService.showSnackbar(
+        message: 'Failed to create recipe. Please try again.',
+        duration: const Duration(seconds: 3),
+      );
     }
+  } catch (e) {
+    _snackbarService.showSnackbar(
+      message: 'An error occurred: $e',
+      duration: const Duration(seconds: 3),
+    );
+  } finally {
+    // Set the loading state to false after the recipe creation attempt
+    setLoading(false);
   }
+}
+
 
   void resetForm() {
     foodNameController.clear();
@@ -197,7 +198,6 @@ class CreateRecipeViewModel extends AppBaseViewModel {
     quantities = [""];
     instructions = [""];
 
-    cookTimeUnit = "Minutes";
     difficultyLevel = "Easy";
 
     notifyListeners();

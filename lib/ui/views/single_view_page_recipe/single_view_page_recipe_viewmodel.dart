@@ -3,6 +3,8 @@ import 'package:food_ai_thesis/app/app.router.dart';
 import 'package:food_ai_thesis/app/app_base_viewmodel.dart';
 import 'package:food_ai_thesis/models/single_view_created_recipe/single_view_created_recipe.dart';
 import 'package:food_ai_thesis/services/api/api_services/api_service_service.dart';
+import 'package:food_ai_thesis/ui/views/single_view_page_recipe/recipe_export_pdf.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:stacked_services/stacked_services.dart';
 
 class SingleViewPageRecipeViewModel extends AppBaseViewModel {
@@ -84,5 +86,41 @@ class SingleViewPageRecipeViewModel extends AppBaseViewModel {
     isDeleting = false; // Reset deleting state
     setBusy(false); // Hide busy state
     notifyListeners();
+  }
+
+   // Method to export recipe as PDF
+  Future<void> exportRecipeAsPDF() async {
+    if (singleRecipe == null) return;
+
+    try {
+      // Ensure we have storage permission before proceeding
+      await requestStoragePermission();
+
+      final file = await RecipeExportPdf.generateRecipePDF(singleRecipe!);
+
+      _snackbarService.showSnackbar(
+        title: 'Success',
+        message: 'PDF exported: ${file.path}',
+      );
+
+      // Optional: Share the PDF
+      // await Share.shareXFiles([XFile(file.path)], text: 'Check out this recipe!');
+    } catch (e) {
+      _snackbarService.showSnackbar(
+        title: 'Error',
+        message: 'Failed to export PDF.',
+      );
+      print('PDF Export Error: $e');
+    }
+  }
+
+  // Request storage permission (assuming you have a method for it)
+  Future<void> requestStoragePermission() async {
+    // You can add logic to request permissions here using the permission_handler package
+    // Example:
+    final status = await Permission.manageExternalStorage.request();
+    if (!status.isGranted) {
+      throw Exception("Storage permission not granted");
+    }
   }
 }

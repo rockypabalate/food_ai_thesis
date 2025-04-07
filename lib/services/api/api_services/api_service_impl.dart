@@ -18,12 +18,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 class ApiServiceImpl implements ApiServiceService {
   ApiServiceImpl({
     Dio? dio,
-    Dio? flaskDio, 
+    Dio? flaskDio,
   })  : _dio = dio ?? DioClient().instance,
         _flaskDio = flaskDio ?? DioClient().flaskInstance;
 
   final Dio _dio;
-  final Dio _flaskDio; 
+  final Dio _flaskDio;
   final logger = Logger();
 
   static const String bearerTokenKey = 'bearerToken';
@@ -81,7 +81,6 @@ class ApiServiceImpl implements ApiServiceService {
       return [];
     }
   }
-
 
 // Fetch Popular Recipes
   @override
@@ -397,34 +396,32 @@ class ApiServiceImpl implements ApiServiceService {
   }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
-@override
+  @override
   Future<String?> classifyFood(File imageFile) async {
-  try {
-    FormData formData = FormData.fromMap({
-      'file': await MultipartFile.fromFile(imageFile.path),
-    });
+    try {
+      FormData formData = FormData.fromMap({
+        'file': await MultipartFile.fromFile(imageFile.path),
+      });
 
-    final response = await _flaskDio.post(
-      '/predict',
-      data: formData,
-      options: Options(headers: {'accept': 'application/json'}),
-    );
+      final response = await _flaskDio.post(
+        '/predict',
+        data: formData,
+        options: Options(headers: {'accept': 'application/json'}),
+      );
 
-    if (response.statusCode == 200) {
-      // Fix: Access the 'prediction' key instead of 'food_name'
-      return response.data['prediction'];  // Extract food name from 'prediction'
-    } else {
-      logger.e('Flask API Error: ${response.data}');
+      if (response.statusCode == 200) {
+        // Fix: Access the 'prediction' key instead of 'food_name'
+        return response
+            .data['prediction']; // Extract food name from 'prediction'
+      } else {
+        logger.e('Flask API Error: ${response.data}');
+        return null;
+      }
+    } on DioException catch (e) {
+      logger.e('Dio Error (Flask): ${e.message}');
       return null;
     }
-  } on DioException catch (e) {
-    logger.e('Dio Error (Flask): ${e.message}');
-    return null;
   }
-}
-
-
- 
 
   @override
   Future<List<FoodInformation>> searchRecipesByName(String foodName) async {
@@ -456,6 +453,7 @@ class ApiServiceImpl implements ApiServiceService {
       return [];
     }
   }
+
 /////////////////////////////////////////////////////////////////////////////////////////////////
   @override
   Future<RecipeResponse?> createRecipe(Recipe recipe) async {
@@ -724,6 +722,94 @@ class ApiServiceImpl implements ApiServiceService {
       } else {
         print(
             'Failed to delete recipe: ${response.statusCode} - ${response.data}');
+        return false;
+      }
+    } on DioException catch (e) {
+      if (e.response != null) {
+        print('Dio Error: ${e.response?.statusCode} - ${e.response?.data}');
+      } else {
+        print('Dio Error: ${e.message}');
+      }
+      return false;
+    } catch (e) {
+      print('Unexpected Error: ${e.toString()}');
+      return false;
+    }
+  }
+
+  @override
+  Future<bool> isRecipeSaved(int foodId) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString(bearerTokenKey);
+
+      if (token == null) {
+        print('Unauthorized: No Bearer token');
+        return false;
+      }
+
+      final response = await _dio.get(
+        '/recipes/is-recipe-saved',
+        queryParameters: {
+          'foodId': foodId,
+        },
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'accept': 'application/json',
+          },
+        ),
+      );
+
+      if (response.statusCode == 200 && response.data != null) {
+        final bool isSaved = response.data['isSaved'] ?? false;
+        return isSaved;
+      } else {
+        print('Unexpected response: ${response.statusCode} - ${response.data}');
+        return false;
+      }
+    } on DioException catch (e) {
+      if (e.response != null) {
+        print('Dio Error: ${e.response?.statusCode} - ${e.response?.data}');
+      } else {
+        print('Dio Error: ${e.message}');
+      }
+      return false;
+    } catch (e) {
+      print('Unexpected Error: ${e.toString()}');
+      return false;
+    }
+  }
+
+  @override
+  Future<bool> isRecipeLiked(int foodId) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString(bearerTokenKey);
+
+      if (token == null) {
+        print('Unauthorized: No Bearer token');
+        return false;
+      }
+
+      final response = await _dio.get(
+        '/recipes/is-recipe-liked',
+        queryParameters: {
+          'foodId': foodId,
+        },
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'accept': 'application/json',
+          },
+        ),
+      );
+
+      if (response.statusCode == 200 && response.data != null) {
+        final bool isLiked = response.data['isLiked'] ?? false;
+        return isLiked;
+      } else {
+        print('Unexpected response: ${response.statusCode} - ${response.data}');
         return false;
       }
     } on DioException catch (e) {

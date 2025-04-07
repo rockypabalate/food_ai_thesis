@@ -149,7 +149,7 @@ class MyRecipesTab extends StatelessWidget {
                                         borderRadius: BorderRadius.circular(16),
                                         child: CachedNetworkImage(
                                           imageUrl: recipe.images.isNotEmpty
-                                              ? recipe.images.first
+                                              ? '${recipe.images.first}?w=500&auto=compress'
                                               : '',
                                           width: double.infinity,
                                           height: double.infinity,
