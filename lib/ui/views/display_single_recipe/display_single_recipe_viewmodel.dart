@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/material.dart';
 import 'package:food_ai_thesis/app/app.locator.dart';
 import 'package:food_ai_thesis/app/app_base_viewmodel.dart';
 import 'package:food_ai_thesis/models/list_recipes/single_display_recipe.dart';
@@ -11,7 +12,6 @@ import 'package:stacked_services/stacked_services.dart';
 class DisplaySingleRecipeViewModel extends AppBaseViewModel {
   final ApiServiceService _apiService = locator<ApiServiceService>();
   final SnackbarService _snackbarService = locator<SnackbarService>();
-  
 
   FoodInfoById? _foodInfoById;
   FoodInfoById? get foodInfoById => _foodInfoById;
@@ -28,6 +28,13 @@ class DisplaySingleRecipeViewModel extends AppBaseViewModel {
     notifyListeners();
   }
 
+  bool _isSaved = false;
+  bool get isSaved => _isSaved;
+
+  bool _isLiked = false;
+  bool get isLiked => _isLiked;
+
+  // Fetch the food details and check the saved/liked status
   Future<void> fetchFoodInfoById(int foodId) async {
     _isBusy = true;
     notifyListeners();
@@ -35,6 +42,8 @@ class DisplaySingleRecipeViewModel extends AppBaseViewModel {
     try {
       _foodInfoById = await _apiService.getFoodInfoById(foodId);
       _foodInfoById ??= null;
+
+      await checkLikedAndSavedStatus(foodId); // Check status here
     } catch (e) {
       print('Error fetching food info: $e');
     } finally {
@@ -43,8 +52,8 @@ class DisplaySingleRecipeViewModel extends AppBaseViewModel {
     }
   }
 
+  // Save food by id
   Future<void> saveFoodById(int foodId) async {
-    // Removed _isBusy handling
     try {
       final success = await _apiService.saveFoodById(foodId);
 
@@ -53,12 +62,14 @@ class DisplaySingleRecipeViewModel extends AppBaseViewModel {
           title: 'Success',
           message: 'Recipe saved successfully',
         );
+        _isSaved = true; // Update saved status
       } else {
         _snackbarService.showSnackbar(
           title: 'Failed',
           message: 'Recipe already saved',
         );
       }
+      notifyListeners();
     } catch (e) {
       _snackbarService.showSnackbar(
         title: 'Error',
@@ -68,11 +79,13 @@ class DisplaySingleRecipeViewModel extends AppBaseViewModel {
     }
   }
 
+  // Like food by id
   Future<void> likeFoodById(int foodId) async {
     try {
       final success = await _apiService.incrementLike(foodId);
 
       if (success) {
+        _isLiked = true; // Update liked status
         notifyListeners();
 
         _snackbarService.showSnackbar(
@@ -94,6 +107,7 @@ class DisplaySingleRecipeViewModel extends AppBaseViewModel {
     }
   }
 
+  // Increment view count
   Future<void> incrementViewCount(int foodId) async {
     try {
       final success = await _apiService.incrementView(foodId);
@@ -107,14 +121,12 @@ class DisplaySingleRecipeViewModel extends AppBaseViewModel {
     }
   }
 
-   // Add a function to request storage permission
+  // Request storage permission for export PDF
   Future<void> requestStoragePermission() async {
     if (Platform.isAndroid) {
-      // Requesting storage permissions for Android
       var status = await Permission.storage.request();
 
       if (!status.isGranted) {
-        // If permission is not granted, show an error
         _snackbarService.showSnackbar(
           title: 'Permission Denied',
           message:
@@ -125,11 +137,11 @@ class DisplaySingleRecipeViewModel extends AppBaseViewModel {
     }
   }
 
+  // Export the recipe as a PDF
   Future<void> exportRecipeAsPDF() async {
     if (_foodInfoById == null) return;
 
     try {
-      // Ensure we have storage permission before proceeding
       await requestStoragePermission();
 
       final file = await PdfExportService.generateRecipePDF(_foodInfoById!);
@@ -138,15 +150,30 @@ class DisplaySingleRecipeViewModel extends AppBaseViewModel {
         title: 'Success',
         message: 'PDF exported: ${file.path}',
       );
-
-      // Optional: Share the PDF
-      // await Share.shareXFiles([XFile(file.path)], text: 'Check out this recipe!');
     } catch (e) {
       _snackbarService.showSnackbar(
         title: 'Error',
         message: 'Failed to export PDF.',
       );
       print('PDF Export Error: $e');
+    }
+  }
+
+  // Check if the recipe is liked and saved
+  Future<void> checkLikedAndSavedStatus(int foodId) async {
+    try {
+      final savedResult = await _apiService.isRecipeSaved(foodId);
+      final likedResult = await _apiService.isRecipeLiked(foodId);
+
+      _isSaved = savedResult;
+      _isLiked = likedResult;
+
+      debugPrint('Recipe is ${_isSaved ? 'saved' : 'not saved'}');
+      debugPrint('Recipe is ${_isLiked ? 'liked' : 'not liked'}');
+
+      notifyListeners();
+    } catch (e) {
+      debugPrint('Error checking liked/saved status: $e');
     }
   }
 }

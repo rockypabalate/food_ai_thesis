@@ -155,16 +155,19 @@ class RecipeWidgets {
   }
 
   static Widget buildFavoriteAndBookmarkIcons(
-      BuildContext context, // Add context as a parameter
-      DisplaySingleRecipeViewModel viewModel) {
+    BuildContext context,
+    DisplaySingleRecipeViewModel viewModel,
+  ) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.end, // Aligns to the right
+      mainAxisAlignment: MainAxisAlignment.end,
       children: [
         // Favorite Icon
         GestureDetector(
-          onTap: () {
-            viewModel.likeFoodById(viewModel.foodInfoById!.id);
-          },
+          onTap: viewModel.isLiked
+              ? null
+              : () {
+                  viewModel.likeFoodById(viewModel.foodInfoById!.id);
+                },
           child: Container(
             width: 35,
             height: 35,
@@ -179,10 +182,10 @@ class RecipeWidgets {
                 ),
               ],
             ),
-            child: const Icon(
+            child: Icon(
               Icons.favorite,
               size: 22,
-              color: Colors.grey,
+              color: viewModel.isLiked ? Colors.red : Colors.grey,
             ),
           ),
         ),
@@ -190,9 +193,11 @@ class RecipeWidgets {
 
         // Bookmark Icon
         GestureDetector(
-          onTap: () {
-            viewModel.saveFoodById(viewModel.foodInfoById!.id);
-          },
+          onTap: viewModel.isSaved
+              ? null
+              : () {
+                  viewModel.saveFoodById(viewModel.foodInfoById!.id);
+                },
           child: Container(
             width: 35,
             height: 35,
@@ -207,10 +212,10 @@ class RecipeWidgets {
                 ),
               ],
             ),
-            child: const Icon(
+            child: Icon(
               Icons.bookmark,
               size: 22,
-              color: Colors.grey,
+              color: viewModel.isSaved ? Colors.orange : Colors.grey,
             ),
           ),
         ),
