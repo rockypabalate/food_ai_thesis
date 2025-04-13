@@ -266,7 +266,7 @@ class StackedRouter extends _i1.RouterBase {
         settings: data,
         transitionsBuilder:
             data.transition ?? _i1.TransitionsBuilders.slideLeftWithFade,
-        transitionDuration: const Duration(milliseconds: 500),
+        transitionDuration: const Duration(milliseconds: 700),
       );
     },
     _i5.RegisterView: (data) {
@@ -276,7 +276,7 @@ class StackedRouter extends _i1.RouterBase {
         settings: data,
         transitionsBuilder:
             data.transition ?? _i1.TransitionsBuilders.slideLeftWithFade,
-        transitionDuration: const Duration(milliseconds: 500),
+        transitionDuration: const Duration(milliseconds: 700),
       );
     },
     _i6.MainpageView: (data) {
@@ -285,7 +285,7 @@ class StackedRouter extends _i1.RouterBase {
             const _i6.MainpageView(),
         settings: data,
         transitionsBuilder: data.transition ?? _i1.TransitionsBuilders.fadeIn,
-        transitionDuration: const Duration(milliseconds: 500),
+        transitionDuration: const Duration(milliseconds: 800),
       );
     },
     _i7.PostRecipeView: (data) {
@@ -410,7 +410,7 @@ class StackedRouter extends _i1.RouterBase {
             const _i25.LoginregisterView(),
         settings: data,
         transitionsBuilder: data.transition ?? _i1.TransitionsBuilders.zoomIn,
-        transitionDuration: const Duration(milliseconds: 500),
+        transitionDuration: const Duration(milliseconds: 700),
       );
     },
     _i26.AiProcessingView: (data) {

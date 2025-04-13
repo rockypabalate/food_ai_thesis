@@ -47,17 +47,17 @@ import 'package:food_ai_thesis/ui/views/setting_page/setting_page_view.dart';
     CustomRoute(
       page: LoginView,
       transitionsBuilder: TransitionsBuilders.slideLeftWithFade,
-      durationInMilliseconds: 500,
+      durationInMilliseconds: 700,
     ),
     CustomRoute(
       page: RegisterView,
       transitionsBuilder: TransitionsBuilders.slideLeftWithFade,
-      durationInMilliseconds: 500,
+      durationInMilliseconds: 700,
     ),
     CustomRoute(
       page: MainpageView,
       transitionsBuilder: TransitionsBuilders.fadeIn,
-      durationInMilliseconds: 500,
+      durationInMilliseconds: 800,
     ),
     MaterialRoute(page: PostRecipeView),
     MaterialRoute(page: MyProfileView),
@@ -81,7 +81,7 @@ import 'package:food_ai_thesis/ui/views/setting_page/setting_page_view.dart';
     CustomRoute(
       page: LoginregisterView,
       transitionsBuilder: TransitionsBuilders.zoomIn,
-      durationInMilliseconds: 500,
+      durationInMilliseconds: 700,
     ),
     MaterialRoute(page: AiProcessingView),
     MaterialRoute(page: SettingPageView),

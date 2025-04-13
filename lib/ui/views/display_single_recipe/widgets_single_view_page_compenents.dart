@@ -1,9 +1,11 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:food_ai_thesis/models/list_recipes/single_display_recipe.dart';
 import 'package:food_ai_thesis/ui/views/display_single_recipe/display_single_recipe_viewmodel.dart';
 import 'package:food_ai_thesis/ui/views/display_single_recipe/export_pdf_UI.dart';
 import 'package:food_ai_thesis/ui/views/display_single_recipe/youtube_play.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shimmer/shimmer.dart';
 
 class RecipeWidgets {
   static Widget buildSectionTitle(String title) {
@@ -117,8 +119,7 @@ class RecipeWidgets {
                     if (index > 0) const SizedBox(width: 12.0),
                     Container(
                       decoration: BoxDecoration(
-                        borderRadius:
-                            BorderRadius.circular(8), // Rounded corners
+                        borderRadius: BorderRadius.circular(8),
                         border: Border.all(
                           color: viewModel.selectedImageIndex == index
                               ? Colors.orange
@@ -134,15 +135,25 @@ class RecipeWidgets {
                         ],
                       ),
                       child: ClipRRect(
-                        borderRadius:
-                            BorderRadius.circular(8), // Apply border radius
-                        child: Image.network(
-                          image.imageUrl,
-                          height: 80,
-                          width: 90, // Fixed width for each image container
-                          fit: BoxFit.cover,
-                        ),
-                      ),
+                          borderRadius: BorderRadius.circular(8),
+                          child: CachedNetworkImage(
+                            imageUrl:
+                                "${image.imageUrl}?quality=30", // lower quality
+                            height: 80,
+                            width: 90,
+                            fit: BoxFit.cover,
+                            placeholder: (context, url) => Shimmer.fromColors(
+                              baseColor: Colors.grey[300]!,
+                              highlightColor: Colors.grey[100]!,
+                              child: Container(
+                                height: 80,
+                                width: 90,
+                                color: Colors.white,
+                              ),
+                            ),
+                            errorWidget: (context, url, error) =>
+                                const Icon(Icons.error),
+                          )),
                     ),
                   ],
                 ),
@@ -262,7 +273,7 @@ class RecipeWidgets {
       style: GoogleFonts.poppins(
         fontSize: 28,
         fontWeight: FontWeight.bold,
-        color: Colors.black87,
+        color: Colors.orange,
       ),
     );
   }

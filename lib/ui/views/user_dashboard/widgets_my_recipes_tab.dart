@@ -32,30 +32,35 @@ class MyRecipesTab extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.only(top: 17.0),
                 child: Center(
-                  child: SizedBox(
-                    width: 330,
-                    child: TextFormField(
-                      onChanged: (query) => viewModel.userfilterRecipes(query),
-                      enabled: viewModel.allUserRecipes.isNotEmpty,
-                      decoration: InputDecoration(
-                        labelText: 'Search Recipes',
-                        labelStyle: TextStyle(
-                          color: viewModel.allUserRecipes.isNotEmpty
-                              ? Colors.black
-                              : Colors.grey,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0), // <-- added horizontal padding
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: TextFormField(
+                        onChanged: (query) =>
+                            viewModel.userfilterRecipes(query),
+                        enabled: viewModel.allUserRecipes.isNotEmpty,
+                        decoration: InputDecoration(
+                          labelText: 'Search Recipes',
+                          labelStyle: TextStyle(
+                            color: viewModel.allUserRecipes.isNotEmpty
+                                ? Colors.black
+                                : Colors.grey,
+                          ),
+                          prefixIcon: const Icon(Icons.search),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                            borderSide: const BorderSide(
+                                color: Colors.black, width: 1.0),
+                          ),
+                          filled: true,
+                          fillColor: Colors.white,
+                          contentPadding: const EdgeInsets.symmetric(
+                              vertical: 10.0, horizontal: 15.0),
                         ),
-                        prefixIcon: const Icon(Icons.search),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                          borderSide:
-                              const BorderSide(color: Colors.black, width: 1.0),
-                        ),
-                        filled: true,
-                        fillColor: Colors.white,
-                        contentPadding: const EdgeInsets.symmetric(
-                            vertical: 10.0, horizontal: 15.0),
+                        style: const TextStyle(color: Colors.black),
                       ),
-                      style: const TextStyle(color: Colors.black),
                     ),
                   ),
                 ),

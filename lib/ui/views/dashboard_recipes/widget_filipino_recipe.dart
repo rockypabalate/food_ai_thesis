@@ -173,32 +173,46 @@ class _FilipinoRecipeListWidgetState extends State<FilipinoRecipeListWidget> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 8),
-                    // Cooking time, difficulty, and author
+
+                    const SizedBox(height: 5),
+
+                    // Recipe details - cook time, difficulty, author
                     Row(
                       children: [
                         const Icon(Icons.access_time,
-                            size: 12, color: Colors.orange),
+                            size: 10, color: Colors.orange),
                         const SizedBox(width: 4),
-                        Text(
-                          foodInfo.totalCookTime ?? 'N/A',
-                          style: GoogleFonts.poppins(
-                            fontSize: 12,
-                            color: Colors.black,
+                        Expanded(
+                          child: Text(
+                            '${foodInfo.totalCookTime ?? 'N/A'} · ${foodInfo.difficulty ?? 'N/A'} · ${foodInfo.author ?? 'Unknown'}',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.poppins(
+                                fontSize: 10, color: Colors.black),
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      '${foodInfo.difficulty ?? 'N/A'} · ${foodInfo.author ?? 'Unknown'}',
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.poppins(
-                        fontSize: 12,
-                        color: Colors.black,
-                      ),
+                    const SizedBox(height: 5),
+
+// New row for category
+                    Row(
+                      children: [
+                        const Icon(Icons.restaurant_menu,
+                            size: 10, color: Colors.orange),
+                        const SizedBox(width: 4),
+                        Expanded(
+                          child: Text(
+                            foodInfo.category ?? 'Uncategorized',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.poppins(
+                                fontSize: 10, color: Colors.black),
+                          ),
+                        ),
+                      ],
                     ),
+
                     const Spacer(),
                     // Stats (views and likes)
                     Row(

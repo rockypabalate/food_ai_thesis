@@ -45,7 +45,7 @@ class DashboardRecipesViewModel extends AppBaseViewModel {
   DashboardRecipesViewModel() {
     getCurrentUser();
     getFeaturedRecipes();
-    getPopularRecipes();
+    // getPopularRecipes();
     getAllFoodInfo();
   }
 

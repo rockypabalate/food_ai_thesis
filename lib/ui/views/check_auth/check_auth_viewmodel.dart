@@ -21,7 +21,7 @@ class CheckAuthViewModel extends AppBaseViewModel {
       _isLoading = true;
       notifyListeners();
 
-      await Future.delayed(const Duration(seconds: 5));
+      // await Future.delayed(const Duration(seconds: 5));
 
       // Retrieve the Bearer token instead of session ID
       String? bearerToken = await _sharedPreferenceService.getBearerToken();

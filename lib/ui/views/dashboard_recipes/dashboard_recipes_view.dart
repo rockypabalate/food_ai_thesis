@@ -62,13 +62,6 @@ class DashboardRecipesView extends StackedView<DashboardRecipesViewModel> {
                       padding:
                           EdgeInsets.symmetric(horizontal: screenWidth * 0.00),
                       children: [
-                          _SectionTitle(
-                            title: 'Filipino Recipes', onSeeAllTap: () {}),
-                        FilipinoRecipeListWidget(
-                          foodInfos: viewModel.foodInfos,
-                          isLoading: viewModel.isLoading,
-                        ),
-                           SizedBox(height: screenHeight * 0.02),
                         _SectionTitle(
                             title: 'Featured Recipes', onSeeAllTap: () {}),
                         FeaturedRecipeListWidget(
@@ -76,14 +69,20 @@ class DashboardRecipesView extends StackedView<DashboardRecipesViewModel> {
                           isFeaturedLoading: viewModel.isFeaturedLoading,
                         ),
                         SizedBox(height: screenHeight * 0.02),
-                      
-                        // _SectionTitle(
-                        //     title: 'Most Liked & Viewed Recipes',
-                        //     onSeeAllTap: () {}),
-                        // MostViewedAndLikedRecipesWidget(
-                        //   popularRecipes: viewModel.popularRecipes,
-                        //   isPopularLoading: viewModel.isPopularLoading,
-                        // ),
+                        _SectionTitle(
+                            title: 'Filipino Recipes', onSeeAllTap: () {}),
+                        FilipinoRecipeListWidget(
+                          foodInfos: viewModel.foodInfos,
+                          isLoading: viewModel.isLoading,
+                        ),
+                        SizedBox(height: screenHeight * 0.02),
+                        _SectionTitle(
+                            title: 'Most Liked & Viewed Recipes',
+                            onSeeAllTap: () {}),
+                        MostViewedAndLikedRecipesWidget(
+                          popularRecipes: viewModel.popularRecipes,
+                          isPopularLoading: viewModel.isPopularLoading,
+                        ),
                         SizedBox(height: screenHeight * 0.015),
                       ],
                     ),

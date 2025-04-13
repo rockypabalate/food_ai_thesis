@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class QRCodePage extends StatelessWidget {
   final String imageUrl =
-      "https://firebasestorage.googleapis.com/v0/b/collabed-af286.appspot.com/o/qr-code.png?alt=media&token=866720f5-d3b7-4ef4-84c6-3deb8fe370aa";
+      "https://firebasestorage.googleapis.com/v0/b/collabed-af286.appspot.com/o/qr-code%20(2).png?alt=media&token=9aad2320-8d48-43a5-9caa-2696a2f05d6e";
 
   const QRCodePage({Key? key}) : super(key: key);
 
@@ -15,7 +15,7 @@ class QRCodePage extends StatelessWidget {
           style: TextStyle(color: Colors.white),
         ),
         backgroundColor: Colors.orange,
-        iconTheme: const IconThemeData(color: Colors.white), // White back icon
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       backgroundColor: Colors.white,
       body: Center(

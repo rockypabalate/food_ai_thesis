@@ -34,23 +34,36 @@ class DisplaySingleRecipeViewModel extends AppBaseViewModel {
   bool _isLiked = false;
   bool get isLiked => _isLiked;
 
-  // Fetch the food details and check the saved/liked status
   Future<void> fetchFoodInfoById(int foodId) async {
-    _isBusy = true;
-    notifyListeners();
+  _isBusy = true;
+  notifyListeners();
 
-    try {
-      _foodInfoById = await _apiService.getFoodInfoById(foodId);
-      _foodInfoById ??= null;
-
-      await checkLikedAndSavedStatus(foodId); // Check status here
-    } catch (e) {
-      print('Error fetching food info: $e');
-    } finally {
-      _isBusy = false;
-      notifyListeners();
+  try {
+    // Step 1: Fetch recipe details first
+    final fetchedRecipe = await _apiService.getFoodInfoById(foodId);
+    if (fetchedRecipe != null) {
+      _foodInfoById = fetchedRecipe;
+    } else {
+      throw Exception('Recipe not found');
     }
+
+    // Step 2: Increment view count
+    await incrementViewCount(foodId);
+
+    // Step 3: Check if liked and saved
+    await checkLikedAndSavedStatus(foodId);
+  } catch (e) {
+    print('Error during sequential fetch: $e');
+    _snackbarService.showSnackbar(
+      title: 'Error',
+      message: 'Something went wrong while loading the recipe.',
+    );
+  } finally {
+    _isBusy = false;
+    notifyListeners(); // Notify once after all API calls are done
   }
+}
+
 
   // Save food by id
   Future<void> saveFoodById(int foodId) async {
