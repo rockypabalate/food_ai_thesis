@@ -255,7 +255,7 @@ class _LoginViewState extends State<LoginView> {
                                             ),
                                             focusedBorder: OutlineInputBorder(
                                               borderRadius: BorderRadius.circular(12),
-                                              borderSide: BorderSide(color: primaryColor, width: 1.5),
+                                              borderSide: const BorderSide(color: primaryColor, width: 1.5),
                                             ),
                                           ),
                                         ),
@@ -326,7 +326,7 @@ class _LoginViewState extends State<LoginView> {
                                             ),
                                             focusedBorder: OutlineInputBorder(
                                               borderRadius: BorderRadius.circular(12),
-                                              borderSide: BorderSide(color: primaryColor, width: 1.5),
+                                              borderSide: const BorderSide(color: primaryColor, width: 1.5),
                                             ),
                                           ),
                                         ),
@@ -401,7 +401,7 @@ class _LoginViewState extends State<LoginView> {
                                                 SizedBox(
                                                   width: screenWidth * 0.05,
                                                   height: screenWidth * 0.05,
-                                                  child: CircularProgressIndicator(
+                                                  child: const CircularProgressIndicator(
                                                     strokeWidth: 2.5,
                                                     valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                                                   ),

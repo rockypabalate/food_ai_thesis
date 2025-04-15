@@ -14,14 +14,13 @@ class ModernRecipeWidgets {
     return SliverAppBar(
       pinned: true,
       expandedHeight: 300.0,
-      backgroundColor: Colors.transparent,
+      backgroundColor: Colors.orange,
       elevation: 0,
-      stretch: true,
+      stretch: false, // Keep this false to prevent stretching
       flexibleSpace: FlexibleSpaceBar(
-        stretchModes: const [
-          StretchMode.zoomBackground,
-          StretchMode.blurBackground,
-        ],
+        collapseMode: CollapseMode
+            .pin, // Added this line to pin the background when collapsing
+        stretchModes: const [], // Keep empty to prevent stretching
         background: Stack(
           fit: StackFit.expand,
           children: [
@@ -88,7 +87,7 @@ class ModernRecipeWidgets {
       leading: Container(
         margin: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-          color: Colors.black.withOpacity(0.4),
+          color: Colors.black.withOpacity(0.2),
           shape: BoxShape.circle,
         ),
         child: IconButton(
@@ -100,7 +99,7 @@ class ModernRecipeWidgets {
         Container(
           margin: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: Colors.black.withOpacity(0.4),
+            color: Colors.black.withOpacity(0.2),
             shape: BoxShape.circle,
           ),
           child: IconButton(
@@ -116,7 +115,7 @@ class ModernRecipeWidgets {
         Container(
           margin: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: Colors.black.withOpacity(0.4),
+            color: Colors.black.withOpacity(0.2),
             shape: BoxShape.circle,
           ),
           child: IconButton(

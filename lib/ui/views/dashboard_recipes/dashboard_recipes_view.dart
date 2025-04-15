@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+
 import 'package:food_ai_thesis/ui/views/dashboard_recipes/tilt.dart';
 import 'package:food_ai_thesis/ui/views/dashboard_recipes/widget_dashboard_header.dart';
 import 'package:food_ai_thesis/ui/views/dashboard_recipes/widget_featured_recipe.dart';
 import 'package:food_ai_thesis/ui/views/dashboard_recipes/widget_filipino_recipe.dart';
 import 'package:food_ai_thesis/ui/views/dashboard_recipes/widget_liked_viewed_recipes.dart';
+import 'package:food_ai_thesis/utils/constants.dart';
 import 'package:stacked/stacked.dart';
 import 'dashboard_recipes_viewmodel.dart';
 
 class DashboardRecipesView extends StackedView<DashboardRecipesViewModel> {
-  const DashboardRecipesView({Key? key}) : super(key: key);
+  const DashboardRecipesView({super.key});
 
   @override
   Widget builder(
@@ -17,89 +19,131 @@ class DashboardRecipesView extends StackedView<DashboardRecipesViewModel> {
     DashboardRecipesViewModel viewModel,
     Widget? child,
   ) {
-    final double screenWidth = MediaQuery.of(context).size.width;
-    final double screenHeight = MediaQuery.of(context).size.height;
-
-    return WillPopScope(
-      onWillPop: () async => false,
+    return PopScope(
+      canPop: false,
       child: Scaffold(
         backgroundColor: Colors.white,
         floatingActionButton: TiltingFab(
           onPressed: viewModel.navigateToImageProcessing,
         ),
-        body: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            DashboardHeader(
-              profileImage: viewModel.profileImage,
-              username: viewModel.username,
-            ),
-            SizedBox(height: screenHeight * 0.01),
-            Expanded(
-              child: _buildMainContent(
-                  context, viewModel, screenWidth, screenHeight),
-            ),
-          ],
+        body: LayoutBuilder(
+          builder: (context, constraints) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                DashboardHeader(
+                  profileImage: viewModel.profileImage,
+                  username: viewModel.username,
+                ),
+                const SizedBox(height: AppSpacing.sm),
+                Expanded(
+                  child: _buildMainContent(context, viewModel,
+                      constraints.maxWidth, constraints.maxHeight),
+                ),
+              ],
+            );
+          },
         ),
       ),
     );
   }
 
   Widget _buildMainContent(
-      BuildContext context,
-      DashboardRecipesViewModel viewModel,
-      double screenWidth,
-      double screenHeight) {
-    if (viewModel.isLoading &&
-        viewModel.foodInfos.isEmpty &&
+    BuildContext context,
+    DashboardRecipesViewModel viewModel,
+    double width,
+    double height,
+  ) {
+    final bool isDataEmpty = viewModel.foodInfos.isEmpty &&
         viewModel.featuredRecipes.isEmpty &&
-        viewModel.popularRecipes.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            SpinKitFadingCube(
-              color: Colors.orange,
-              size: screenWidth * 0.08,
-            ),
-            SizedBox(height: screenHeight * 0.02),
-            Text(
-              'Preparing your recipes...',
-              style: TextStyle(
-                fontSize: screenWidth * 0.045,
-                fontWeight: FontWeight.w600,
-                color: Colors.orange,
-              ),
-            ),
-          ],
-        ),
-      );
+        viewModel.popularRecipes.isEmpty;
+
+    if (viewModel.isLoading && isDataEmpty) {
+      return _buildLoadingState(context, width);
     } else {
-      return ListView(
-        physics: const BouncingScrollPhysics(),
-        padding: EdgeInsets.symmetric(vertical: screenHeight * 0.00),
+      return _buildContentState(context, viewModel, width, height);
+    }
+  }
+
+  Widget _buildLoadingState(BuildContext context, double width) {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          const _SectionTitle(title: 'Featured Recipes'),
+          SpinKitFadingCube(
+            color: Colors.orange,
+            size: width * 0.08,
+          ),
+          const SizedBox(height: 25),
+          Text(
+            'Fetching recipes...',
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black54,
+                ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildContentState(
+    BuildContext context,
+    DashboardRecipesViewModel viewModel,
+    double width,
+    double height,
+  ) {
+    // Calculate responsive padding based on screen width
+    final double horizontalPadding = width * 0.04;
+
+    return RefreshIndicator(
+      onRefresh: () async {
+        await Future.wait([
+          viewModel.getAllFoodInfo(),
+          viewModel.getFeaturedRecipes(),
+          viewModel.getPopularRecipes(),
+        ]);
+      },
+      color: Theme.of(context).colorScheme.primary,
+      child: ListView(
+        physics: const AlwaysScrollableScrollPhysics(
+          parent: BouncingScrollPhysics(),
+        ),
+        padding: EdgeInsets.only(bottom: AppSpacing.xxl),
+        children: [
+          SectionTitle(
+            title: 'Featured Recipes',
+            padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+          ),
           FeaturedRecipeListWidget(
             featuredRecipes: viewModel.featuredRecipes,
             isFeaturedLoading: viewModel.isFeaturedLoading,
           ),
-          SizedBox(height: screenHeight * 0.010),
-          const _SectionTitle(title: 'Filipino Recipes'),
+          const SizedBox(height: AppSpacing.sm),
+
+          SectionTitle(
+            title: 'Filipino Recipes',
+            padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+          ),
           FilipinoRecipeListWidget(
             foodInfos: viewModel.foodInfos,
             isLoading: viewModel.isLoading,
           ),
-          SizedBox(height: screenHeight * 0.010),
-          const _SectionTitle(title: 'Most Liked & Viewed Recipes'),
+          const SizedBox(height: AppSpacing.sm),
+
+          SectionTitle(
+            title: 'Most Liked & Viewed Recipes',
+            padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+          ),
           MostViewedAndLikedRecipesWidget(
             popularRecipes: viewModel.popularRecipes,
             isPopularLoading: viewModel.isPopularLoading,
           ),
-          SizedBox(height: screenHeight * 0.08),
+
+          // Space for FAB and bottom navigation
         ],
-      );
-    }
+      ),
+    );
   }
 
   @override
@@ -117,33 +161,53 @@ class DashboardRecipesView extends StackedView<DashboardRecipesViewModel> {
   }
 }
 
-class _SectionTitle extends StatelessWidget {
+class SectionTitle extends StatelessWidget {
   final String title;
+  final EdgeInsetsGeometry padding;
+  final VoidCallback? onSeeAllPressed;
 
-  const _SectionTitle({
-    Key? key,
+  const SectionTitle({
+    super.key,
     required this.title,
-  }) : super(key: key);
+    this.padding = const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+    this.onSeeAllPressed,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final double screenWidth = MediaQuery.of(context).size.width;
+    // Adaptive text sizing based on screen width
+    final textScaleFactor = MediaQuery.of(context).textScaleFactor;
+    final titleSize = textScaleFactor * 18.0;
 
     return Padding(
-      padding:
-          EdgeInsets.symmetric(horizontal: screenWidth * 0.04, vertical: 8.0),
+      padding: padding,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
             title,
-            style: TextStyle(
-              fontSize: screenWidth * 0.055,
-              fontWeight: FontWeight.bold,
-              color: Colors.black87,
-            ),
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  fontSize: titleSize,
+                  fontWeight: FontWeight.bold,
+                ),
           ),
-          // 'See all' removed
+          if (onSeeAllPressed != null)
+            TextButton(
+              onPressed: onSeeAllPressed,
+              style: TextButton.styleFrom(
+                minimumSize: Size.zero,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              ),
+              child: Text(
+                'See all',
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.primary,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
         ],
       ),
     );
