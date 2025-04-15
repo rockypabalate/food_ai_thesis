@@ -151,7 +151,7 @@ class _FrontPageState extends State<FrontPage> {
             ),
             SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(20, 32, 20, 16),
+                padding: const EdgeInsets.fromLTRB(20, 20, 20, 16),
                 child: FadeEffectSettings(
                   delay: 500,
                   child: Text(

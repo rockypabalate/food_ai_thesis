@@ -44,201 +44,423 @@ class _RegisterViewState extends State<RegisterView> {
     final screenSize = MediaQuery.of(context).size;
     final screenHeight = screenSize.height;
     final screenWidth = screenSize.width;
-    
+
     // Calculate responsive sizes
-    final double contentPadding = screenWidth * 0.05; // 5% of screen width
-    final double buttonHeight = screenHeight * 0.06; // 6% of screen height
-    final double verticalSpacing = screenHeight * 0.02; // 2% of screen height
-    final double smallerSpacing = screenHeight * 0.015; // 1.5% of screen height
-    final double cardWidth = screenWidth * 0.9; // 90% of screen width
-    
+    final double contentPadding = screenWidth * 0.05;
+    final double buttonHeight = screenHeight * 0.06;
+    final double verticalSpacing = screenHeight * 0.02;
+    final double smallerSpacing = screenHeight * 0.015;
+
     // Text scaling
-    final textScaleFactor = MediaQuery.of(context).textScaleFactor;
-    final titleFontSize = 27 * (screenWidth / 375); // Base size for iPhone X
+    final titleFontSize = 28 * (screenWidth / 375);
+    final subtitleFontSize = 15 * (screenWidth / 375);
     final bodyTextFontSize = 14 * (screenWidth / 375);
-    final inputTextFontSize = 16 * (screenWidth / 375);
-    final smallTextFontSize = 11 * (screenWidth / 375);
-    
+    final smallTextFontSize = 12 * (screenWidth / 375);
+
+    // Colors - matching the login page
+    final primaryColor = const Color(0xFFFF6B00); // Vibrant orange
+    final secondaryColor = const Color(0xFF2E3E5C); // Dark blue for text
+    final backgroundColor = const Color(0xFFFAFAFA); // Light background
+    final cardColor = Colors.white;
+    final subtleGrey = const Color(0xFFF1F1F1); // For input fields
+
     return ViewModelBuilder<RegisterViewModel>.reactive(
       viewModelBuilder: () => RegisterViewModel(),
       builder: (context, viewModel, child) {
         return Scaffold(
-          backgroundColor: Colors.white,
+          backgroundColor: backgroundColor,
+          appBar: AppBar(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            leading: IconButton(
+              icon: Icon(Icons.arrow_back_ios_rounded, color: secondaryColor),
+              onPressed: () => viewModel.navigateToLogin(),
+            ),
+          ),
           body: Stack(
             children: [
-              Container(
-                height: screenHeight,
-                color: Colors.white,
-              ),
-
-              SingleChildScrollView(
-                child: Padding(
-                  padding: EdgeInsets.only(
-                    top: screenHeight * 0.15, // 15% from top
-                    left: contentPadding,
-                    right: contentPadding,
-                    bottom: screenHeight * 0.05, // 5% padding at bottom
-                  ),
-                  child: Column(
-                    children: [
-                      FadeEffectRegister(
-                        delay: 100,
-                        isHorizontalSlide: true,
-                        child: Container(
-                          width: cardWidth,
-                          padding: EdgeInsets.all(screenWidth * 0.04),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(20.0),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.withOpacity(.2),
-                                spreadRadius: 3,
-                                blurRadius: 3,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              // Title
-                              FadeEffectRegister(
-                                delay: 200,
-                                child: Text(
-                                  'Register Account',
-                                  style: GoogleFonts.poppins(
-                                    fontSize: titleFontSize,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                              SizedBox(height: verticalSpacing * 1.5),
-                              
-                              // Subtitle
-                              FadeEffectRegister(
-                                delay: 300,
-                                child: Align(
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    'Create an account to explore the all features of the app',
-                                    textAlign: TextAlign.center,
-                                    style: GoogleFonts.poppins(
-                                      fontSize: bodyTextFontSize,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              SizedBox(height: verticalSpacing),
-                              
-                              // Username field
-                              FadeEffectRegister(
-                                delay: 400,
-                                child: _buildTextField(
-                                  controller: usernameController,
-                                  hintText: 'Username',
-                                  icon: Icons.person,
-                                  screenWidth: screenWidth,
-                                  screenHeight: screenHeight,
-                                  inputTextFontSize: inputTextFontSize,
-                                  hintTextFontSize: bodyTextFontSize,
-                                ),
-                              ),
-                              SizedBox(height: smallerSpacing),
-                              
-                              // Email field
-                              FadeEffectRegister(
-                                delay: 500,
-                                child: _buildTextField(
-                                  controller: emailController,
-                                  hintText: 'Email',
-                                  icon: Icons.email,
-                                  screenWidth: screenWidth,
-                                  screenHeight: screenHeight,
-                                  inputTextFontSize: inputTextFontSize,
-                                  hintTextFontSize: bodyTextFontSize,
-                                ),
-                              ),
-                              SizedBox(height: smallerSpacing),
-                              
-                              // Password field
-                              FadeEffectRegister(
-                                delay: 600,
-                                child: _buildPasswordField(
-                                  controller: passwordController,
-                                  hintText: 'Password',
-                                  isVisible: viewModel.isPasswordVisible,
-                                  toggleVisibility: viewModel.togglePasswordVisibility,
-                                  screenWidth: screenWidth,
-                                  screenHeight: screenHeight,
-                                  inputTextFontSize: inputTextFontSize,
-                                  hintTextFontSize: bodyTextFontSize,
-                                ),
-                              ),
-                              SizedBox(height: smallerSpacing),
-                              
-                              // Confirm password field
-                              FadeEffectRegister(
-                                delay: 700,
-                                child: _buildPasswordField(
-                                  controller: confirmPasswordController,
-                                  hintText: 'Confirm Password',
-                                  isVisible: viewModel.isPasswordVisible,
-                                  toggleVisibility: viewModel.togglePasswordVisibility,
-                                  screenWidth: screenWidth,
-                                  screenHeight: screenHeight,
-                                  inputTextFontSize: inputTextFontSize,
-                                  hintTextFontSize: bodyTextFontSize,
-                                ),
-                              ),
-                              SizedBox(height: verticalSpacing),
-                              
-                              // Sign up button
-                              FadeEffectRegister(
-                                delay: 800,
-                                child: _buildSignUpButton(
-                                  viewModel, 
-                                  buttonHeight, 
-                                  bodyTextFontSize
-                                ),
-                              ),
-                              
-                              // Error message
-                              if (viewModel.errorMessage != null)
-                                FadeEffectRegister(
-                                  delay: 900,
-                                  child: Padding(
-                                    padding: EdgeInsets.only(top: smallerSpacing),
-                                    child: Text(
-                                      viewModel.errorMessage!,
-                                      style: TextStyle(
-                                        color: Colors.red,
-                                        fontSize: bodyTextFontSize,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              SizedBox(height: verticalSpacing),
-                              
-                              // Sign in text
-                              FadeEffectRegister(
-                                delay: 1200,
-                                child: _buildSignInText(viewModel, smallTextFontSize),
-                              ),
-                              SizedBox(height: verticalSpacing),
-                            ],
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: verticalSpacing * 0.5),
-                    ],
+              // Background with subtle pattern
+              Positioned.fill(
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: backgroundColor,
+                    image: const DecorationImage(
+                      image: AssetImage(
+                          'lib/assets/subtle_pattern.png'), // Add this asset or use a color
+                      repeat: ImageRepeat.repeat,
+                      opacity: 0.05,
+                    ),
                   ),
                 ),
               ),
-              // Loading overlay
-              LoadingIndicator(isLoading: viewModel.isLoading),
+
+              // Main content
+              SafeArea(
+                child: SingleChildScrollView(
+                  physics: const BouncingScrollPhysics(),
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: contentPadding,
+                      vertical: screenHeight * 0.02,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Title and subtitle
+                        FadeEffectRegister(
+                          delay: 200,
+                          child: Text(
+                            'Create Account',
+                            style: GoogleFonts.poppins(
+                              fontSize: titleFontSize,
+                              color: secondaryColor,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 0.5,
+                            ),
+                          ),
+                        ),
+
+                        SizedBox(height: verticalSpacing * 0.5),
+
+                        FadeEffectRegister(
+                          delay: 300,
+                          child: Text(
+                            'Discover personalized recipes tailored just for you',
+                            style: GoogleFonts.poppins(
+                              fontSize: subtitleFontSize,
+                              color: secondaryColor.withOpacity(0.7),
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                        ),
+
+                        SizedBox(height: verticalSpacing * 2),
+
+                        // Registration form
+                        FadeEffectRegister(
+                          delay: 400,
+                          isHorizontalSlide: true,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: cardColor,
+                              borderRadius: BorderRadius.circular(24),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.06),
+                                  blurRadius: 15,
+                                  spreadRadius: 0,
+                                  offset: const Offset(0, 5),
+                                ),
+                              ],
+                            ),
+                            padding: EdgeInsets.all(screenWidth * 0.06),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // Form title
+                                FadeEffectRegister(
+                                  delay: 500,
+                                  child: Text(
+                                    'Personal Information',
+                                    style: GoogleFonts.poppins(
+                                      fontSize: bodyTextFontSize * 1.1,
+                                      color: secondaryColor,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+
+                                SizedBox(height: verticalSpacing * 1.2),
+
+                                // Username field
+                                FadeEffectRegister(
+                                  delay: 600,
+                                  child: _buildTextField(
+                                    controller: usernameController,
+                                    label: 'Username',
+                                    hintText: 'Enter your username',
+                                    icon: Icons.person_outline_rounded,
+                                    screenWidth: screenWidth,
+                                    screenHeight: screenHeight,
+                                    bodyTextFontSize: bodyTextFontSize,
+                                    smallTextFontSize: smallTextFontSize,
+                                    primaryColor: primaryColor,
+                                    secondaryColor: secondaryColor,
+                                    subtleGrey: subtleGrey,
+                                  ),
+                                ),
+
+                                SizedBox(height: verticalSpacing),
+
+                                // Email field
+                                FadeEffectRegister(
+                                  delay: 700,
+                                  child: _buildTextField(
+                                    controller: emailController,
+                                    label: 'Email',
+                                    hintText: 'Enter your email address',
+                                    icon: Icons.email_outlined,
+                                    screenWidth: screenWidth,
+                                    screenHeight: screenHeight,
+                                    bodyTextFontSize: bodyTextFontSize,
+                                    smallTextFontSize: smallTextFontSize,
+                                    primaryColor: primaryColor,
+                                    secondaryColor: secondaryColor,
+                                    subtleGrey: subtleGrey,
+                                  ),
+                                ),
+
+                                SizedBox(height: verticalSpacing),
+
+                                // Password field
+                                FadeEffectRegister(
+                                  delay: 800,
+                                  child: _buildPasswordField(
+                                    controller: passwordController,
+                                    label: 'Password',
+                                    hintText: 'Create a secure password',
+                                    isVisible: viewModel.isPasswordVisible,
+                                    toggleVisibility:
+                                        viewModel.togglePasswordVisibility,
+                                    screenWidth: screenWidth,
+                                    screenHeight: screenHeight,
+                                    bodyTextFontSize: bodyTextFontSize,
+                                    smallTextFontSize: smallTextFontSize,
+                                    primaryColor: primaryColor,
+                                    secondaryColor: secondaryColor,
+                                    subtleGrey: subtleGrey,
+                                  ),
+                                ),
+
+                                SizedBox(height: verticalSpacing),
+
+                                // Confirm password field
+                                FadeEffectRegister(
+                                  delay: 900,
+                                  child: _buildPasswordField(
+                                    controller: confirmPasswordController,
+                                    label: 'Confirm Password',
+                                    hintText: 'Repeat your password',
+                                    isVisible: viewModel.isPasswordVisible,
+                                    toggleVisibility:
+                                        viewModel.togglePasswordVisibility,
+                                    screenWidth: screenWidth,
+                                    screenHeight: screenHeight,
+                                    bodyTextFontSize: bodyTextFontSize,
+                                    smallTextFontSize: smallTextFontSize,
+                                    primaryColor: primaryColor,
+                                    secondaryColor: secondaryColor,
+                                    subtleGrey: subtleGrey,
+                                  ),
+                                ),
+
+                                // Password strength indicator could be added here
+
+                                SizedBox(height: verticalSpacing * 1.5),
+
+                                // Sign up button
+                                FadeEffectRegister(
+                                  delay: 1000,
+                                  child: SizedBox(
+                                    width: double.infinity,
+                                    height: buttonHeight,
+                                    child: ElevatedButton(
+                                      onPressed: viewModel.isLoading
+                                          ? null
+                                          : () async {
+                                              FocusScope.of(context).unfocus();
+                                              await viewModel.register(
+                                                usernameController.text,
+                                                emailController.text,
+                                                passwordController.text,
+                                                confirmPasswordController.text,
+                                              );
+                                            },
+                                      style: ElevatedButton.styleFrom(
+                                        foregroundColor: Colors.white,
+                                        backgroundColor: primaryColor,
+                                        shadowColor:
+                                            primaryColor.withOpacity(0.4),
+                                        elevation: 8,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(12),
+                                        ),
+                                        disabledBackgroundColor:
+                                            primaryColor.withOpacity(0.7),
+                                        disabledForegroundColor: Colors.white,
+                                      ),
+                                      child: viewModel.isLoading
+                                          ? Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                SizedBox(
+                                                  width: screenWidth * 0.05,
+                                                  height: screenWidth * 0.05,
+                                                  child:
+                                                      const CircularProgressIndicator(
+                                                    strokeWidth: 2.5,
+                                                    valueColor:
+                                                        AlwaysStoppedAnimation<
+                                                                Color>(
+                                                            Colors.white),
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                    width: screenWidth * 0.03),
+                                                Text(
+                                                  'Creating...',
+                                                  style: GoogleFonts.poppins(
+                                                    fontSize: bodyTextFontSize,
+                                                    fontWeight: FontWeight.w600,
+                                                    letterSpacing: 0.5,
+                                                  ),
+                                                ),
+                                              ],
+                                            )
+                                          : Text(
+                                              'Create Account',
+                                              style: GoogleFonts.poppins(
+                                                fontSize:
+                                                    bodyTextFontSize * 1.1,
+                                                fontWeight: FontWeight.w600,
+                                                letterSpacing: 0.5,
+                                              ),
+                                            ),
+                                    ),
+                                  ),
+                                ),
+
+                                // Error message
+                                if (viewModel.errorMessage != null)
+                                  FadeEffectRegister(
+                                    delay: 1050,
+                                    child: Padding(
+                                      padding:
+                                          EdgeInsets.only(top: smallerSpacing),
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(
+                                          vertical: 8,
+                                          horizontal: 12,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: Colors.red.withOpacity(0.1),
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                        ),
+                                        child: Row(
+                                          children: [
+                                            Icon(
+                                              Icons.error_outline,
+                                              color: Colors.red,
+                                              size: bodyTextFontSize * 1.2,
+                                            ),
+                                            const SizedBox(width: 8),
+                                            Expanded(
+                                              child: Text(
+                                                viewModel.errorMessage!,
+                                                style: GoogleFonts.poppins(
+                                                  color: Colors.red,
+                                                  fontSize: smallTextFontSize,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          ),
+                        ),
+
+                        SizedBox(height: verticalSpacing * 2),
+
+                        // Already have an account text
+                        FadeEffectRegister(
+                          delay: 1100,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                "Already have an account? ",
+                                style: GoogleFonts.poppins(
+                                  fontSize: bodyTextFontSize,
+                                  color: secondaryColor.withOpacity(0.7),
+                                ),
+                              ),
+                              GestureDetector(
+                                onTap: () => viewModel.navigateToLogin(),
+                                child: Text(
+                                  "Sign In",
+                                  style: GoogleFonts.poppins(
+                                    fontSize: bodyTextFontSize,
+                                    color: primaryColor,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        SizedBox(height: verticalSpacing),
+
+                        // Terms and Privacy Policy
+                        FadeEffectRegister(
+                          delay: 1200,
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: screenWidth * 0.05),
+                            child: RichText(
+                              textAlign: TextAlign.center,
+                              text: TextSpan(
+                                style: GoogleFonts.poppins(
+                                  fontSize: smallTextFontSize,
+                                  color: secondaryColor.withOpacity(0.6),
+                                ),
+                                children: [
+                                  const TextSpan(
+                                    text:
+                                        'By creating an account, you agree to our ',
+                                  ),
+                                  TextSpan(
+                                    text: 'Terms of Service',
+                                    style: GoogleFonts.poppins(
+                                      fontSize: smallTextFontSize,
+                                      color: primaryColor,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                    recognizer: TapGestureRecognizer()
+                                      ..onTap = () {
+                                        // Handle terms tap
+                                      },
+                                  ),
+                                  const TextSpan(text: ' and acknowledge our '),
+                                  TextSpan(
+                                    text: 'Privacy Policy',
+                                    style: GoogleFonts.poppins(
+                                      fontSize: smallTextFontSize,
+                                      color: primaryColor,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                    recognizer: TapGestureRecognizer()
+                                      ..onTap = () {
+                                        // Handle privacy policy tap
+                                      },
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
             ],
           ),
         );
@@ -248,156 +470,149 @@ class _RegisterViewState extends State<RegisterView> {
 
   Widget _buildTextField({
     required TextEditingController controller,
+    required String label,
     required String hintText,
     required IconData icon,
     required double screenWidth,
     required double screenHeight,
-    required double inputTextFontSize,
-    required double hintTextFontSize,
+    required double bodyTextFontSize,
+    required double smallTextFontSize,
+    required Color primaryColor,
+    required Color secondaryColor,
+    required Color subtleGrey,
   }) {
-    return TextField(
-      controller: controller,
-      style: GoogleFonts.poppins(fontSize: inputTextFontSize),
-      decoration: InputDecoration(
-        filled: true,
-        fillColor: Colors.grey[100],
-        hintText: hintText,
-        hintStyle: GoogleFonts.poppins(
-          fontSize: hintTextFontSize,
-          color: Colors.grey[600],
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 4, bottom: 8),
+          child: Text(
+            label,
+            style: GoogleFonts.poppins(
+              fontSize: smallTextFontSize,
+              fontWeight: FontWeight.w500,
+              color: secondaryColor.withOpacity(0.8),
+            ),
+          ),
         ),
-        contentPadding: EdgeInsets.symmetric(
-          vertical: screenHeight * 0.015,
-          horizontal: screenWidth * 0.05,
+        TextField(
+          controller: controller,
+          style: GoogleFonts.poppins(
+            fontSize: bodyTextFontSize,
+            color: secondaryColor,
+          ),
+          decoration: InputDecoration(
+            filled: true,
+            fillColor: subtleGrey,
+            hintText: hintText,
+            hintStyle: GoogleFonts.poppins(
+              fontSize: bodyTextFontSize,
+              color: secondaryColor.withOpacity(0.4),
+            ),
+            contentPadding: EdgeInsets.symmetric(
+              vertical: screenHeight * 0.018,
+              horizontal: screenWidth * 0.05,
+            ),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide.none,
+            ),
+            prefixIcon: Icon(
+              icon,
+              color: primaryColor,
+              size: screenWidth * 0.055,
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide.none,
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: primaryColor, width: 1.5),
+            ),
+          ),
         ),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(15.0),
-          borderSide: BorderSide.none,
-        ),
-        prefixIcon: Icon(
-          icon, 
-          color: Colors.orange[600],
-          size: screenWidth * 0.055,
-        ),
-      ),
+      ],
     );
   }
 
   Widget _buildPasswordField({
     required TextEditingController controller,
+    required String label,
     required String hintText,
     required bool isVisible,
     required VoidCallback toggleVisibility,
     required double screenWidth,
     required double screenHeight,
-    required double inputTextFontSize,
-    required double hintTextFontSize,
+    required double bodyTextFontSize,
+    required double smallTextFontSize,
+    required Color primaryColor,
+    required Color secondaryColor,
+    required Color subtleGrey,
   }) {
-    return TextField(
-      controller: controller,
-      obscureText: !isVisible,
-      style: GoogleFonts.poppins(fontSize: inputTextFontSize),
-      decoration: InputDecoration(
-        filled: true,
-        fillColor: Colors.grey[100],
-        hintText: hintText,
-        hintStyle: GoogleFonts.poppins(
-          fontSize: hintTextFontSize,
-          color: Colors.grey[600],
-        ),
-        contentPadding: EdgeInsets.symmetric(
-          vertical: screenHeight * 0.015,
-          horizontal: screenWidth * 0.05,
-        ),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(15.0),
-          borderSide: BorderSide.none,
-        ),
-        prefixIcon: Icon(
-          Icons.lock, 
-          color: Colors.orange[600],
-          size: screenWidth * 0.055,
-        ),
-        suffixIcon: IconButton(
-          icon: Icon(
-            isVisible ? Icons.visibility : Icons.visibility_off,
-            color: Colors.grey[600],
-            size: screenWidth * 0.055,
-          ),
-          onPressed: toggleVisibility,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSignUpButton(
-    RegisterViewModel viewModel, 
-    double buttonHeight,
-    double textSize,
-  ) {
-    return SizedBox(
-      width: double.infinity,
-      height: buttonHeight,
-      child: ElevatedButton(
-        onPressed: () async {
-          FocusScope.of(context).unfocus();
-          viewModel.setLoading(true);
-          await viewModel.register(
-            usernameController.text,
-            emailController.text,
-            passwordController.text,
-            confirmPasswordController.text,
-          );
-          viewModel.setLoading(false);
-        },
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.orange[600],
-          foregroundColor: Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-        ),
-        child: viewModel.isBusy
-            ? SizedBox(
-                height: buttonHeight * 0.6,
-                width: buttonHeight * 0.6,
-                child: const CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                  strokeWidth: 3,
-                ),
-              )
-            : Text(
-                'Sign Up',
-                style: GoogleFonts.poppins(
-                  fontSize: textSize,
-                  color: Colors.white,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-      ),
-    );
-  }
-
-  Widget _buildSignInText(RegisterViewModel viewModel, double textSize) {
-    return RichText(
-      text: TextSpan(
-        text: "Already have an account?  ",
-        style: GoogleFonts.poppins(fontSize: textSize, color: Colors.black),
-        children: [
-          TextSpan(
-            text: "Sign In here",
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 4, bottom: 8),
+          child: Text(
+            label,
             style: GoogleFonts.poppins(
-              fontSize: textSize,
-              color: Colors.orange[900],
-              decoration: TextDecoration.underline,
+              fontSize: smallTextFontSize,
+              fontWeight: FontWeight.w500,
+              color: secondaryColor.withOpacity(0.8),
             ),
-            recognizer: TapGestureRecognizer()
-              ..onTap = () {
-                viewModel.navigateToLogin();
-              },
           ),
-        ],
-      ),
+        ),
+        TextField(
+          controller: controller,
+          obscureText: !isVisible,
+          style: GoogleFonts.poppins(
+            fontSize: bodyTextFontSize,
+            color: secondaryColor,
+          ),
+          decoration: InputDecoration(
+            filled: true,
+            fillColor: subtleGrey,
+            hintText: hintText,
+            hintStyle: GoogleFonts.poppins(
+              fontSize: bodyTextFontSize,
+              color: secondaryColor.withOpacity(0.4),
+            ),
+            contentPadding: EdgeInsets.symmetric(
+              vertical: screenHeight * 0.018,
+              horizontal: screenWidth * 0.05,
+            ),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide.none,
+            ),
+            prefixIcon: Icon(
+              Icons.lock_outline_rounded,
+              color: primaryColor,
+              size: screenWidth * 0.055,
+            ),
+            suffixIcon: IconButton(
+              icon: Icon(
+                isVisible
+                    ? Icons.visibility_rounded
+                    : Icons.visibility_off_rounded,
+                color: secondaryColor.withOpacity(0.6),
+                size: screenWidth * 0.055,
+              ),
+              onPressed: toggleVisibility,
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide.none,
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: primaryColor, width: 1.5),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

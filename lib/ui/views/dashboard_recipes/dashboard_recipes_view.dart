@@ -36,61 +36,70 @@ class DashboardRecipesView extends StackedView<DashboardRecipesViewModel> {
             ),
             SizedBox(height: screenHeight * 0.01),
             Expanded(
-              child: viewModel.isLoading
-                  ? Center(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          SpinKitThreeBounce(
-                            color: Colors.orange,
-                            size: screenWidth * 0.08,
-                          ),
-                          SizedBox(height: screenHeight * 0.02),
-                          Text(
-                            'Fetching recipes...',
-                            style: TextStyle(
-                              fontSize: screenWidth * 0.045,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.orange,
-                            ),
-                          ),
-                        ],
-                      ),
-                    )
-                  : ListView(
-                      physics: const BouncingScrollPhysics(),
-                      padding:
-                          EdgeInsets.symmetric(horizontal: screenWidth * 0.00),
-                      children: [
-                        _SectionTitle(
-                            title: 'Featured Recipes', onSeeAllTap: () {}),
-                        FeaturedRecipeListWidget(
-                          featuredRecipes: viewModel.featuredRecipes,
-                          isFeaturedLoading: viewModel.isFeaturedLoading,
-                        ),
-                        SizedBox(height: screenHeight * 0.02),
-                        _SectionTitle(
-                            title: 'Filipino Recipes', onSeeAllTap: () {}),
-                        FilipinoRecipeListWidget(
-                          foodInfos: viewModel.foodInfos,
-                          isLoading: viewModel.isLoading,
-                        ),
-                        SizedBox(height: screenHeight * 0.02),
-                        _SectionTitle(
-                            title: 'Most Liked & Viewed Recipes',
-                            onSeeAllTap: () {}),
-                        MostViewedAndLikedRecipesWidget(
-                          popularRecipes: viewModel.popularRecipes,
-                          isPopularLoading: viewModel.isPopularLoading,
-                        ),
-                        SizedBox(height: screenHeight * 0.015),
-                      ],
-                    ),
+              child: _buildMainContent(
+                  context, viewModel, screenWidth, screenHeight),
             ),
           ],
         ),
       ),
     );
+  }
+
+  Widget _buildMainContent(
+      BuildContext context,
+      DashboardRecipesViewModel viewModel,
+      double screenWidth,
+      double screenHeight) {
+    if (viewModel.isLoading &&
+        viewModel.foodInfos.isEmpty &&
+        viewModel.featuredRecipes.isEmpty &&
+        viewModel.popularRecipes.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SpinKitFadingCube(
+              color: Colors.orange,
+              size: screenWidth * 0.08,
+            ),
+            SizedBox(height: screenHeight * 0.02),
+            Text(
+              'Preparing your recipes...',
+              style: TextStyle(
+                fontSize: screenWidth * 0.045,
+                fontWeight: FontWeight.w600,
+                color: Colors.orange,
+              ),
+            ),
+          ],
+        ),
+      );
+    } else {
+      return ListView(
+        physics: const BouncingScrollPhysics(),
+        padding: EdgeInsets.symmetric(vertical: screenHeight * 0.00),
+        children: [
+          const _SectionTitle(title: 'Featured Recipes'),
+          FeaturedRecipeListWidget(
+            featuredRecipes: viewModel.featuredRecipes,
+            isFeaturedLoading: viewModel.isFeaturedLoading,
+          ),
+          SizedBox(height: screenHeight * 0.010),
+          const _SectionTitle(title: 'Filipino Recipes'),
+          FilipinoRecipeListWidget(
+            foodInfos: viewModel.foodInfos,
+            isLoading: viewModel.isLoading,
+          ),
+          SizedBox(height: screenHeight * 0.010),
+          const _SectionTitle(title: 'Most Liked & Viewed Recipes'),
+          MostViewedAndLikedRecipesWidget(
+            popularRecipes: viewModel.popularRecipes,
+            isPopularLoading: viewModel.isPopularLoading,
+          ),
+          SizedBox(height: screenHeight * 0.08),
+        ],
+      );
+    }
   }
 
   @override
@@ -100,20 +109,20 @@ class DashboardRecipesView extends StackedView<DashboardRecipesViewModel> {
   @override
   void onViewModelReady(DashboardRecipesViewModel viewModel) {
     super.onViewModelReady(viewModel);
-    viewModel.getAllFoodInfo();
-    viewModel.getFeaturedRecipes();
-    viewModel.getPopularRecipes();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      viewModel.getAllFoodInfo();
+      viewModel.getFeaturedRecipes();
+      viewModel.getPopularRecipes();
+    });
   }
 }
 
 class _SectionTitle extends StatelessWidget {
   final String title;
-  final VoidCallback onSeeAllTap;
 
   const _SectionTitle({
     Key? key,
     required this.title,
-    required this.onSeeAllTap,
   }) : super(key: key);
 
   @override
@@ -122,18 +131,19 @@ class _SectionTitle extends StatelessWidget {
 
     return Padding(
       padding:
-          EdgeInsets.symmetric(horizontal: screenWidth * 0.04, vertical: 2.0),
+          EdgeInsets.symmetric(horizontal: screenWidth * 0.04, vertical: 8.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
             title,
             style: TextStyle(
-              fontSize: screenWidth * 0.06,
+              fontSize: screenWidth * 0.055,
               fontWeight: FontWeight.bold,
-              color: Colors.black,
+              color: Colors.black87,
             ),
           ),
+          // 'See all' removed
         ],
       ),
     );

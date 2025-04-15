@@ -25,7 +25,7 @@ class _MostViewedAndLikedRecipesWidgetState
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.fromLTRB(15.0, 8.0, 15.0, 0),
+      padding: const EdgeInsets.fromLTRB(15.0, 0.0, 15.0, 0),
       child: widget.isPopularLoading
           ? _buildShimmerList()
           : widget.popularRecipes.isEmpty
