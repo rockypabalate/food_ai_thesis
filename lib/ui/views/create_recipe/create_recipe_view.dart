@@ -13,721 +13,748 @@ class CreateRecipeView extends StackedView<CreateRecipeViewModel> {
     CreateRecipeViewModel viewModel,
     Widget? child,
   ) {
-    bool _isLoading = false;
     return WillPopScope(
-        onWillPop: () async {
-          bool? exitConfirmed = await showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                title: const Text('Exit Confirmation'),
-                content:
-                    const Text('Are you sure you want to exit without saving?'),
-                actions: [
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pop(context, false); // Stay on the page
-                    },
-                    child: const Text('Cancel'),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pop(context, true); // Exit the page
-                    },
-                    child: const Text(
-                      'Yes',
-                      style: TextStyle(fontWeight: FontWeight.bold),
+      onWillPop: () async {
+        return await _showExitConfirmation(context) ?? false;
+      },
+      child: Scaffold(
+        backgroundColor: Colors.grey[50],
+        appBar: AppBar(
+          title: const Text(
+            'Create Recipe',
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          backgroundColor: Colors.orange[600],
+          elevation: 0,
+          iconTheme: const IconThemeData(color: Colors.white),
+        ),
+        body: viewModel.isLoading
+            ? _buildLoadingIndicator()
+            : _buildFormContent(context, viewModel),
+        bottomNavigationBar: _buildBottomButton(context, viewModel),
+      ),
+    );
+  }
+
+  Future<bool?> _showExitConfirmation(BuildContext context) {
+    return showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          title: const Row(
+            children: [
+              Icon(Icons.warning_amber_rounded, color: Colors.orange, size: 28),
+              SizedBox(width: 8),
+              Text(
+                'Exit Confirmation',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+          content: const Text('Are you sure you want to exit without saving?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text(
+                'Cancel',
+                style: TextStyle(fontSize: 16, color: Colors.black),
+              ),
+            ),
+            GestureDetector(
+              onTap: () => Navigator.pop(context, true),
+              child: const Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.exit_to_app, color: Colors.orange),
+                  SizedBox(width: 4),
+                  Text(
+                    'Exit',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.orange,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                 ],
-              );
-            },
-          );
-
-          return exitConfirmed ?? false; // Prevent exit if null
-        },
-        child: Scaffold(
-          backgroundColor: Colors.white,
-          appBar: AppBar(
-            title: const Text(
-              'Create Recipe',
-              style: TextStyle(color: Colors.white), // Make title text white
+              ),
             ),
-            backgroundColor: Colors.orange,
-            iconTheme: const IconThemeData(
-                color: Colors.white), // Make back arrow white
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildLoadingIndicator() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SpinKitPulse(
+            color: Colors.orange[600],
+            size: 50.0,
           ),
-          body: SingleChildScrollView(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+          const SizedBox(height: 20),
+          Text(
+            'Creating Recipe...',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w500,
+              color: Colors.orange[700],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFormContent(
+      BuildContext context, CreateRecipeViewModel viewModel) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(12.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildFormCard(
+            context,
+            title: 'Recipe Details',
+            children: [
+              _buildTextField(
+                label: 'Food Name',
+                hint: 'Enter food name',
+                controller: viewModel.foodNameController,
+                isRequired: true,
+              ),
+              const SizedBox(height: 16),
+              _buildTextField(
+                label: 'Category',
+                hint: 'Enter category (e.g., Breakfast, Dinner)',
+                controller: viewModel.categoryController,
+              ),
+              const SizedBox(height: 16),
+              _buildServingCounter(viewModel),
+              const SizedBox(height: 16),
+              _buildTextField(
+                label: 'Total Cook Time',
+                hint: 'E.g., 45 minutes',
+                controller: viewModel.totalCookTimeController,
+              ),
+              const SizedBox(height: 16),
+              _buildDifficultyDropdown(viewModel),
+            ],
+          ),
+          const SizedBox(height: 16),
+          _buildFormCard(
+            context,
+            title: 'Description',
+            children: [
+              _buildMultilineTextField(
+                hint: 'Write a brief description of your recipe...',
+                controller: viewModel.descriptionController,
+                maxLines: 4,
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          _buildFormCard(
+            context,
+            title: 'Preparation Tips',
+            children: [
+              _buildMultilineTextField(
+                hint: 'Any preparation tips to share...',
+                controller: viewModel.preparationTipsController,
+                maxLines: 4,
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          _buildFormCard(
+            context,
+            title: 'Ingredients',
+            children: [
+              _buildIngredientsList(viewModel),
+              const SizedBox(height: 16),
+              _buildAddButton(
+                label: 'Add Ingredient',
+                onPressed: viewModel.addIngredient,
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          _buildFormCard(
+            context,
+            title: 'Cooking Steps',
+            children: [
+              _buildInstructionsList(viewModel),
+              const SizedBox(height: 16),
+              _buildAddButton(
+                label: 'Add Step',
+                onPressed: viewModel.addInstruction,
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          _buildFormCard(
+            context,
+            title: 'Nutritional Content',
+            isOptional: true,
+            children: [
+              _buildMultilineTextField(
+                hint: 'Enter nutritional information (optional)',
+                controller: viewModel.nutritionalParagraphController,
+                maxLines: 4,
+              ),
+            ],
+          ),
+          const SizedBox(height: 30),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFormCard(
+    BuildContext context, {
+    required String title,
+    required List<Widget> children,
+    bool isOptional = false,
+  }) {
+    return Card(
+      elevation: 6, // Increased for a deeper shadow
+      shadowColor: Colors.black38, // Slightly darker shadow
+      color: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
               children: [
-                // Food Name
-                Column(
-                  crossAxisAlignment:
-                      CrossAxisAlignment.start, // Align text to the left
-                  children: [
-                    const Text(
-                      'Food Name:',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
-                    ),
-                    const SizedBox(
-                        height: 4), // Space between text and TextField
-                    TextField(
-                      controller: viewModel.foodNameController,
-                      style: const TextStyle(fontSize: 16),
-                      decoration: const InputDecoration(
-                        hintText: 'Enter food name',
-                        hintStyle: TextStyle(color: Colors.grey),
-                        border: UnderlineInputBorder(),
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide:
-                              BorderSide(color: Colors.orange, width: 1),
-                        ),
-                        isDense: true, // Reduce TextField height
-                        contentPadding: EdgeInsets.symmetric(
-                            vertical: 4), // Bring text closer to line
-                      ),
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: 20),
-
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Category:',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
-                    ),
-                    const SizedBox(
-                        height: 4), // Space between text and TextField
-                    TextField(
-                      controller: viewModel.categoryController,
-                      style: const TextStyle(fontSize: 16),
-                      decoration: const InputDecoration(
-                        hintText: 'Enter category',
-                        hintStyle: TextStyle(color: Colors.grey),
-                        border: UnderlineInputBorder(),
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide:
-                              BorderSide(color: Colors.orange, width: 1),
-                        ),
-                        isDense: true, // Reduce TextField height
-                        contentPadding: EdgeInsets.symmetric(
-                            vertical: 4), // Bring text closer to line
-                      ),
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: 25),
-
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      "Total Serving:",
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                          left: 3), // Move Row to the right
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          const Text(
-                            "Serves",
-                            style: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.bold),
-                          ),
-                          const SizedBox(
-                              width:
-                                  16), // Small space between text and counter
-                          Row(
-                            children: [
-                              Container(
-                                width: 20, // Reduced button size
-                                height: 20,
-                                decoration: const BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color:
-                                      Colors.white, // White circular background
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black26, // Soft shadow
-                                      blurRadius: 2,
-                                      offset: Offset(1, 1),
-                                    )
-                                  ],
-                                ),
-                                child: IconButton(
-                                  padding:
-                                      EdgeInsets.zero, // Remove extra padding
-                                  iconSize: 16, // Reduce icon size
-                                  icon: const Icon(Icons.remove,
-                                      color: Colors.orange),
-                                  onPressed: () {
-                                    int current = int.tryParse(viewModel
-                                            .servingsController.text) ??
-                                        1;
-                                    if (current > 1) {
-                                      viewModel.servingsController.text =
-                                          (current - 1).toString();
-                                    }
-                                  },
-                                ),
-                              ),
-                              const SizedBox(width: 6), // Adjusted spacing
-                              SizedBox(
-                                width: 30,
-                                child: TextField(
-                                  controller: viewModel.servingsController,
-                                  textAlign: TextAlign.center,
-                                  keyboardType: TextInputType.number,
-                                  style: const TextStyle(
-                                      fontSize: 14), // Adjust text size
-                                  decoration: const InputDecoration(
-                                      border: InputBorder.none),
-                                ),
-                              ),
-                              const SizedBox(width: 6),
-                              Container(
-                                width: 20, // Reduced button size
-                                height: 20,
-                                decoration: const BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color:
-                                      Colors.white, // White circular background
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black26, // Soft shadow
-                                      blurRadius: 2,
-                                      offset: Offset(1, 1),
-                                    )
-                                  ],
-                                ),
-                                child: IconButton(
-                                  padding:
-                                      EdgeInsets.zero, // Remove extra padding
-                                  iconSize: 16, // Reduce icon size
-                                  icon: const Icon(Icons.add,
-                                      color: Colors.orange),
-                                  onPressed: () {
-                                    int current = int.tryParse(viewModel
-                                            .servingsController.text) ??
-                                        1;
-                                    viewModel.servingsController.text =
-                                        (current + 1).toString();
-                                  },
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: 10),
-
-                // Total Cook Time (Row with Number Input & Dropdown)
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      "Total Cook Time:",
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(
-                        height: 6), // Small space between header and fields
-                    Row(
-                      children: [
-                        SizedBox(
-                          width: 200,
-                          child: TextFormField(
-                            controller: viewModel.totalCookTimeController,
-                            keyboardType: TextInputType
-                                .text, // Allow any text or characters
-                            style: const TextStyle(
-                                fontSize: 14, height: 1), // Compact text
-                            decoration: InputDecoration(
-                              contentPadding: const EdgeInsets.symmetric(
-                                  vertical: 12, horizontal: 8),
-                              isDense: true, // Compact field height
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(6.0),
-                                borderSide: const BorderSide(
-                                    color: Colors.grey,
-                                    width: 1), // Default grey
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(6.0),
-                                borderSide: const BorderSide(
-                                    color: Colors.orange,
-                                    width: 2), // Orange when selected
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(6.0),
-                                borderSide: const BorderSide(
-                                    color: Colors.grey,
-                                    width: 1), // Grey when not focused
-                              ),
-                              hintText: 'Enter time', // Generic hint
-                              hintStyle: const TextStyle(fontSize: 14),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: 20),
-
-                // Difficulty Level Section
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      "Difficulty:",
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(
-                        height: 6), // Space between label and dropdown
-                    DropdownButton<String>(
-                      value: viewModel.difficultyLevel,
-                      items: ["Easy", "Medium", "Hard"].map((String level) {
-                        return DropdownMenuItem<String>(
-                          value: level,
-                          child: Text(level),
-                        );
-                      }).toList(),
-                      onChanged: (value) {
-                        viewModel.updateDifficultyLevel(value!);
-                      },
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 20),
-                // Description
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      "Recipe Description:", // Title Header
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(
-                        height: 8), // Small space between title and input
-                    TextField(
-                      controller: viewModel.descriptionController,
-                      decoration: InputDecoration(
-                        hintText: 'Enter a brief description...', // Hint text
-                        labelStyle: const TextStyle(color: Colors.grey),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                          borderSide: const BorderSide(
-                              color: Colors.grey,
-                              width: 1.0), // Grey when not selected
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                          borderSide: const BorderSide(
-                              color: Colors.orange,
-                              width: 1.5), // Orange when selected
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                          borderSide: const BorderSide(
-                              color: Colors.grey,
-                              width: 1.0), // Grey when not selected
-                        ),
-                      ),
-                      maxLines: 5,
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: 20),
-
-                // Dynamic Instructions Input with Preparation Tips inside
-                const Text(
-                  'Preparation:',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 8),
-                TextField(
-                  controller: viewModel.preparationTipsController,
-                  decoration: InputDecoration(
-                    hintText: 'Any tips for preparation...',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                      borderSide: const BorderSide(
-                          color: Colors.grey,
-                          width: 1.0), // Grey when not selected
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                      borderSide: const BorderSide(
-                          color: Colors.orange,
-                          width: 1.5), // Orange when selected
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                      borderSide: const BorderSide(
-                          color: Colors.grey,
-                          width: 1.0), // Grey when not selected
-                    ),
-                  ),
-                  maxLines: 5,
-                ),
-                const SizedBox(height: 20),
-
-                // List of Instructions with Dynamic Step Numbering and Spacing
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 10.0),
-                      child: Text(
-                        "Cooking Steps:",
-                        style: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: viewModel.instructions.length,
-                      itemBuilder: (context, index) {
-                        return Padding(
-                          padding: const EdgeInsets.only(
-                              bottom: 10.0), // Add space below each field
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: TextFormField(
-                                  decoration: InputDecoration(
-                                    labelText: 'Step ${index + 1}',
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(10.0),
-                                      borderSide: const BorderSide(
-                                          color: Colors.grey,
-                                          width: 1.0), // Grey when inactive
-                                    ),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(10.0),
-                                      borderSide: const BorderSide(
-                                          color: Colors.orange,
-                                          width: 1.5), // Orange when selected
-                                    ),
-                                    enabledBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(10.0),
-                                      borderSide: const BorderSide(
-                                          color: Colors.grey,
-                                          width: 1.0), // Grey when inactive
-                                    ),
-                                  ),
-                                  onChanged: (value) =>
-                                      viewModel.updateInstruction(index, value),
-                                ),
-                              ),
-                              IconButton(
-                                icon:
-                                    const Icon(Icons.delete, color: Colors.red),
-                                onPressed: () =>
-                                    viewModel.removeInstruction(index),
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
-
-                    // Centered "Add Instruction" Button
-                    Center(
-                      child: ElevatedButton.icon(
-                        onPressed: viewModel.addInstruction,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.orange,
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 0),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8.0),
-                          ),
-                        ),
-                        icon: const Icon(Icons.add, color: Colors.white),
-                        label: const Text(
-                          'Add Instruction',
-                          style: TextStyle(
-                              color: Colors.white, fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: 20),
-
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 10.0),
-                      child: Text(
-                        "Ingredients:",
-                        style: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: viewModel.ingredients.length,
-                      itemBuilder: (context, index) {
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 10.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              // Ingredient Name Input
-                              TextFormField(
-                                decoration: InputDecoration(
-                                  labelText: 'Ingredient ${index + 1}',
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(10.0),
-                                  ),
-                                ),
-                                initialValue: viewModel.ingredients[
-                                    index], // Ensure value persistence
-                                onChanged: (value) =>
-                                    viewModel.updateIngredient(index, value),
-                              ),
-                              const SizedBox(height: 10),
-
-                              // Quantity and Unit Row
-                              Row(
-                                children: [
-                                  // Quantity Input
-                                  Expanded(
-                                    child: TextFormField(
-                                      keyboardType: TextInputType.number,
-                                      inputFormatters: [
-                                        FilteringTextInputFormatter.digitsOnly
-                                      ],
-                                      decoration: InputDecoration(
-                                        labelText: 'Quantity',
-                                        border: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(10.0),
-                                        ),
-                                      ),
-                                      initialValue: viewModel.quantities[
-                                          index], // Ensure persistence
-                                      onChanged: (value) => viewModel
-                                          .updateQuantity(index, value),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 10),
-
-                                  // Unit TextField (Instead of Dropdown)
-                                  Expanded(
-                                    child: TextFormField(
-                                      decoration: InputDecoration(
-                                        labelText: 'Unit',
-                                        border: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(10.0),
-                                        ),
-                                      ),
-                                      initialValue: viewModel
-                                          .units[index], // Ensure persistence
-                                      onChanged: (value) =>
-                                          viewModel.updateUnit(index, value),
-                                    ),
-                                  ),
-
-                                  // Delete Button
-                                  IconButton(
-                                    icon: const Icon(Icons.delete,
-                                        color: Colors.red),
-                                    onPressed: () =>
-                                        viewModel.removeIngredient(index),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
-
-                    // Add Ingredient Button
-                    Center(
-                      child: ElevatedButton.icon(
-                        onPressed: viewModel.addIngredient,
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.orange),
-                        icon: const Icon(Icons.add, color: Colors.white),
-                        label: const Text('Add Ingredient',
-                            style: TextStyle(color: Colors.white)),
-                      ),
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: 20),
-                // Nutritional Paragraph Input
-                const Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Nutritional Content:',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 5),
-                    Text(
-                      '(Adding Nutritional Content is optional)',
-                      style: TextStyle(
-                        fontSize: 10,
-                        fontStyle: FontStyle.italic,
-                        fontWeight: FontWeight.normal, // Ensure it’s not bold
-                      ),
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: 10),
-                TextFormField(
-                  controller: viewModel.nutritionalParagraphController,
-                  decoration: InputDecoration(
-                    hintText: 'Enter Nutritional Information',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                      borderSide: const BorderSide(
-                          color: Colors.grey, width: 1.0), // Grey when inactive
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                      borderSide: const BorderSide(
-                          color: Colors.orange,
-                          width: 1), // Orange when selected
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                      borderSide: const BorderSide(
-                          color: Colors.grey, width: 1.0), // Grey when inactive
-                    ),
-                  ),
-
-                  maxLines: 5, // Allows multi-line input
-                ),
-
-                const SizedBox(height: 20),
-
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      // Start loading when button is pressed
-                      viewModel.setLoading(true); // Set loading to true
-
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: const Text('Confirmation'),
-                            content: const Text(
-                                'Are you sure you want to create this recipe?'),
-                            actions: [
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.pop(context); // Cancel
-                                  viewModel.setLoading(
-                                      false); // Reset loading if canceled
-                                },
-                                child: const Text('Cancel'),
-                              ),
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.pop(context); // Close dialog
-                                  viewModel.createRecipe().then((_) {
-                                    // After recipe creation, hide spinner
-                                    viewModel.setLoading(
-                                        false); // Set loading to false
-                                  });
-                                },
-                                child: const Text(
-                                  'Yes',
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.orange,
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                    ),
-                    child: const Text(
-                      'Create Recipe',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-
-                // If loading, show the spinner and message
-                viewModel.isLoading
-                    ? const Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          SpinKitThreeBounce(
-                            color: Colors.orange,
-                            size: 30.0,
-                          ),
-                          SizedBox(height: 12),
-                          Text(
-                            'Creating Recipe...',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.orange,
-                            ),
-                          ),
-                        ],
-                      )
-                    : Container(),
+                if (isOptional) ...[
+                  const SizedBox(width: 8),
+                  Text(
+                    '(Optional)',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey[600],
+                      fontStyle: FontStyle.italic,
+                    ),
+                  ),
+                ],
               ],
             ),
+            const Divider(height: 24),
+            ...children,
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTextField({
+    required String label,
+    required String hint,
+    required TextEditingController controller,
+    bool isRequired = false,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                color: Colors.grey[800],
+              ),
+            ),
+            if (isRequired) ...[
+              const SizedBox(width: 4),
+              Text(
+                '*',
+                style: TextStyle(
+                  color: Colors.red[700],
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ],
+        ),
+        const SizedBox(height: 8),
+        TextField(
+          controller: controller,
+          style: const TextStyle(fontSize: 16),
+          decoration: InputDecoration(
+            hintText: hint,
+            hintStyle: TextStyle(color: Colors.grey[400]),
+            filled: false, // No fill color
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(
+                color: Colors.black, // Black border
+                width: .5,
+              ),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(
+                color: Colors.black,
+                width: .5,
+              ),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(
+                color: Colors.black,
+                width: .5,
+              ),
+            ),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 14,
+            ),
           ),
-        ));
+        ),
+      ],
+    );
+  }
+
+  Widget _buildMultilineTextField({
+    required String hint,
+    required TextEditingController controller,
+    int maxLines = 3,
+  }) {
+    return TextField(
+      controller: controller,
+      maxLines: maxLines,
+      style: const TextStyle(fontSize: 16),
+      decoration: InputDecoration(
+        hintText: hint,
+        hintStyle: TextStyle(color: Colors.grey[400]),
+        filled: false, // No background color
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(
+            color: Colors.black, // Black border
+            width: .5,
+          ),
+        ),
+        contentPadding: const EdgeInsets.all(16),
+      ),
+    );
+  }
+
+  Widget _buildServingCounter(CreateRecipeViewModel viewModel) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Servings',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+            color: Colors.grey[800],
+          ),
+        ),
+        const SizedBox(height: 8),
+        Container(
+          height: 36,
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          decoration: BoxDecoration(
+            color: Colors.grey[100],
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _buildCompactCircleButton(
+                icon: Icons.remove,
+                onPressed: () {
+                  int current =
+                      int.tryParse(viewModel.servingsController.text) ?? 1;
+                  if (current > 1) {
+                    viewModel.servingsController.text =
+                        (current - 1).toString();
+                  }
+                },
+              ),
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 8),
+                width: 28,
+                height: 28, // Ensure it's the same height as the button
+                alignment: Alignment.center, // Center the child inside
+                child: TextField(
+                  controller: viewModel.servingsController,
+                  textAlign: TextAlign.center,
+                  keyboardType: TextInputType.number,
+                  style: const TextStyle(fontSize: 14),
+                  decoration: const InputDecoration(
+                    border: InputBorder.none,
+                    isCollapsed: true, // Removes extra vertical padding
+                    contentPadding: EdgeInsets.zero,
+                  ),
+                ),
+              ),
+              _buildCompactCircleButton(
+                icon: Icons.add,
+                onPressed: () {
+                  int current =
+                      int.tryParse(viewModel.servingsController.text) ?? 1;
+                  viewModel.servingsController.text = (current + 1).toString();
+                },
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCompactCircleButton(
+      {required IconData icon, required VoidCallback onPressed}) {
+    return Container(
+      width: 24,
+      height: 24,
+      decoration: const BoxDecoration(
+        color: Colors.orange,
+        shape: BoxShape.circle,
+      ),
+      child: IconButton(
+        icon: Icon(icon, color: Colors.white, size: 12),
+        onPressed: onPressed,
+        padding: EdgeInsets.zero,
+        constraints: const BoxConstraints(),
+      ),
+    );
+  }
+
+  Widget _buildDifficultyDropdown(CreateRecipeViewModel viewModel) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Difficulty',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+            color: Colors.grey[800],
+          ),
+        ),
+        const SizedBox(height: 8),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          decoration: BoxDecoration(
+            color: Colors.grey[100],
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: DropdownButtonHideUnderline(
+            child: DropdownButton<String>(
+              value: viewModel.difficultyLevel,
+              isExpanded: true,
+              icon: Icon(Icons.arrow_drop_down, color: Colors.orange[700]),
+              items: ["Easy", "Medium", "Hard"].map((String level) {
+                return DropdownMenuItem<String>(
+                  value: level,
+                  child: Text(level),
+                );
+              }).toList(),
+              onChanged: (value) {
+                viewModel.updateDifficultyLevel(value!);
+              },
+              style: const TextStyle(
+                fontSize: 16,
+                color: Colors.black87,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildIngredientsList(CreateRecipeViewModel viewModel) {
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: viewModel.ingredients.length,
+      itemBuilder: (context, index) {
+        return Container(
+          margin: const EdgeInsets.only(bottom: 16),
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: Colors.orange[50],
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Colors.orange[100]!),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      'Ingredient ${index + 1}',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.delete_outline, color: Colors.red[400]),
+                    onPressed: () => viewModel.removeIngredient(index),
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              TextField(
+                controller: viewModel.ingredientControllers[index],
+                decoration: InputDecoration(
+                  hintText: 'Ingredient name',
+                  filled: true,
+                  fillColor: Colors.white,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide.none,
+                  ),
+                ),
+                onChanged: (value) => viewModel.updateIngredient(index, value),
+              ),
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: TextEditingController(
+                          text: viewModel.quantities[index]),
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                      decoration: InputDecoration(
+                        hintText: 'Quantity',
+                        filled: true,
+                        fillColor: Colors.white,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide.none,
+                        ),
+                      ),
+                      onChanged: (value) =>
+                          viewModel.updateQuantity(index, value),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: TextField(
+                      controller:
+                          TextEditingController(text: viewModel.units[index]),
+                      decoration: InputDecoration(
+                        hintText: 'Unit',
+                        filled: true,
+                        fillColor: Colors.white,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide.none,
+                        ),
+                      ),
+                      onChanged: (value) => viewModel.updateUnit(index, value),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildInstructionsList(CreateRecipeViewModel viewModel) {
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: viewModel.instructions.length,
+      itemBuilder: (context, index) {
+        return Container(
+          margin: const EdgeInsets.only(bottom: 12),
+          decoration: BoxDecoration(
+            color: Colors.grey[100],
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.orange[600],
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(12),
+                    bottomLeft: Radius.circular(12),
+                  ),
+                ),
+                child: Text(
+                  '${index + 1}',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              Expanded(
+                child: TextField(
+                  maxLines: null,
+                  decoration: const InputDecoration(
+                    hintText: 'Describe this step',
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.all(12),
+                  ),
+                  onChanged: (value) =>
+                      viewModel.updateInstruction(index, value),
+                ),
+              ),
+              IconButton(
+                icon: Icon(Icons.delete_outline, color: Colors.red[400]),
+                onPressed: () => viewModel.removeInstruction(index),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildAddButton(
+      {required String label, required VoidCallback onPressed}) {
+    return Center(
+      child: ElevatedButton.icon(
+        onPressed: onPressed,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.orange,
+          foregroundColor: Colors.white,
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+        icon: const Icon(
+          Icons.add,
+          color: Colors.white,
+        ),
+        label: Text(label),
+      ),
+    );
+  }
+
+  Widget _buildBottomButton(
+      BuildContext context, CreateRecipeViewModel viewModel) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            offset: const Offset(0, -2),
+            blurRadius: 8,
+          ),
+        ],
+      ),
+      child: SafeArea(
+        child: ElevatedButton(
+          onPressed: () => _showCreateConfirmation(context, viewModel),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.orange[600],
+            foregroundColor: Colors.white,
+            padding: const EdgeInsets.symmetric(vertical: 16),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            elevation: 0,
+          ),
+          child: const Text(
+            'Create Recipe',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showCreateConfirmation(
+      BuildContext context, CreateRecipeViewModel viewModel) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          title: const Row(
+            children: [
+              Icon(Icons.add_circle_outline, color: Colors.orange, size: 28),
+              SizedBox(width: 8),
+              Text(
+                'Create Recipe',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+          content: const Text('Are you sure you want to create this recipe?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text(
+                'Cancel',
+                style: TextStyle(fontSize: 16),
+              ),
+            ),
+            GestureDetector(
+              onTap: () {
+                Navigator.pop(context);
+                viewModel.setLoading(true);
+                viewModel.createRecipe().then((_) {
+                  viewModel.setLoading(false);
+                });
+              },
+              child: const Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.check_circle_outline, color: Colors.orange),
+                  SizedBox(width: 4),
+                  Text(
+                    'Create',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.orange,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override

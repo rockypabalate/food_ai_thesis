@@ -55,38 +55,39 @@ class _RegisterViewState extends State<RegisterView> {
     final titleFontSize = 28 * (screenWidth / 375);
     final subtitleFontSize = 15 * (screenWidth / 375);
     final bodyTextFontSize = 14 * (screenWidth / 375);
-    final smallTextFontSize = 12 * (screenWidth / 375);
+    final smallTextFontSize = 10 * (screenWidth / 375);
 
     // Colors - matching the login page
-    final primaryColor = const Color(0xFFFF6B00); // Vibrant orange
-    final secondaryColor = const Color(0xFF2E3E5C); // Dark blue for text
-    final backgroundColor = const Color(0xFFFAFAFA); // Light background
-    final cardColor = Colors.white;
-    final subtleGrey = const Color(0xFFF1F1F1); // For input fields
+    const primaryColor = Color(0xFFFF6B00); // Vibrant orange
+    const secondaryColor = Color(0xFF2E3E5C); // Dark blue for text
+    const backgroundColor = Color(0xFFFAFAFA); // Light background
+    const cardColor = Colors.white;
+    const subtleGrey = Color(0xFFF1F1F1); // For input fields
 
     return ViewModelBuilder<RegisterViewModel>.reactive(
       viewModelBuilder: () => RegisterViewModel(),
       builder: (context, viewModel, child) {
         return Scaffold(
           backgroundColor: backgroundColor,
-          appBar: AppBar(
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            leading: IconButton(
-              icon: Icon(Icons.arrow_back_ios_rounded, color: secondaryColor),
-              onPressed: () => viewModel.navigateToLogin(),
-            ),
-          ),
+          // appBar: AppBar(
+          //   backgroundColor: Colors.transparent,
+          //   elevation: 0,
+          //   leading: IconButton(
+          //     icon: const Icon(Icons.arrow_back_ios_rounded,
+          //         color: secondaryColor),
+          //     onPressed: () => viewModel.navigateToLogin(),
+          //   ),
+          // ),
           body: Stack(
             children: [
               // Background with subtle pattern
               Positioned.fill(
                 child: Container(
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     color: backgroundColor,
-                    image: const DecorationImage(
+                    image: DecorationImage(
                       image: AssetImage(
-                          'lib/assets/subtle_pattern.png'), // Add this asset or use a color
+                          'lib/assets/bg_food.jpg'), // Add this asset or use a color
                       repeat: ImageRepeat.repeat,
                       opacity: 0.05,
                     ),
@@ -101,11 +102,21 @@ class _RegisterViewState extends State<RegisterView> {
                   child: Padding(
                     padding: EdgeInsets.symmetric(
                       horizontal: contentPadding,
-                      vertical: screenHeight * 0.02,
+                      vertical: screenHeight * 0.01,
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        // Back button with left padding
+                        Padding(
+                          padding: const EdgeInsets.only(left: 0.0),
+                          child: IconButton(
+                            icon: const Icon(Icons.arrow_back),
+                            color: secondaryColor,
+                            onPressed: () => viewModel.navigateToLogin(),
+                          ),
+                        ),
+                        const SizedBox(height: 10),
                         // Title and subtitle
                         FadeEffectRegister(
                           delay: 200,
@@ -133,7 +144,6 @@ class _RegisterViewState extends State<RegisterView> {
                             ),
                           ),
                         ),
-
                         SizedBox(height: verticalSpacing * 2),
 
                         // Registration form
@@ -456,6 +466,7 @@ class _RegisterViewState extends State<RegisterView> {
                             ),
                           ),
                         ),
+                        const SizedBox(height: 50),
                       ],
                     ),
                   ),

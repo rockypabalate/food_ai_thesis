@@ -5,6 +5,7 @@ import 'package:food_ai_thesis/app/app.locator.dart';
 import 'package:food_ai_thesis/app/app_base_viewmodel.dart';
 import 'package:food_ai_thesis/models/list_recipes/single_display_recipe.dart';
 import 'package:food_ai_thesis/services/api/api_services/api_service_service.dart';
+import 'package:food_ai_thesis/services/feedback_service.dart';
 import 'package:food_ai_thesis/ui/views/display_single_recipe/export_pdf_recipe.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:stacked_services/stacked_services.dart';
@@ -12,6 +13,8 @@ import 'package:stacked_services/stacked_services.dart';
 class DisplaySingleRecipeViewModel extends AppBaseViewModel {
   final ApiServiceService _apiService = locator<ApiServiceService>();
   final SnackbarService _snackbarService = locator<SnackbarService>();
+
+  final _feedbackService = locator<FeedbackService>();
 
   FoodInfoById? _foodInfoById;
   FoodInfoById? get foodInfoById => _foodInfoById;
@@ -35,35 +38,34 @@ class DisplaySingleRecipeViewModel extends AppBaseViewModel {
   bool get isLiked => _isLiked;
 
   Future<void> fetchFoodInfoById(int foodId) async {
-  _isBusy = true;
-  notifyListeners();
+    _isBusy = true;
+    notifyListeners();
 
-  try {
-    // Step 1: Fetch recipe details first
-    final fetchedRecipe = await _apiService.getFoodInfoById(foodId);
-    if (fetchedRecipe != null) {
-      _foodInfoById = fetchedRecipe;
-    } else {
-      throw Exception('Recipe not found');
+    try {
+      // Step 1: Fetch recipe details first
+      final fetchedRecipe = await _apiService.getFoodInfoById(foodId);
+      if (fetchedRecipe != null) {
+        _foodInfoById = fetchedRecipe;
+      } else {
+        throw Exception('Recipe not found');
+      }
+
+      // Step 2: Increment view count
+      await incrementViewCount(foodId);
+
+      // Step 3: Check if liked and saved
+      await checkLikedAndSavedStatus(foodId);
+    } catch (e) {
+      print('Error during sequential fetch: $e');
+      _snackbarService.showSnackbar(
+        title: 'Error',
+        message: 'Something went wrong while loading the recipe.',
+      );
+    } finally {
+      _isBusy = false;
+      notifyListeners(); // Notify once after all API calls are done
     }
-
-    // Step 2: Increment view count
-    await incrementViewCount(foodId);
-
-    // Step 3: Check if liked and saved
-    await checkLikedAndSavedStatus(foodId);
-  } catch (e) {
-    print('Error during sequential fetch: $e');
-    _snackbarService.showSnackbar(
-      title: 'Error',
-      message: 'Something went wrong while loading the recipe.',
-    );
-  } finally {
-    _isBusy = false;
-    notifyListeners(); // Notify once after all API calls are done
   }
-}
-
 
   // Save food by id
   Future<void> saveFoodById(int foodId) async {
@@ -187,6 +189,19 @@ class DisplaySingleRecipeViewModel extends AppBaseViewModel {
       notifyListeners();
     } catch (e) {
       debugPrint('Error checking liked/saved status: $e');
+    }
+  }
+
+  void markVisitedForFeedback() async {
+    const pageKey = 'visited_DisplaySingleRecipeView';
+
+    final alreadyVisited = await _feedbackService.isPageVisited(pageKey);
+
+    if (!alreadyVisited) {
+      await _feedbackService.markPageVisited(pageKey);
+      debugPrint('✅ DisplaySingleRecipeView visited for the first time.');
+    } else {
+      debugPrint('ℹ️ DisplaySingleRecipeView was already visited.');
     }
   }
 }

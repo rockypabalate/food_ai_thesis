@@ -42,13 +42,11 @@ class WidgetSearchAllrecipesViewModel extends AppBaseViewModel {
 
   /// Filter recipes based on the selected category
   void filterByCategory(String category) {
-  _selectedCategory = category; // ✅ Add this line!
-  _filteredFoodInfos = _foodInfos
-      .where((foodInfo) => foodInfo.category == category)
-      .toList();
-  notifyListeners();
-}
-
+    _selectedCategory = category; // ✅ Add this line!
+    _filteredFoodInfos =
+        _foodInfos.where((foodInfo) => foodInfo.category == category).toList();
+    notifyListeners();
+  }
 
   /// Retrieve unique categories from the food list
   Set<String> get uniqueCategories {

@@ -24,7 +24,11 @@ class _UserDashboardViewState extends State<UserDashboardView>
 
     return ViewModelBuilder<UserDashboardViewModel>.reactive(
       viewModelBuilder: () => UserDashboardViewModel(),
-      onViewModelReady: (viewModel) => viewModel.getCurrentUser(),
+      onViewModelReady: (viewModel) {
+        viewModel.getCurrentUser(); // Get current user data
+        viewModel
+            .markVisitedForFeedback(); // Mark the page as visited for feedback
+      },
       builder: (context, viewModel, child) {
         return WillPopScope(
           onWillPop: () async {

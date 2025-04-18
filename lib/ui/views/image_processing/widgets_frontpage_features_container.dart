@@ -40,8 +40,10 @@ class FeaturesContainer extends StatelessWidget {
         ),
         padding: const EdgeInsets.all(16.0),
         child: Column(
-          mainAxisAlignment: alignment, // Adjust the vertical alignment of the Column
-          crossAxisAlignment: CrossAxisAlignment.center, // Center items horizontally
+          mainAxisAlignment:
+              alignment, // Adjust the vertical alignment of the Column
+          crossAxisAlignment:
+              CrossAxisAlignment.center, // Center items horizontally
           children: [
             // Display PNG image
             SizedBox(
@@ -59,7 +61,8 @@ class FeaturesContainer extends StatelessWidget {
             const SizedBox(height: 16),
             // Title and Description aligned to the left
             Column(
-              crossAxisAlignment: CrossAxisAlignment.start, // Align text to the left
+              crossAxisAlignment:
+                  CrossAxisAlignment.start, // Align text to the left
               children: [
                 Text(
                   title,

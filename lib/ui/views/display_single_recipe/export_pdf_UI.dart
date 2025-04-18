@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:food_ai_thesis/models/list_recipes/single_display_recipe.dart';
 import 'package:food_ai_thesis/ui/views/display_single_recipe/export_pdf_recipe.dart';
 
-
 class PdfExportPage extends StatefulWidget {
   final FoodInfoById recipe;
 
@@ -44,9 +43,11 @@ class _PdfExportPageState extends State<PdfExportPage> {
                 ? Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(Icons.check_circle, color: Colors.green, size: 60),
+                      const Icon(Icons.check_circle,
+                          color: Colors.green, size: 60),
                       const SizedBox(height: 20),
-                      const Text("PDF saved at:", style: TextStyle(fontWeight: FontWeight.bold)),
+                      const Text("PDF saved at:",
+                          style: TextStyle(fontWeight: FontWeight.bold)),
                       Padding(
                         padding: const EdgeInsets.all(12.0),
                         child: Text(_filePath!, textAlign: TextAlign.center),

@@ -53,6 +53,13 @@ class SettingPageView extends StackedView<SettingPageViewModel> {
             },
           ),
           ListTile(
+            leading: const Icon(Icons.feedback, color: Colors.orange),
+            title: const Text('Feedback'),
+            onTap: () {
+              viewModel.navigateToFeedback();
+            },
+          ),
+          ListTile(
             leading: const Icon(Icons.logout, color: Colors.orange),
             title: const Text('Logout'),
             onTap: () => _showLogoutDialog(context, viewModel),
@@ -75,12 +82,18 @@ class SettingPageView extends StackedView<SettingPageViewModel> {
         return AlertDialog(
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-          title: const Column(
+          title: const Row(
             children: [
-              Icon(Icons.warning_amber_rounded, size: 50, color: Colors.red),
-              SizedBox(height: 10),
-              Text("Logout",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+              Icon(Icons.warning_amber_rounded, size: 30, color: Colors.orange),
+              SizedBox(width: 10),
+              Text(
+                "Logout",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                  color: Colors.orange,
+                ),
+              ),
             ],
           ),
           content: const Text(
@@ -91,16 +104,21 @@ class SettingPageView extends StackedView<SettingPageViewModel> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text("Cancel", style: TextStyle(color: Colors.grey)),
+              child: const Text(
+                "Cancel",
+                style: TextStyle(color: Colors.orange),
+              ),
             ),
-            ElevatedButton(
+            TextButton.icon(
               onPressed: () {
                 Navigator.pop(context);
                 viewModel.logout();
               },
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-              child:
-                  const Text("Logout", style: TextStyle(color: Colors.white)),
+              icon: const Icon(Icons.logout, color: Colors.orange),
+              label: const Text(
+                "Logout",
+                style: TextStyle(color: Colors.orange),
+              ),
             ),
           ],
         );

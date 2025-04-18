@@ -188,24 +188,40 @@ class MyRecipesTab extends StatelessWidget {
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.start,
                                                 children: [
-                                                  Text(
-                                                    recipe.foodName,
-                                                    maxLines: 1,
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    style: GoogleFonts.poppins(
-                                                      fontSize: 14,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Colors.orange,
-                                                      shadows: const [
-                                                        Shadow(
-                                                          offset: Offset(0, .3),
-                                                          blurRadius: .1,
-                                                          color: Colors.white,
+                                                  Row(
+                                                    children: [
+                                                      const Icon(
+                                                        Icons
+                                                            .emoji_food_beverage,
+                                                        size: 14,
+                                                        color: Colors.orange,
+                                                      ),
+                                                      const SizedBox(
+                                                          width:
+                                                              4), // Optional spacing between icon and text
+                                                      Text(
+                                                        recipe.foodName,
+                                                        maxLines: 1,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        style:
+                                                            GoogleFonts.poppins(
+                                                          fontSize: 14,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          color: Colors.orange,
+                                                          shadows: const [
+                                                            Shadow(
+                                                              offset:
+                                                                  Offset(0, .3),
+                                                              blurRadius: .1,
+                                                              color:
+                                                                  Colors.white,
+                                                            ),
+                                                          ],
                                                         ),
-                                                      ],
-                                                    ),
+                                                      ),
+                                                    ],
                                                   ),
                                                   const SizedBox(height: 5),
                                                   Row(
@@ -274,8 +290,8 @@ Widget noImageWidget() {
     child: const Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Icon(Icons.image_not_supported, size: 50, color: Colors.grey),
-        SizedBox(height: 8),
+        Icon(Icons.image_not_supported, size: 60, color: Colors.grey),
+        SizedBox(height: 2),
         Text("No Image", style: TextStyle(fontSize: 14, color: Colors.grey)),
       ],
     ),

@@ -23,6 +23,10 @@ class _FrontPageState extends State<FrontPage> {
   void initState() {
     super.initState();
     _pageController = PageController(initialPage: 0);
+    // Add this: Show the note dialog after the widget is fully built
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      showImageProcessingNoteDialog(context);
+    });
   }
 
   @override

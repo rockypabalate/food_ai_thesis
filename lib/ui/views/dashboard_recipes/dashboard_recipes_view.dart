@@ -157,6 +157,7 @@ class DashboardRecipesView extends StackedView<DashboardRecipesViewModel> {
       viewModel.getAllFoodInfo();
       viewModel.getFeaturedRecipes();
       viewModel.getPopularRecipes();
+      viewModel.markVisitedForFeedback();
     });
   }
 }

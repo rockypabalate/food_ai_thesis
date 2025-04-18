@@ -37,6 +37,8 @@ import 'package:food_ai_thesis/ui/views/single_view_page_recipe/single_view_page
 import 'package:food_ai_thesis/ui/views/loginregister/loginregister_view.dart';
 import 'package:food_ai_thesis/ui/views/ai_processing/ai_processing_view.dart';
 import 'package:food_ai_thesis/ui/views/setting_page/setting_page_view.dart';
+import 'package:food_ai_thesis/services/feedback_service.dart';
+import 'package:food_ai_thesis/ui/views/feedback/feedback_view.dart';
 // @stacked-import
 
 @StackedApp(
@@ -85,6 +87,7 @@ import 'package:food_ai_thesis/ui/views/setting_page/setting_page_view.dart';
     ),
     MaterialRoute(page: AiProcessingView),
     MaterialRoute(page: SettingPageView),
+    MaterialRoute(page: FeedbackView),
 // @stacked-route
   ],
   dependencies: [
@@ -97,7 +100,8 @@ import 'package:food_ai_thesis/ui/views/setting_page/setting_page_view.dart';
     LazySingleton(
         classType: SharedPreferenceServiceImpl,
         asType: SharedPreferenceService),
-    // @stacked-service
+    LazySingleton(classType: FeedbackService),
+// @stacked-service
   ],
   bottomsheets: [
     StackedBottomsheet(classType: NoticeSheet),

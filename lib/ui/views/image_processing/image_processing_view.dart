@@ -446,4 +446,11 @@ class ImageProcessingView extends StackedView<ImageProcessingViewModel> {
   @override
   ImageProcessingViewModel viewModelBuilder(BuildContext context) =>
       ImageProcessingViewModel();
+
+  @override
+  void onViewModelReady(ImageProcessingViewModel viewModel) {
+    super.onViewModelReady(viewModel);
+
+    viewModel.markVisitedForFeedback();
+  }
 }

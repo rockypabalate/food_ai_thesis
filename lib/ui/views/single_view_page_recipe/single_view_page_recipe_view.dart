@@ -7,6 +7,18 @@ import 'package:stacked/stacked.dart';
 import 'recipe_details.dart';
 import 'single_view_page_recipe_viewmodel.dart';
 
+// Modern color scheme
+class AppColors {
+  static const Color primary = Colors.orange; // Deep purple primary
+  static const Color secondary = Colors.orange; // Teal secondary
+  static const Color background = Colors.white;
+  static const Color surface = Color(0xFFF5F5F5); // Light gray surface
+  static const Color error = Color(0xFFB00020); // Error red
+  static const Color onPrimary = Colors.white;
+  static const Color onBackground = Color(0xFF121212); // Near black text
+  static const Color cardBackground = Color(0xFFFAFAFA); // Slightly off-white
+}
+
 class SingleViewPageRecipeView
     extends StackedView<SingleViewPageRecipeViewModel> {
   final String recipeId;
@@ -20,24 +32,24 @@ class SingleViewPageRecipeView
     SingleViewPageRecipeViewModel viewModel,
     Widget? child,
   ) {
-    // Show loading spinner and message based on the viewModel's busy state
-    if (viewModel.isBusy) {
-      return Scaffold(
-        backgroundColor: Colors.white,
+    final recipe = viewModel.singleRecipe;
+
+    // Show loading screen only for fetching
+    if (viewModel.isBusy && !viewModel.isDeleting) {
+      return const Scaffold(
+        backgroundColor: AppColors.background,
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const SpinKitThreeBounce(
-                color: Colors.orange,
+              SpinKitThreeBounce(
+                color: AppColors.primary,
                 size: 40.0,
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: 16),
               Text(
-                viewModel.isDeleting
-                    ? 'Deleting Recipe...'
-                    : 'Fetching Recipe...',
-                style: const TextStyle(
+                'Fetching Recipe...',
+                style: TextStyle(
                   fontSize: 20.0,
                   fontWeight: FontWeight.bold,
                   color: Colors.black54,
@@ -49,14 +61,13 @@ class SingleViewPageRecipeView
       );
     }
 
-    final recipe = viewModel.singleRecipe;
-
     // If recipe is null, show error message
     if (recipe == null) {
       return Scaffold(
         appBar: AppBar(
           title: const Text('Recipe Details'),
-          backgroundColor: Colors.orange,
+          backgroundColor: AppColors.primary,
+          foregroundColor: AppColors.onPrimary,
         ),
         body: Center(
           child: Column(
@@ -65,7 +76,7 @@ class SingleViewPageRecipeView
               Icon(
                 Icons.error_outline,
                 size: 64,
-                color: Colors.orange.withOpacity(0.7),
+                color: AppColors.error.withOpacity(0.7),
               ),
               const SizedBox(height: 16),
               const Text(
@@ -81,7 +92,7 @@ class SingleViewPageRecipeView
                 onPressed: () => viewModel.fetchSingleRecipe(recipeId),
                 child: const Text('Try Again'),
                 style: TextButton.styleFrom(
-                  foregroundColor: Colors.orange,
+                  foregroundColor: AppColors.primary,
                 ),
               ),
             ],
@@ -91,279 +102,330 @@ class SingleViewPageRecipeView
     }
 
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: CustomScrollView(
-        slivers: [
-          // Modern SliverAppBar with recipe image as background
-          SliverAppBar(
-            expandedHeight: 250.0,
-            floating: false,
-            pinned: true,
-            backgroundColor: Colors.orange,
-            flexibleSpace: FlexibleSpaceBar(
-              background: Stack(
-                fit: StackFit.expand,
-                children: [
-                  // Recipe image or placeholder
-                  recipe.images.isNotEmpty
-                      ? Image.network(
-                          recipe.images[0],
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) =>
-                              Container(
-                            color: Colors.orange.withOpacity(0.2),
-                            child: const Icon(
-                              Icons.image_not_supported,
-                              size: 64,
-                              color: Colors.white,
-                            ),
-                          ),
-                        )
-                      : GestureDetector(
-                          onTap: () {
-                            viewModel.navigateToUploadImage(recipe.id);
-                          },
-                          child: Container(
-                            color: Colors.orange.withOpacity(0.2),
-                            child: const Icon(
-                              Icons.add_photo_alternate,
-                              size: 64,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                  // Gradient overlay for better text visibility
-                  Container(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          Colors.transparent,
-                          Colors.black.withOpacity(0.7),
-                        ],
-                        stops: const [0.6, 1.0],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              title: Text(
-                recipe.foodName,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
+      backgroundColor: AppColors.background,
+      body: Stack(
+        children: [
+          CustomScrollView(
+            slivers: [
+              SliverAppBar(
+                expandedHeight: 200.0,
+                floating: false,
+                pinned: true,
+                backgroundColor: AppColors.primary,
+                leading: IconButton(
+                  icon:
+                      const Icon(Icons.arrow_back, color: AppColors.onPrimary),
+                  onPressed: () => Navigator.of(context).pop(),
                 ),
-              ),
-              titlePadding: const EdgeInsets.only(left: 16, bottom: 16),
-              collapseMode: CollapseMode.pin,
-            ),
-            actions: [
-              IconButton(
-                icon: const Icon(Icons.picture_as_pdf, color: Colors.white),
-                tooltip: 'Export as PDF',
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => CreatePdfExportPage(recipe: recipe),
-                    ),
-                  );
-                },
-              ),
-              IconButton(
-                icon: const Icon(Icons.delete, color: Colors.white),
-                tooltip: 'Delete Recipe',
-                onPressed: () {
-                  // Show confirmation dialog before deleting
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: const Text('Delete Recipe'),
-                        content: const Text(
-                            'Are you sure you want to delete this recipe?'),
-                        actions: [
-                          TextButton(
-                            child: const Text('Cancel'),
-                            onPressed: () => Navigator.of(context).pop(),
-                          ),
-                          TextButton(
-                            child: const Text(
-                              'Delete',
-                              style: TextStyle(color: Colors.red),
-                            ),
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                              viewModel.deleteRecipe(recipe.id);
-                            },
-                          ),
-                        ],
-                      );
+                flexibleSpace: FlexibleSpaceBar(
+                  background: GestureDetector(
+                    onTap: () {
+                      if (recipe.images.isEmpty) {
+                        viewModel.navigateToUploadImage(recipe.id);
+                      }
                     },
-                  );
-                },
-              ),
-            ],
-          ),
-
-          // Recipe Info - Quick Stats
-          SliverToBoxAdapter(
-            child: FadeEffectRecipe(
-              delay: 300,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 16.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    _buildInfoChip(Icons.category_outlined, recipe.category),
-                    _buildInfoChip(Icons.people_alt_outlined,
-                        "${recipe.servings} servings"),
-                    _buildInfoChip(Icons.timer_outlined, recipe.totalCookTime),
-                    _buildInfoChip(Icons.bar_chart, recipe.difficulty),
-                  ],
-                ),
-              ),
-            ),
-          ),
-
-          // Recipe Description
-          if (recipe.description.isNotEmpty)
-            SliverToBoxAdapter(
-              child: FadeEffectRecipe(
-                delay: 400,
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(18.0, 0, 18.0, 16.0),
-                  child: Container(
-                    padding: const EdgeInsets.all(16.0),
-                    decoration: BoxDecoration(
-                      color: Colors.orange.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Colors.orange.withOpacity(0.3)),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    child: Stack(
+                      fit: StackFit.expand,
                       children: [
-                        const Row(
-                          children: [
-                            Icon(Icons.restaurant, color: Colors.orange),
-                            SizedBox(width: 8),
-                            Text(
-                              'About This Recipe',
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.orange,
+                        recipe.images.isNotEmpty
+                            ? Image.network(
+                                recipe.images[0],
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) =>
+                                    Container(
+                                  color: AppColors.primary.withOpacity(0.2),
+                                  child: const Icon(
+                                    Icons.image_not_supported,
+                                    size: 64,
+                                    color: AppColors.onPrimary,
+                                  ),
+                                ),
+                              )
+                            : Container(
+                                color: AppColors.primary.withOpacity(0.2),
+                                child: const Icon(
+                                  Icons.add_photo_alternate,
+                                  size: 64,
+                                  color: AppColors.onPrimary,
+                                ),
                               ),
+                        Container(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                Colors.transparent,
+                                Colors.black.withOpacity(0.7),
+                              ],
+                              stops: const [0.6, 1.0],
                             ),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          recipe.description,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            height: 1.5,
                           ),
                         ),
                       ],
                     ),
                   ),
                 ),
+                actions: [
+                  IconButton(
+                    icon: const Icon(Icons.picture_as_pdf,
+                        color: AppColors.onPrimary),
+                    tooltip: 'Export as PDF',
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              CreatePdfExportPage(recipe: recipe),
+                        ),
+                      );
+                    },
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.delete, color: AppColors.onPrimary),
+                    tooltip: 'Delete Recipe',
+                    onPressed: () {
+                      viewModel.deleteRecipe(recipe.id);
+                    },
+                  ),
+                ],
               ),
-            ),
+              // New: Recipe title outside of AppBar
+              SliverToBoxAdapter(
+                child: Container(
+                  color: Colors.transparent, // Set to transparent
+                  padding: const EdgeInsets.fromLTRB(16, 20, 20, 16),
+                  child: Text(
+                    recipe.foodName,
+                    style: const TextStyle(
+                      color: Colors.black87,
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
 
-          // Recipe carousel for multiple images
-          if (recipe.images.length > 1)
-            SliverToBoxAdapter(
-              child: FadeEffectRecipe(
-                delay: 500,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(18.0, 0, 18.0, 8.0),
-                      child: Row(
-                        children: [
-                          const Icon(Icons.photo_library, color: Colors.orange),
-                          const SizedBox(width: 8),
-                          Text(
-                            'Photos (${recipe.images.length})',
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.orange,
-                            ),
+              SliverToBoxAdapter(
+                child: FadeEffectRecipe(
+                  delay: 300,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0), // Add spacing on left and right
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(vertical: 16.0),
+                      decoration: BoxDecoration(
+                        color: Colors.orange.shade100,
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(20),
+                          topRight: Radius.circular(20),
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.05),
+                            blurRadius: 8,
+                            offset: const Offset(0, -3),
                           ),
                         ],
                       ),
-                    ),
-                    SizedBox(
-                      height: 120,
-                      child: ListView.builder(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                        scrollDirection: Axis.horizontal,
-                        itemCount: recipe.images.length,
-                        itemBuilder: (context, index) {
-                          return Padding(
-                            padding: const EdgeInsets.only(right: 8.0),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(8),
-                              child: Image.network(
-                                recipe.images[index],
-                                width: 120,
-                                height: 120,
-                                fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) =>
-                                    Container(
-                                  width: 120,
-                                  height: 120,
-                                  color: Colors.grey[300],
-                                  child: const Icon(Icons.image_not_supported,
-                                      color: Colors.grey),
-                                ),
-                              ),
-                            ),
-                          );
-                        },
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          _buildInfoChip(
+                              Icons.category_outlined, recipe.category),
+                          _buildInfoChip(Icons.people_alt_outlined,
+                              "${recipe.servings} servings"),
+                          _buildInfoChip(
+                              Icons.timer_outlined, recipe.totalCookTime),
+                          _buildInfoChip(Icons.bar_chart, recipe.difficulty),
+                        ],
                       ),
                     ),
-                    const SizedBox(height: 16),
+                  ),
+                ),
+              ),
+              if (recipe.description.isNotEmpty)
+                SliverToBoxAdapter(
+                  child: FadeEffectRecipe(
+                    delay: 400,
+                    child: Padding(
+                      padding:
+                          const EdgeInsets.fromLTRB(18.0, 16.0, 18.0, 16.0),
+                      child: Container(
+                        padding: const EdgeInsets.all(16.0),
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade100,
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.05),
+                              blurRadius: 10,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Row(
+                              children: [
+                                Icon(Icons.restaurant,
+                                    color: AppColors.primary),
+                                SizedBox(width: 8),
+                                Text(
+                                  'About This Recipe',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: AppColors.primary,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 12),
+                            Text(
+                              recipe.description,
+                              style: const TextStyle(
+                                fontSize: 16,
+                                height: 1.5,
+                                color: AppColors.onBackground,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              if (recipe.images.length > 1)
+                SliverToBoxAdapter(
+                  child: FadeEffectRecipe(
+                    delay: 500,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding:
+                              const EdgeInsets.fromLTRB(18.0, 0, 18.0, 12.0),
+                          child: Row(
+                            children: [
+                              const Icon(Icons.photo_library,
+                                  color: AppColors.primary),
+                              const SizedBox(width: 8),
+                              Text(
+                                'Photos (${recipe.images.length})',
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.primary,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          height: 140,
+                          child: ListView.builder(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 16.0),
+                            scrollDirection: Axis.horizontal,
+                            itemCount: recipe.images.length,
+                            itemBuilder: (context, index) {
+                              return Padding(
+                                padding: const EdgeInsets.only(right: 12.0),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(12),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withOpacity(0.1),
+                                          blurRadius: 8,
+                                          offset: const Offset(0, 2),
+                                        ),
+                                      ],
+                                    ),
+                                    child: Image.network(
+                                      recipe.images[index],
+                                      width: 140,
+                                      height: 140,
+                                      fit: BoxFit.cover,
+                                      errorBuilder:
+                                          (context, error, stackTrace) =>
+                                              Container(
+                                        width: 140,
+                                        height: 140,
+                                        color: Colors.grey[300],
+                                        child: const Icon(
+                                            Icons.image_not_supported,
+                                            color: Colors.grey),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                      ],
+                    ),
+                  ),
+                ),
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 18.0),
+                  child: RecipeDetailsSection(
+                    ingredients: recipe.ingredients,
+                    quantities: recipe.quantities,
+                    preparationTips: recipe.preparationTips,
+                    instructions: recipe.instructions,
+                    nutritionalParagraph: recipe.nutritionalParagraph,
+                  ),
+                ),
+              ),
+              const SliverToBoxAdapter(
+                child: SizedBox(height: 80),
+              ),
+            ],
+          ),
+
+          // Deletion Overlay
+          if (viewModel.isDeleting)
+            Container(
+              color: Colors.black.withOpacity(0.5),
+              child: const Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    SpinKitThreeBounce(
+                      color: AppColors.secondary,
+                      size: 40.0,
+                    ),
+                    SizedBox(height: 16),
+                    Text(
+                      'Deleting Recipe...',
+                      style: TextStyle(
+                        fontSize: 20.0,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
                   ],
                 ),
               ),
             ),
-
-          // Recipe Details Content
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 18.0),
-              child: RecipeDetailsSection(
-                ingredients: recipe.ingredients,
-                quantities: recipe.quantities,
-                preparationTips: recipe.preparationTips,
-                instructions: recipe.instructions,
-                nutritionalParagraph: recipe.nutritionalParagraph,
-              ),
-            ),
-          ),
-
-          // Bottom padding
-          const SliverToBoxAdapter(
-            child: SizedBox(height: 24),
-          ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-          // You can add functionality here, like sharing the recipe
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Feature coming soon!')),
           );
         },
-        backgroundColor: Colors.orange,
-        child: const Icon(Icons.share, color: Colors.white),
+        backgroundColor: AppColors.secondary,
+        icon: const Icon(Icons.share, color: Colors.black87),
+        label: const Text('Share', style: TextStyle(color: Colors.black87)),
       ),
     );
   }
@@ -383,15 +445,16 @@ class SingleViewPageRecipeView
       children: [
         Icon(
           icon,
-          color: Colors.orange,
+          color: AppColors.primary,
           size: 24,
         ),
-        const SizedBox(height: 4),
+        const SizedBox(height: 6),
         Text(
           text,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w500,
+            color: AppColors.onBackground.withOpacity(0.8),
           ),
           textAlign: TextAlign.center,
         ),

@@ -15,7 +15,7 @@ class LoginView extends StatefulWidget {
 class _LoginViewState extends State<LoginView> {
   late final TextEditingController emailController;
   late final TextEditingController passwordController;
-  
+
   @override
   void initState() {
     super.initState();
@@ -36,26 +36,26 @@ class _LoginViewState extends State<LoginView> {
     final screenSize = MediaQuery.of(context).size;
     final screenHeight = screenSize.height;
     final screenWidth = screenSize.width;
-    
+
     // Calculate responsive sizes
-    final double logoSize = screenWidth * 0.28;
+    final double logoSize = screenWidth * 0.33;
     final double contentPadding = screenWidth * 0.05;
     final double buttonHeight = screenHeight * 0.06;
     final double verticalSpacing = screenHeight * 0.02;
-    
+
     // Text scaling
     final titleFontSize = 28 * (screenWidth / 375);
     final bodyTextFontSize = 14 * (screenWidth / 375);
     final smallTextFontSize = 12 * (screenWidth / 375);
     final tinyTextFontSize = 10 * (screenWidth / 375);
-    
+
     // Colors
     const primaryColor = Color(0xFFFF6B00); // Vibrant orange
     const secondaryColor = Color(0xFF2E3E5C); // Dark blue for text
     const backgroundColor = Color(0xFFFAFAFA); // Light background
     const cardColor = Colors.white;
     const subtleGrey = Color(0xFFF1F1F1); // For input fields
-    
+
     return ViewModelBuilder<LoginViewModel>.reactive(
       viewModelBuilder: () => LoginViewModel(),
       builder: (context, viewModel, child) {
@@ -71,14 +71,15 @@ class _LoginViewState extends State<LoginView> {
                     decoration: const BoxDecoration(
                       color: backgroundColor,
                       image: DecorationImage(
-                        image: AssetImage('lib/assets/subtle_pattern.png'), // Add a subtle pattern background
+                        image: AssetImage(
+                            'lib/assets/bg_food.jpg'), // Add a subtle pattern background
                         repeat: ImageRepeat.repeat,
-                        opacity: 0.05,
+                        opacity: 0.07,
                       ),
                     ),
                   ),
                 ),
-                
+
                 // Main content
                 SafeArea(
                   child: SingleChildScrollView(
@@ -118,9 +119,9 @@ class _LoginViewState extends State<LoginView> {
                               ),
                             ),
                           ),
-                          
+
                           SizedBox(height: verticalSpacing),
-                          
+
                           // App name
                           FadeEffectLogin(
                             delay: 200,
@@ -135,9 +136,9 @@ class _LoginViewState extends State<LoginView> {
                               ),
                             ),
                           ),
-                          
+
                           SizedBox(height: verticalSpacing * 0.5),
-                          
+
                           // Welcome text
                           FadeEffectLogin(
                             delay: 300,
@@ -151,9 +152,9 @@ class _LoginViewState extends State<LoginView> {
                               ),
                             ),
                           ),
-                          
+
                           SizedBox(height: verticalSpacing * 2),
-                          
+
                           // Login card
                           FadeEffectLogin(
                             delay: 400,
@@ -187,9 +188,9 @@ class _LoginViewState extends State<LoginView> {
                                       ),
                                     ),
                                   ),
-                                  
+
                                   SizedBox(height: verticalSpacing * 0.5),
-                                  
+
                                   // Subtitle
                                   FadeEffectLogin(
                                     delay: 550,
@@ -201,29 +202,33 @@ class _LoginViewState extends State<LoginView> {
                                       ),
                                     ),
                                   ),
-                                  
+
                                   SizedBox(height: verticalSpacing * 1.5),
-                                  
+
                                   // Email field
                                   FadeEffectLogin(
                                     delay: 600,
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Padding(
-                                          padding: const EdgeInsets.only(left: 4, bottom: 8),
+                                          padding: const EdgeInsets.only(
+                                              left: 4, bottom: 8),
                                           child: Text(
                                             'Email',
                                             style: GoogleFonts.poppins(
                                               fontSize: smallTextFontSize,
                                               fontWeight: FontWeight.w500,
-                                              color: secondaryColor.withOpacity(0.8),
+                                              color: secondaryColor
+                                                  .withOpacity(0.8),
                                             ),
                                           ),
                                         ),
                                         TextField(
                                           controller: emailController,
-                                          keyboardType: TextInputType.emailAddress,
+                                          keyboardType:
+                                              TextInputType.emailAddress,
                                           style: GoogleFonts.poppins(
                                             fontSize: bodyTextFontSize,
                                             color: secondaryColor,
@@ -234,14 +239,17 @@ class _LoginViewState extends State<LoginView> {
                                             hintText: 'Enter your email',
                                             hintStyle: GoogleFonts.poppins(
                                               fontSize: bodyTextFontSize,
-                                              color: secondaryColor.withOpacity(0.4),
+                                              color: secondaryColor
+                                                  .withOpacity(0.4),
                                             ),
-                                            contentPadding: EdgeInsets.symmetric(
+                                            contentPadding:
+                                                EdgeInsets.symmetric(
                                               vertical: screenHeight * 0.018,
                                               horizontal: screenWidth * 0.05,
                                             ),
                                             border: OutlineInputBorder(
-                                              borderRadius: BorderRadius.circular(12),
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
                                               borderSide: BorderSide.none,
                                             ),
                                             prefixIcon: Icon(
@@ -250,41 +258,49 @@ class _LoginViewState extends State<LoginView> {
                                               size: screenWidth * 0.055,
                                             ),
                                             enabledBorder: OutlineInputBorder(
-                                              borderRadius: BorderRadius.circular(12),
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
                                               borderSide: BorderSide.none,
                                             ),
                                             focusedBorder: OutlineInputBorder(
-                                              borderRadius: BorderRadius.circular(12),
-                                              borderSide: const BorderSide(color: primaryColor, width: 1.5),
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
+                                              borderSide: const BorderSide(
+                                                  color: primaryColor,
+                                                  width: 1.5),
                                             ),
                                           ),
                                         ),
                                       ],
                                     ),
                                   ),
-                                  
+
                                   SizedBox(height: verticalSpacing),
-                                  
+
                                   // Password field
                                   FadeEffectLogin(
                                     delay: 700,
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Padding(
-                                          padding: const EdgeInsets.only(left: 4, bottom: 8),
+                                          padding: const EdgeInsets.only(
+                                              left: 4, bottom: 8),
                                           child: Text(
                                             'Password',
                                             style: GoogleFonts.poppins(
                                               fontSize: smallTextFontSize,
                                               fontWeight: FontWeight.w500,
-                                              color: secondaryColor.withOpacity(0.8),
+                                              color: secondaryColor
+                                                  .withOpacity(0.8),
                                             ),
                                           ),
                                         ),
                                         TextField(
                                           controller: passwordController,
-                                          obscureText: !viewModel.isPasswordVisible,
+                                          obscureText:
+                                              !viewModel.isPasswordVisible,
                                           style: GoogleFonts.poppins(
                                             fontSize: bodyTextFontSize,
                                             color: secondaryColor,
@@ -295,14 +311,17 @@ class _LoginViewState extends State<LoginView> {
                                             hintText: 'Enter your password',
                                             hintStyle: GoogleFonts.poppins(
                                               fontSize: bodyTextFontSize,
-                                              color: secondaryColor.withOpacity(0.4),
+                                              color: secondaryColor
+                                                  .withOpacity(0.4),
                                             ),
-                                            contentPadding: EdgeInsets.symmetric(
+                                            contentPadding:
+                                                EdgeInsets.symmetric(
                                               vertical: screenHeight * 0.018,
                                               horizontal: screenWidth * 0.05,
                                             ),
                                             border: OutlineInputBorder(
-                                              borderRadius: BorderRadius.circular(12),
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
                                               borderSide: BorderSide.none,
                                             ),
                                             prefixIcon: Icon(
@@ -314,28 +333,35 @@ class _LoginViewState extends State<LoginView> {
                                               icon: Icon(
                                                 viewModel.isPasswordVisible
                                                     ? Icons.visibility_rounded
-                                                    : Icons.visibility_off_rounded,
-                                                color: secondaryColor.withOpacity(0.6),
+                                                    : Icons
+                                                        .visibility_off_rounded,
+                                                color: secondaryColor
+                                                    .withOpacity(0.6),
                                                 size: screenWidth * 0.055,
                                               ),
-                                              onPressed: viewModel.togglePasswordVisibility,
+                                              onPressed: viewModel
+                                                  .togglePasswordVisibility,
                                             ),
                                             enabledBorder: OutlineInputBorder(
-                                              borderRadius: BorderRadius.circular(12),
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
                                               borderSide: BorderSide.none,
                                             ),
                                             focusedBorder: OutlineInputBorder(
-                                              borderRadius: BorderRadius.circular(12),
-                                              borderSide: const BorderSide(color: primaryColor, width: 1.5),
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
+                                              borderSide: const BorderSide(
+                                                  color: primaryColor,
+                                                  width: 1.5),
                                             ),
                                           ),
                                         ),
                                       ],
                                     ),
                                   ),
-                                  
+
                                   SizedBox(height: verticalSpacing * 0.5),
-                                  
+
                                   // Forgot password link
                                   FadeEffectLogin(
                                     delay: 750,
@@ -351,7 +377,8 @@ class _LoginViewState extends State<LoginView> {
                                             vertical: 4,
                                             horizontal: 8,
                                           ),
-                                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                          tapTargetSize:
+                                              MaterialTapTargetSize.shrinkWrap,
                                         ),
                                         child: Text(
                                           'Forgot Password?',
@@ -364,9 +391,9 @@ class _LoginViewState extends State<LoginView> {
                                       ),
                                     ),
                                   ),
-                                  
+
                                   SizedBox(height: verticalSpacing),
-                                  
+
                                   // Sign In Button with circular loading
                                   FadeEffectLogin(
                                     delay: 800,
@@ -375,56 +402,70 @@ class _LoginViewState extends State<LoginView> {
                                       height: buttonHeight,
                                       child: ElevatedButton(
                                         onPressed: viewModel.isLoading
-                                          ? null
-                                          : () {
-                                              FocusScope.of(context).unfocus();
-                                              viewModel.login(
-                                                emailController.text,
-                                                passwordController.text,
-                                              );
-                                            },
+                                            ? null
+                                            : () {
+                                                FocusScope.of(context)
+                                                    .unfocus();
+                                                viewModel.login(
+                                                  emailController.text,
+                                                  passwordController.text,
+                                                );
+                                              },
                                         style: ElevatedButton.styleFrom(
                                           foregroundColor: Colors.white,
                                           backgroundColor: primaryColor,
-                                          shadowColor: primaryColor.withOpacity(0.4),
+                                          shadowColor:
+                                              primaryColor.withOpacity(0.4),
                                           elevation: 8,
                                           shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(12),
+                                            borderRadius:
+                                                BorderRadius.circular(12),
                                           ),
-                                          disabledBackgroundColor: primaryColor.withOpacity(0.7),
+                                          disabledBackgroundColor:
+                                              primaryColor.withOpacity(0.7),
                                           disabledForegroundColor: Colors.white,
                                         ),
                                         child: viewModel.isLoading
-                                          ? Row(
-                                              mainAxisAlignment: MainAxisAlignment.center,
-                                              children: [
-                                                SizedBox(
-                                                  width: screenWidth * 0.05,
-                                                  height: screenWidth * 0.05,
-                                                  child: const CircularProgressIndicator(
-                                                    strokeWidth: 2.5,
-                                                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                            ? Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  SizedBox(
+                                                    width: screenWidth * 0.05,
+                                                    height: screenWidth * 0.05,
+                                                    child:
+                                                        const CircularProgressIndicator(
+                                                      strokeWidth: 2.5,
+                                                      valueColor:
+                                                          AlwaysStoppedAnimation<
+                                                                  Color>(
+                                                              Colors.white),
+                                                    ),
                                                   ),
-                                                ),
-                                                SizedBox(width: screenWidth * 0.03),
-                                                Text(
-                                                  'Signing In...',
-                                                  style: GoogleFonts.poppins(
-                                                    fontSize: bodyTextFontSize,
-                                                    fontWeight: FontWeight.w600,
-                                                    letterSpacing: 0.5,
+                                                  SizedBox(
+                                                      width:
+                                                          screenWidth * 0.03),
+                                                  Text(
+                                                    'Signing In...',
+                                                    style: GoogleFonts.poppins(
+                                                      fontSize:
+                                                          bodyTextFontSize,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      letterSpacing: 0.5,
+                                                    ),
                                                   ),
+                                                ],
+                                              )
+                                            : Text(
+                                                'Sign In',
+                                                style: GoogleFonts.poppins(
+                                                  fontSize:
+                                                      bodyTextFontSize * 1.1,
+                                                  fontWeight: FontWeight.w600,
+                                                  letterSpacing: 0.5,
                                                 ),
-                                              ],
-                                            )
-                                          : Text(
-                                              'Sign In',
-                                              style: GoogleFonts.poppins(
-                                                fontSize: bodyTextFontSize * 1.1,
-                                                fontWeight: FontWeight.w600,
-                                                letterSpacing: 0.5,
                                               ),
-                                            ),
                                       ),
                                     ),
                                   ),
@@ -432,75 +473,76 @@ class _LoginViewState extends State<LoginView> {
                               ),
                             ),
                           ),
-                          
+
                           SizedBox(height: verticalSpacing * 1.5),
-                          
-                          // Divider with text
-                          FadeEffectLogin(
-                            delay: 900,
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: Divider(
-                                    color: secondaryColor.withOpacity(0.2),
-                                    thickness: 1,
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                                  child: Text(
-                                    'Or continue with',
-                                    style: GoogleFonts.poppins(
-                                      fontSize: smallTextFontSize,
-                                      color: secondaryColor.withOpacity(0.6),
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Divider(
-                                    color: secondaryColor.withOpacity(0.2),
-                                    thickness: 1,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          
-                          SizedBox(height: verticalSpacing),
-                          
-                          // Social login buttons
-                          FadeEffectLogin(
-                            delay: 1000,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                // Google button
-                                _socialButton(
-                                  image: 'lib/assets/search.png',
-                                  onTap: () {},
-                                  screenWidth: screenWidth,
-                                  label: 'Google',
-                                  color: Colors.white,
-                                  textColor: secondaryColor,
-                                ),
-                                
-                                SizedBox(width: screenWidth * 0.04),
-                                
-                                // Facebook button
-                                _socialButton(
-                                  image: 'lib/assets/facebook.png',
-                                  onTap: () {},
-                                  screenWidth: screenWidth,
-                                  label: 'Facebook',
-                                  color: Colors.white,
-                                  textColor: secondaryColor,
-                                ),
-                              ],
-                            ),
-                          ),
-                          
-                          SizedBox(height: verticalSpacing * 2),
-                          
+
+                          // // Divider with text
+                          // FadeEffectLogin(
+                          //   delay: 900,
+                          //   child: Row(
+                          //     children: [
+                          //       Expanded(
+                          //         child: Divider(
+                          //           color: secondaryColor.withOpacity(0.2),
+                          //           thickness: 1,
+                          //         ),
+                          //       ),
+                          //       Padding(
+                          //         padding: const EdgeInsets.symmetric(
+                          //             horizontal: 16),
+                          //         child: Text(
+                          //           'Or continue with',
+                          //           style: GoogleFonts.poppins(
+                          //             fontSize: smallTextFontSize,
+                          //             color: secondaryColor.withOpacity(0.6),
+                          //           ),
+                          //         ),
+                          //       ),
+                          //       Expanded(
+                          //         child: Divider(
+                          //           color: secondaryColor.withOpacity(0.2),
+                          //           thickness: 1,
+                          //         ),
+                          //       ),
+                          //     ],
+                          //   ),
+                          // ),
+
+                          // SizedBox(height: verticalSpacing),
+
+                          // // Social login buttons
+                          // FadeEffectLogin(
+                          //   delay: 1000,
+                          //   child: Row(
+                          //     mainAxisAlignment: MainAxisAlignment.center,
+                          //     children: [
+                          //       // Google button
+                          //       _socialButton(
+                          //         image: 'lib/assets/search.png',
+                          //         onTap: () {},
+                          //         screenWidth: screenWidth,
+                          //         label: 'Google',
+                          //         color: Colors.white,
+                          //         textColor: secondaryColor,
+                          //       ),
+
+                          //       SizedBox(width: screenWidth * 0.04),
+
+                          //       // Facebook button
+                          //       _socialButton(
+                          //         image: 'lib/assets/facebook.png',
+                          //         onTap: () {},
+                          //         screenWidth: screenWidth,
+                          //         label: 'Facebook',
+                          //         color: Colors.white,
+                          //         textColor: secondaryColor,
+                          //       ),
+                          //     ],
+                          //   ),
+                          // ),
+
+                          // SizedBox(height: verticalSpacing * 2),
+
                           // Sign up text
                           FadeEffectLogin(
                             delay: 1100,
@@ -528,9 +570,9 @@ class _LoginViewState extends State<LoginView> {
                               ],
                             ),
                           ),
-                          
+
                           SizedBox(height: verticalSpacing),
-                          
+
                           // Terms and conditions
                           FadeEffectLogin(
                             delay: 1200,
@@ -574,6 +616,7 @@ class _LoginViewState extends State<LoginView> {
                               ),
                             ),
                           ),
+                          const SizedBox(height: 80),
                         ],
                       ),
                     ),
@@ -586,7 +629,7 @@ class _LoginViewState extends State<LoginView> {
       },
     );
   }
-  
+
   // Helper method to create social login buttons
   Widget _socialButton({
     required String image,

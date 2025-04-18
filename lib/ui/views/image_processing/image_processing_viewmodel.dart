@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:flutter/material.dart';
 import 'package:food_ai_thesis/app/app.router.dart';
+import 'package:food_ai_thesis/services/feedback_service.dart';
 import 'package:image/image.dart' as img;
 import 'package:food_ai_thesis/app/app.locator.dart';
 import 'package:food_ai_thesis/app/app_base_viewmodel.dart';
@@ -14,6 +16,8 @@ import 'package:stacked_services/stacked_services.dart';
 class ImageProcessingViewModel extends AppBaseViewModel {
   final ApiServiceService _apiService = locator<ApiServiceService>();
   final NavigationService _navigationService = locator<NavigationService>();
+
+  final _feedbackService = locator<FeedbackService>();
 
   final Logger _logger = Logger();
 
@@ -94,7 +98,7 @@ class ImageProcessingViewModel extends AppBaseViewModel {
       final response = await _generativeModel.generateContent([
         Content.multi([
           TextPart(
-            'Check if the food in this image matches any of the following Filipino dishes. It must be image not text:\n'
+            'Check if the image is food , if not then prompt error and if matches in any of the following Filipino dishes below like:\n'
             '• Adobong Manok\n'
             '• Ginataang Langka\n'
             '• Ginisang Munggo\n'
@@ -106,7 +110,8 @@ class ImageProcessingViewModel extends AppBaseViewModel {
             '• Sinigang Baboy\n'
             '• Tinolang Manok\n'
             '• Tortang Talong\n\n'
-            'Please respond with only the **exact name** from the list above that matches the food item in the image.\n'
+            'Please respond with only the **exact name** from the list above that matches the food item.\n'
+            'The text images must not include the process it must be food images not a list of food.\n'
             'If the food is not one of the listed Filipino dishes, simply respond: "Not a listed Filipino food item."',
           ),
           DataPart('image/jpeg', compressedBytes),
@@ -144,5 +149,19 @@ class ImageProcessingViewModel extends AppBaseViewModel {
 
   void navigateBack() {
     _navigationService.navigateTo(Routes.imageProcessingView);
+  }
+
+  void markVisitedForFeedback() async {
+    const pageKey = 'visited_ImageClassificationView';
+
+    final alreadyVisited = await _feedbackService.isPageVisited(pageKey);
+
+    if (!alreadyVisited) {
+      await _feedbackService.markPageVisited(pageKey);
+      debugPrint(
+          '✅ visited_ImageClassificationView visited for the first time.');
+    } else {
+      debugPrint('ℹ️ visited_ImageClassificationView was already visited.');
+    }
   }
 }

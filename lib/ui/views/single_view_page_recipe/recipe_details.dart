@@ -30,8 +30,8 @@ class RecipeDetailsSection extends StatelessWidget {
               context: context,
               title: 'Ingredients',
               icon: Icons.shopping_basket_outlined,
-              color: Colors.green.shade100,
-              iconColor: Colors.green.shade800,
+              color: Colors.orange.shade100,
+              iconColor: Colors.orange.shade800,
               child: ListView.separated(
                 physics: const NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
@@ -50,7 +50,7 @@ class RecipeDetailsSection extends StatelessWidget {
                           width: 8,
                           height: 8,
                           decoration: BoxDecoration(
-                            color: Colors.green.shade800,
+                            color: Colors.orange.shade800,
                             shape: BoxShape.circle,
                           ),
                         ),
@@ -66,7 +66,7 @@ class RecipeDetailsSection extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
-                            color: Colors.green.shade800,
+                            color: Colors.orange.shade800,
                           ),
                         ),
                       ],
@@ -84,8 +84,8 @@ class RecipeDetailsSection extends StatelessWidget {
                 context: context,
                 title: 'Preparation Tips',
                 icon: Icons.lightbulb_outline,
-                color: Colors.amber.shade100,
-                iconColor: Colors.amber.shade800,
+                color: Colors.orange.shade100,
+                iconColor: Colors.orange.shade800,
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 12.0),
                   child: Text(
@@ -105,8 +105,8 @@ class RecipeDetailsSection extends StatelessWidget {
               context: context,
               title: 'Instructions',
               icon: Icons.format_list_numbered,
-              color: Colors.blue.shade100,
-              iconColor: Colors.blue.shade800,
+              color: Colors.orange.shade100,
+              iconColor: Colors.orange.shade800,
               child: ListView.separated(
                 physics: const NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
@@ -124,7 +124,7 @@ class RecipeDetailsSection extends StatelessWidget {
                         width: 28,
                         height: 28,
                         decoration: BoxDecoration(
-                          color: Colors.blue.shade800,
+                          color: Colors.orange.shade800,
                           shape: BoxShape.circle,
                         ),
                         child: Center(
@@ -164,8 +164,8 @@ class RecipeDetailsSection extends StatelessWidget {
                 context: context,
                 title: 'Nutritional Information',
                 icon: Icons.monitor_heart_outlined,
-                color: Colors.purple.shade100,
-                iconColor: Colors.purple.shade800,
+                color: Colors.orange.shade100,
+                iconColor: Colors.orange.shade800,
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 12.0),
                   child: Text(

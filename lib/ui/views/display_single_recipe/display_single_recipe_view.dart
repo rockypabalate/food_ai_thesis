@@ -88,114 +88,8 @@ class DisplaySingleRecipeView
 
   Widget _buildRecipeContent(
       BuildContext context, DisplaySingleRecipeViewModel viewModel) {
-    // Using our new ModernRecipeWidgets implementation
     return ModernRecipeWidgets.buildRecipeScreen(viewModel, context);
 
-    // If you prefer to keep the delayed animations from the original design,
-    // you can use the alternative implementation below instead:
-    /*
-    return CustomScrollView(
-      physics: const BouncingScrollPhysics(),
-      slivers: [
-        // App Bar with Hero Image
-        ModernRecipeWidgets.buildSliverAppBar(viewModel, context),
-        
-        // Content
-        SliverToBoxAdapter(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Quick Info Card
-                DelayedFadeIn(
-                  delay: 150,
-                  child: ModernRecipeWidgets.buildQuickInfoCard(viewModel, context),
-                ),
-                
-                // Author if available
-                if (viewModel.foodInfoById!.author != null)
-                  DelayedFadeIn(
-                    delay: 200,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                      child: Row(
-                        children: [
-                          const Icon(Icons.person, color: Colors.grey),
-                          const SizedBox(width: 8),
-                          Text(
-                            'Recipe by ${viewModel.foodInfoById!.author}',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontStyle: FontStyle.italic,
-                              color: Colors.grey[700],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                
-                // Image Gallery
-                DelayedFadeIn(
-                  delay: 250,
-                  child: ModernRecipeWidgets.buildImageGallery(viewModel),
-                ),
-                
-                // Description
-                DelayedFadeIn(
-                  delay: 300,
-                  child: ModernRecipeWidgets.buildDescription(
-                    viewModel.foodInfoById!.description,
-                  ),
-                ),
-                
-                // Tips Card
-                if (viewModel.foodInfoById!.preparationTips != null)
-                  DelayedFadeIn(
-                    delay: 400,
-                    child: ModernRecipeWidgets.buildTipsCard(
-                      viewModel.foodInfoById!.preparationTips,
-                    ),
-                  ),
-                
-                // Ingredients Card
-                DelayedFadeIn(
-                  delay: 500,
-                  child: ModernRecipeWidgets.buildIngredientsCard(
-                    viewModel.foodInfoById!.ingredients,
-                  ),
-                ),
-                
-                // Instructions Card
-                DelayedFadeIn(
-                  delay: 600,
-                  child: ModernRecipeWidgets.buildInstructionsCard(
-                    viewModel.foodInfoById!.instructions,
-                  ),
-                ),
-                
-                // Nutritional Content
-                DelayedFadeIn(
-                  delay: 700,
-                  child: ModernRecipeWidgets.buildNutritionalCard(
-                    viewModel.foodInfoById!.nutritionalContent,
-                    viewModel.foodInfoById!.nutritionalParagraph,
-                  ),
-                ),
-                
-                // PDF Export Button
-                DelayedFadeIn(
-                  delay: 800,
-                  child: ModernRecipeWidgets.buildFooter(viewModel, context),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-    */
   }
 
   @override
@@ -206,6 +100,7 @@ class DisplaySingleRecipeView
   void onViewModelReady(DisplaySingleRecipeViewModel viewModel) {
     super.onViewModelReady(viewModel);
     fetchRecipeData(viewModel);
+      viewModel.markVisitedForFeedback();
   }
 
   void fetchRecipeData(DisplaySingleRecipeViewModel viewModel) async {

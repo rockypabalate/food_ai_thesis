@@ -8,6 +8,7 @@ import 'package:food_ai_thesis/models/list_recipes/list_recipes.dart';
 import 'package:food_ai_thesis/models/list_recipes/popular_recipe_model.dart';
 import 'package:food_ai_thesis/services/api/api_services/api_service_service.dart';
 import 'package:food_ai_thesis/services/api/auth/auth_api_service.dart';
+import 'package:food_ai_thesis/services/feedback_service.dart';
 import 'package:stacked_services/stacked_services.dart';
 
 class DashboardRecipesViewModel extends AppBaseViewModel {
@@ -15,6 +16,8 @@ class DashboardRecipesViewModel extends AppBaseViewModel {
   final SnackbarService _snackbarService = locator<SnackbarService>();
   final NavigationService _navigationService = locator<NavigationService>();
   final ApiServiceService _apiService = locator<ApiServiceService>();
+
+  final _feedbackService = locator<FeedbackService>();
 
   FocusNode searchFieldFocusNode = FocusNode();
 
@@ -55,9 +58,9 @@ class DashboardRecipesViewModel extends AppBaseViewModel {
     super.dispose();
   }
 
-  List<FoodInfo> get foodInfos => _foodInfos.take(5).toList();
-  List<FeaturedRecipe> get featuredRecipes => _featuredRecipes;
-  List<PopularRecipe> get popularRecipes => _popularRecipes;
+  List<FoodInfo> get foodInfos => _foodInfos.take(3).toList();
+  List<FeaturedRecipe> get featuredRecipes => _featuredRecipes.take(3).toList();
+  List<PopularRecipe> get popularRecipes => _popularRecipes.take(3).toList();
 
   Future<void> getAllFoodInfo() async {
     _isLoading = true;
@@ -151,5 +154,18 @@ class DashboardRecipesViewModel extends AppBaseViewModel {
 
   void navigateToImageProcessing() {
     _navigationService.navigateTo(Routes.imageProcessingView);
+  }
+
+  void markVisitedForFeedback() async {
+    const pageKey = 'visited_DashboardRecipesView';
+
+    final alreadyVisited = await _feedbackService.isPageVisited(pageKey);
+
+    if (!alreadyVisited) {
+      await _feedbackService.markPageVisited(pageKey);
+      debugPrint('✅ visited_DashboardRecipesView visited for the first time.');
+    } else {
+      debugPrint('ℹ️ visited_DashboardRecipesView was already visited.');
+    }
   }
 }

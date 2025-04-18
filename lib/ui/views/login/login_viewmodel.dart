@@ -66,4 +66,3 @@ class LoginViewModel extends AppBaseViewModel {
     }
   }
 }
-
