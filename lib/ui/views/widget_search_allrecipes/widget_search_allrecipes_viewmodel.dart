@@ -22,6 +22,8 @@ class WidgetSearchAllrecipesViewModel extends AppBaseViewModel {
   Timer? _debounce;
   bool _isTyping = false;
   bool get isTyping => _isTyping;
+  bool _showCategories = true;
+  bool get showCategories => _showCategories;
 
   bool _isLoading = false;
   bool get isLoading => _isLoading;
@@ -38,6 +40,19 @@ class WidgetSearchAllrecipesViewModel extends AppBaseViewModel {
     searchController.dispose();
     _debounce?.cancel();
     super.dispose();
+  }
+
+  void showCategoryList() {
+    _showCategories = true;
+    notifyListeners();
+  }
+
+  void selectCategory(String category) {
+    _selectedCategory = category;
+    _filteredFoodInfos =
+        _foodInfos.where((foodInfo) => foodInfo.category == category).toList();
+    _showCategories = false;
+    notifyListeners();
   }
 
   /// Filter recipes based on the selected category
@@ -120,5 +135,15 @@ class WidgetSearchAllrecipesViewModel extends AppBaseViewModel {
       _isTyping = false;
       notifyListeners();
     });
+  }
+
+  Map<String, List<FoodInfo>> get categoryRecipesMap {
+    final Map<String, List<FoodInfo>> map = {};
+    for (final food in _foodInfos) {
+      if (food.category != null) {
+        map.putIfAbsent(food.category!, () => []).add(food);
+      }
+    }
+    return map;
   }
 }

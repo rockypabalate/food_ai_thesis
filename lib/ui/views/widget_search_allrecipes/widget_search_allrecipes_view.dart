@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:food_ai_thesis/models/list_recipes/list_recipes.dart';
 import 'package:food_ai_thesis/ui/views/widget_search_allrecipes/category_modal.dart';
 import 'package:food_ai_thesis/ui/views/widget_search_allrecipes/wg_all_recipes.dart';
 import 'package:food_ai_thesis/utils/shimmer_loading_widget.dart';
@@ -16,187 +18,84 @@ class WidgetSearchAllrecipesView
     WidgetSearchAllrecipesViewModel viewModel,
     Widget? child,
   ) {
-    final searchController = viewModel.searchController;
     final screenSize = MediaQuery.of(context).size;
-    final statusBarHeight = MediaQuery.of(context).padding.top;
-
-    // Calculate relative sizes based on screen dimensions
-    final headerPadding = screenSize.height * 0.01;
-    final headerBottomRadius = screenSize.width * 0.03;
-    final titleFontSize = screenSize.width * 0.055; // 5% of screen width
-    final searchBarHeight = screenSize.height * 0.060;
-    final contentPadding = screenSize.width * 0.03;
+    final contentPadding = screenSize.width * 0.01;
 
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            padding: EdgeInsets.symmetric(vertical: headerPadding),
-            decoration: BoxDecoration(
-              color: Colors.orange,
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(headerBottomRadius),
-                bottomRight: Radius.circular(headerBottomRadius),
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  blurRadius: 8.0,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(height: statusBarHeight),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
+      appBar: AppBar(
+        backgroundColor: Colors.orange,
+        elevation: 4,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () {
+            if (!viewModel.showCategories) {
+              viewModel.showCategoryList();
+            } else {
+              Navigator.pop(context);
+            }
+          },
+        ),
+        title: Text(
+          viewModel.showCategories
+              ? 'Search Recipes'
+              : viewModel.selectedCategory ?? '',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: screenSize.width * 0.055,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+      body: Padding(
+        padding: EdgeInsets.symmetric(horizontal: contentPadding),
+        child: viewModel.isLoading
+            ? ListView.builder(
+                itemCount: 5,
+                itemBuilder: (_, __) => const ShimmerLoadingWidget(),
+              )
+            : viewModel.showCategories
+                ? SingleChildScrollView(
+                    child: Column(
                       children: [
-                        IconButton(
-                          icon:
-                              const Icon(Icons.arrow_back, color: Colors.white),
-                          padding: EdgeInsets.all(screenSize.width * 0.02),
-                          iconSize: screenSize.width * 0.06,
-                          onPressed: () {
-                            viewModel.searchFocusNode.unfocus();
-                            Navigator.pop(context);
-                          },
-                        ),
-                        Text(
-                          'Search Recipes',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: titleFontSize,
-                            fontWeight: FontWeight.bold,
+                        GridView.builder(
+                          padding: const EdgeInsets.only(top: 12),
+                          itemCount: viewModel.categoryRecipesMap.length,
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            crossAxisSpacing: 12,
+                            mainAxisSpacing: 12,
+                            childAspectRatio: 1.2,
                           ),
+                          itemBuilder: (context, index) {
+                            final category = viewModel.categoryRecipesMap.keys
+                                .elementAt(index);
+                            final recipes =
+                                viewModel.categoryRecipesMap[category]!;
+
+                            return _AnimatedCategoryTile(
+                              category: category,
+                              recipes: recipes,
+                              onTap: () => viewModel.selectCategory(category),
+                            );
+                          },
                         ),
                       ],
                     ),
-                    IconButton(
-                      icon: const Icon(Icons.filter_list, color: Colors.white),
-                      padding: EdgeInsets.all(screenSize.width * 0.02),
-                      iconSize: screenSize.width * 0.07,
-                      onPressed: () {
-                        // Hide keyboard before opening modal
-                        FocusScope.of(context).unfocus();
-
-                        showCategoryFilterModal(
-                          context: context,
-                          categories: viewModel.uniqueCategories.toList(),
-                          selectedCategory: viewModel.selectedCategory,
-                          onCategorySelected: viewModel.filterByCategory,
-                          onClearFilter: viewModel.clearCategoryFilter,
-                        );
-                      },
-                    ),
-                  ],
-                ),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: contentPadding),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: SizedBox(
-                          height: searchBarHeight,
-                          child: TextField(
-                            controller: searchController,
-                            focusNode: viewModel.searchFocusNode,
-                            style:
-                                TextStyle(fontSize: screenSize.width * 0.035),
-                            decoration: InputDecoration(
-                              hintText: 'Search recipes...',
-                              hintStyle:
-                                  TextStyle(fontSize: screenSize.width * 0.035),
-                              contentPadding: EdgeInsets.symmetric(
-                                vertical: searchBarHeight * 0.2,
-                                horizontal: contentPadding * 0.75,
-                              ),
-                              prefixIcon: Icon(
-                                Icons.search,
-                                color: Colors.grey,
-                                size: screenSize.width * 0.05,
-                              ),
-                              suffixIcon:
-                                  ValueListenableBuilder<TextEditingValue>(
-                                valueListenable: searchController,
-                                builder: (context, value, child) {
-                                  return value.text.isNotEmpty
-                                      ? IconButton(
-                                          icon: Icon(
-                                            Icons.clear,
-                                            color: Colors.grey,
-                                            size: screenSize.width * 0.05,
-                                          ),
-                                          onPressed: () {
-                                            searchController.clear();
-                                            viewModel.filterRecipes('');
-                                            FocusScope.of(context).unfocus();
-                                          },
-                                        )
-                                      : const SizedBox.shrink();
-                                },
-                              ),
-                              filled: true,
-                              fillColor: Colors.white,
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(
-                                    screenSize.width * 0.03),
-                                borderSide: BorderSide.none,
-                              ),
-                            ),
-                            onChanged: viewModel.filterRecipes,
-                          ),
-                        ),
+                  )
+                : SingleChildScrollView(
+                    padding: EdgeInsets.all(contentPadding),
+                    child: FadeEffectRecipe(
+                      delay: 200,
+                      child: AllRecipesWidget(
+                        foodInfos: viewModel.filteredFoodInfos,
+                        isLoading: viewModel.isTyping,
                       ),
-                    ],
+                    ),
                   ),
-                ),
-                SizedBox(height: headerPadding * 0.5),
-              ],
-            ),
-          ),
-          Expanded(
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: contentPadding,
-                  vertical: headerPadding,
-                ),
-                child: viewModel.isLoading
-                    ? Column(
-                        children: List.generate(
-                          5,
-                          (_) => const ShimmerLoadingWidget(),
-                        ),
-                      )
-                    : viewModel.filteredFoodInfos.isEmpty
-                        ? Center(
-                            child: Text(
-                              'No recipes found.',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: screenSize.width * 0.04,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          )
-                        : FadeEffectRecipe(
-                            delay: 200,
-                            child: AllRecipesWidget(
-                              foodInfos: viewModel.filteredFoodInfos,
-                              isLoading: viewModel.isTyping,
-                            ),
-                          ),
-              ),
-            ),
-          ),
-          SizedBox(height: screenSize.height * 0.01),
-        ],
       ),
     );
   }
@@ -211,3 +110,124 @@ class WidgetSearchAllrecipesView
     viewModel.getAllFoodInfo();
   }
 }
+
+class _AnimatedCategoryTile extends StatefulWidget {
+  final String category;
+  final List<FoodInfo> recipes;
+  final VoidCallback onTap;
+
+  const _AnimatedCategoryTile({
+    required this.category,
+    required this.recipes,
+    required this.onTap,
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  State<_AnimatedCategoryTile> createState() => _AnimatedCategoryTileState();
+}
+
+class _AnimatedCategoryTileState extends State<_AnimatedCategoryTile> {
+  int _currentImageIndex = 0;
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.recipes.isNotEmpty) {
+      _timer = Timer.periodic(const Duration(seconds: 3), (timer) {
+        setState(() {
+          _currentImageIndex =
+              (_currentImageIndex + 1) % widget.recipes.length;
+        });
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final imageUrl = widget.recipes.isNotEmpty &&
+            widget.recipes[_currentImageIndex].imageUrls.isNotEmpty
+        ? widget.recipes[_currentImageIndex].imageUrls.first
+        : '';
+
+    return GestureDetector(
+      onTap: widget.onTap,
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Stack(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 500),
+                transitionBuilder: (Widget child, Animation<double> animation) {
+                  return FadeTransition(opacity: animation, child: child);
+                },
+                child: imageUrl.isNotEmpty
+                    ? Image.network(
+                        imageUrl,
+                        key: ValueKey(imageUrl),
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                        height: double.infinity,
+                      )
+                    : Container(
+                        key: const ValueKey('empty'),
+                        color: Colors.grey[300],
+                      ),
+              ),
+            ),
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                color: Colors.black.withOpacity(0.4),
+              ),
+            ),
+            Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    widget.category,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    '${widget.recipes.length} recipes',
+                    style: const TextStyle(
+                      color: Colors.white70,
+                      fontSize: 14,
+                    ),
+                  )
+                ],
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+
