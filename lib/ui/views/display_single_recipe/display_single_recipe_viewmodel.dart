@@ -204,4 +204,5 @@ class DisplaySingleRecipeViewModel extends AppBaseViewModel {
       debugPrint('ℹ️ DisplaySingleRecipeView was already visited.');
     }
   }
+  
 }

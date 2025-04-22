@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:food_ai_thesis/models/list_recipes/list_recipes.dart';
-import 'package:food_ai_thesis/ui/views/widget_search_allrecipes/category_modal.dart';
+import 'package:food_ai_thesis/ui/views/widget_search_allrecipes/animated_category_tile.dart';
 import 'package:food_ai_thesis/ui/views/widget_search_allrecipes/wg_all_recipes.dart';
 import 'package:food_ai_thesis/utils/shimmer_loading_widget.dart';
 import 'package:food_ai_thesis/utils/widgets_fade_effect.dart';
@@ -19,7 +19,7 @@ class WidgetSearchAllrecipesView
     Widget? child,
   ) {
     final screenSize = MediaQuery.of(context).size;
-    final contentPadding = screenSize.width * 0.01;
+    final contentPadding = screenSize.width * 0.02;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -36,16 +36,37 @@ class WidgetSearchAllrecipesView
             }
           },
         ),
-        title: Text(
-          viewModel.showCategories
-              ? 'Search Recipes'
-              : viewModel.selectedCategory ?? '',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: screenSize.width * 0.055,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+        title: viewModel.isSearching
+            ? TextField(
+                autofocus: true,
+                onChanged: viewModel.onSearchChanged,
+                style: const TextStyle(color: Colors.white),
+                decoration: const InputDecoration(
+                  hintText: 'Search recipes...',
+                  hintStyle: TextStyle(color: Colors.white70),
+                  border: InputBorder.none,
+                ),
+              )
+            : Text(
+                viewModel.showCategories
+                    ? 'Search Recipes'
+                    : viewModel.selectedCategory ?? '',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: screenSize.width * 0.055,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+        actions: [
+          if (!viewModel.showCategories)
+            IconButton(
+              icon: Icon(
+                viewModel.isSearching ? Icons.close : Icons.search,
+                color: Colors.white,
+              ),
+              onPressed: () => viewModel.toggleSearch(),
+            ),
+        ],
       ),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: contentPadding),
@@ -59,16 +80,16 @@ class WidgetSearchAllrecipesView
                     child: Column(
                       children: [
                         GridView.builder(
-                          padding: const EdgeInsets.only(top: 12),
+                          padding: const EdgeInsets.only(top: 14),
                           itemCount: viewModel.categoryRecipesMap.length,
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
                           gridDelegate:
                               const SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 2,
-                            crossAxisSpacing: 12,
-                            mainAxisSpacing: 12,
-                            childAspectRatio: 1.2,
+                            crossAxisSpacing: 10,
+                            mainAxisSpacing: 10,
+                            childAspectRatio: 1.55,
                           ),
                           itemBuilder: (context, index) {
                             final category = viewModel.categoryRecipesMap.keys
@@ -76,24 +97,32 @@ class WidgetSearchAllrecipesView
                             final recipes =
                                 viewModel.categoryRecipesMap[category]!;
 
-                            return _AnimatedCategoryTile(
+                            return AnimatedCategoryTile(
                               category: category,
                               recipes: recipes,
                               onTap: () => viewModel.selectCategory(category),
                             );
                           },
                         ),
+                        const SizedBox(height: 16),
                       ],
                     ),
                   )
                 : SingleChildScrollView(
                     padding: EdgeInsets.all(contentPadding),
-                    child: FadeEffectRecipe(
-                      delay: 200,
-                      child: AllRecipesWidget(
-                        foodInfos: viewModel.filteredFoodInfos,
-                        isLoading: viewModel.isTyping,
-                      ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Removed TextField from here
+                        const SizedBox(height: 12),
+                        FadeEffectRecipe(
+                          delay: 200,
+                          child: AllRecipesWidget(
+                            foodInfos: viewModel.filteredFoodInfos,
+                            isLoading: viewModel.isTyping,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
       ),
@@ -110,124 +139,3 @@ class WidgetSearchAllrecipesView
     viewModel.getAllFoodInfo();
   }
 }
-
-class _AnimatedCategoryTile extends StatefulWidget {
-  final String category;
-  final List<FoodInfo> recipes;
-  final VoidCallback onTap;
-
-  const _AnimatedCategoryTile({
-    required this.category,
-    required this.recipes,
-    required this.onTap,
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  State<_AnimatedCategoryTile> createState() => _AnimatedCategoryTileState();
-}
-
-class _AnimatedCategoryTileState extends State<_AnimatedCategoryTile> {
-  int _currentImageIndex = 0;
-  Timer? _timer;
-
-  @override
-  void initState() {
-    super.initState();
-    if (widget.recipes.isNotEmpty) {
-      _timer = Timer.periodic(const Duration(seconds: 3), (timer) {
-        setState(() {
-          _currentImageIndex =
-              (_currentImageIndex + 1) % widget.recipes.length;
-        });
-      });
-    }
-  }
-
-  @override
-  void dispose() {
-    _timer?.cancel();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final imageUrl = widget.recipes.isNotEmpty &&
-            widget.recipes[_currentImageIndex].imageUrls.isNotEmpty
-        ? widget.recipes[_currentImageIndex].imageUrls.first
-        : '';
-
-    return GestureDetector(
-      onTap: widget.onTap,
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 4,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Stack(
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(16),
-              child: AnimatedSwitcher(
-                duration: const Duration(milliseconds: 500),
-                transitionBuilder: (Widget child, Animation<double> animation) {
-                  return FadeTransition(opacity: animation, child: child);
-                },
-                child: imageUrl.isNotEmpty
-                    ? Image.network(
-                        imageUrl,
-                        key: ValueKey(imageUrl),
-                        fit: BoxFit.cover,
-                        width: double.infinity,
-                        height: double.infinity,
-                      )
-                    : Container(
-                        key: const ValueKey('empty'),
-                        color: Colors.grey[300],
-                      ),
-              ),
-            ),
-            Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(16),
-                color: Colors.black.withOpacity(0.4),
-              ),
-            ),
-            Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    widget.category,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    '${widget.recipes.length} recipes',
-                    style: const TextStyle(
-                      color: Colors.white70,
-                      fontSize: 14,
-                    ),
-                  )
-                ],
-              ),
-            )
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-

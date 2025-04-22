@@ -96,7 +96,8 @@ class _FeaturedRecipeListWidgetState extends State<FeaturedRecipeListWidget> {
         );
       },
       child: Container(
-        height: 140, // Set a fixed height for the card
+        height: 150, // Set a fixed height for the card
+
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
           boxShadow: [

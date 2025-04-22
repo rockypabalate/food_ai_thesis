@@ -111,36 +111,68 @@ class DashboardRecipesView extends StackedView<DashboardRecipesViewModel> {
         ),
         padding: EdgeInsets.only(bottom: AppSpacing.xxl),
         children: [
-          SectionTitle(
-            title: 'Featured Recipes',
+          // Modern section selector
+          Padding(
             padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
-          ),
-          FeaturedRecipeListWidget(
-            featuredRecipes: viewModel.featuredRecipes,
-            isFeaturedLoading: viewModel.isFeaturedLoading,
+            child: Text(
+              'Discover Recipes',
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
+            ),
           ),
           const SizedBox(height: AppSpacing.sm),
 
-          SectionTitle(
-            title: 'Filipino Recipes',
+          // Section selector containers
+          SectionSelector(
+            selectedSection: viewModel.selectedRecipeSection,
+            onSectionChanged: viewModel.setSelectedRecipeSection,
             padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
           ),
-          FilipinoRecipeListWidget(
-            foodInfos: viewModel.foodInfos,
-            isLoading: viewModel.isLoading,
-          ),
-          const SizedBox(height: AppSpacing.sm),
+          const SizedBox(height: AppSpacing.md),
 
-          SectionTitle(
-            title: 'Most Liked & Viewed Recipes',
-            padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
-          ),
-          MostViewedAndLikedRecipesWidget(
-            popularRecipes: viewModel.popularRecipes,
-            isPopularLoading: viewModel.isPopularLoading,
-          ),
-
-          // Space for FAB and bottom navigation
+          // Show content based on selected section
+          if (viewModel.selectedRecipeSection == RecipeSection.featured)
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+                  child: Text(
+                    'Featured Recipes',
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.sm),
+                FeaturedRecipeListWidget(
+                  featuredRecipes: viewModel.featuredRecipes,
+                  isFeaturedLoading: viewModel.isFeaturedLoading,
+                ),
+              ],
+            )
+          else
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+                  child: Text(
+                    'Most Liked & Viewed Recipes',
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.sm),
+                MostViewedAndLikedRecipesWidget(
+                  popularRecipes: viewModel.popularRecipes,
+                  isPopularLoading: viewModel.isPopularLoading,
+                ),
+              ],
+            ),
         ],
       ),
     );
@@ -162,54 +194,122 @@ class DashboardRecipesView extends StackedView<DashboardRecipesViewModel> {
   }
 }
 
-class SectionTitle extends StatelessWidget {
-  final String title;
+class SectionSelector extends StatelessWidget {
+  final RecipeSection selectedSection;
+  final Function(RecipeSection) onSectionChanged;
   final EdgeInsetsGeometry padding;
-  final VoidCallback? onSeeAllPressed;
 
-  const SectionTitle({
+  const SectionSelector({
     super.key,
-    required this.title,
+    required this.selectedSection,
+    required this.onSectionChanged,
     this.padding = const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-    this.onSeeAllPressed,
   });
 
   @override
   Widget build(BuildContext context) {
-    // Adaptive text sizing based on screen width
-    final textScaleFactor = MediaQuery.of(context).textScaleFactor;
-    final titleSize = textScaleFactor * 18.0;
-
     return Padding(
       padding: padding,
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          Text(
-            title,
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontSize: titleSize,
-                  fontWeight: FontWeight.bold,
-                ),
+          _buildSectionContainer(
+            context,
+            'Featured',
+            RecipeSection.featured,
+            Icons.star_rounded,
           ),
-          if (onSeeAllPressed != null)
-            TextButton(
-              onPressed: onSeeAllPressed,
-              style: TextButton.styleFrom(
-                minimumSize: Size.zero,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          const SizedBox(width: 12),
+          _buildSectionContainer(
+            context,
+            'Most Liked & Viewed',
+            RecipeSection.mostLikedViewed,
+            Icons.favorite_rounded,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSectionContainer(
+    BuildContext context,
+    String title,
+    RecipeSection section,
+    IconData icon,
+  ) {
+    final bool isSelected = selectedSection == section;
+    final theme = Theme.of(context);
+
+    // Define orange gradient colors for a more modern look
+    final gradient = isSelected
+        ? LinearGradient(
+            colors: [
+              Colors.orange.shade600,
+              Colors.deepOrange.shade700,
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          )
+        : null;
+
+    // Define orange color for unselected icons
+    final iconColor = isSelected ? Colors.white : Colors.orange;
+
+    return Expanded(
+      child: GestureDetector(
+        onTap: () => onSectionChanged(section),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 250),
+          padding: const EdgeInsets.symmetric(vertical: 7, horizontal: 12),
+          decoration: BoxDecoration(
+            gradient: gradient,
+            color: isSelected ? null : theme.colorScheme.surface,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: isSelected
+                  ? Colors.transparent
+                  : Colors.orange.withOpacity(0.3),
+              width: 1.5,
+            ),
+            boxShadow: isSelected
+                ? [
+                    BoxShadow(
+                      color: Colors.orange.withOpacity(0.3),
+                      blurRadius: 8,
+                      offset: const Offset(0, 4),
+                    )
+                  ]
+                : [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    )
+                  ],
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                icon,
+                color: iconColor,
+                size: 20,
               ),
-              child: Text(
-                'See all',
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.primary,
-                  fontWeight: FontWeight.w500,
+              const SizedBox(width: 8),
+              Flexible(
+                child: Text(
+                  title,
+                  overflow: TextOverflow.ellipsis,
+                  style: theme.textTheme.labelLarge?.copyWith(
+                    color: isSelected ? Colors.white : Colors.black87,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14,
+                  ),
                 ),
               ),
-            ),
-        ],
+            ],
+          ),
+        ),
       ),
     );
   }

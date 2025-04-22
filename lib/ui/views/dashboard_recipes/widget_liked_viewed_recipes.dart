@@ -25,7 +25,7 @@ class _MostViewedAndLikedRecipesWidgetState
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.fromLTRB(15.0, 0.0, 15.0, 0),
+      padding: const EdgeInsets.fromLTRB(15.0, 5.0, 15.0, 0),
       child: widget.isPopularLoading
           ? _buildShimmerList()
           : widget.popularRecipes.isEmpty
@@ -92,8 +92,7 @@ class _MostViewedAndLikedRecipesWidgetState
         );
       },
       child: Container(
-        height: 140,
-        margin: const EdgeInsets.symmetric(vertical: 4.0),
+        height: 150,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
           boxShadow: [

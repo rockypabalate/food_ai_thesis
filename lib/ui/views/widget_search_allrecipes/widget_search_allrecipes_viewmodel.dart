@@ -27,6 +27,7 @@ class WidgetSearchAllrecipesViewModel extends AppBaseViewModel {
 
   bool _isLoading = false;
   bool get isLoading => _isLoading;
+  bool isSearching = false;
 
   String? _errorMessage;
   String? get errorMessage => _errorMessage;
@@ -42,8 +43,23 @@ class WidgetSearchAllrecipesViewModel extends AppBaseViewModel {
     super.dispose();
   }
 
+  void onSearchChanged(String query) {
+    filterRecipes(query);
+  }
+
+  void toggleSearch() {
+  isSearching = !isSearching;
+  if (!isSearching) {
+    // Reset search results when search bar is closed
+    onSearchChanged('');
+  }
+  notifyListeners();
+}
+
   void showCategoryList() {
     _showCategories = true;
+    searchController.clear(); //  clear search
+    _filteredFoodInfos = _foodInfos; // reset to full list
     notifyListeners();
   }
 

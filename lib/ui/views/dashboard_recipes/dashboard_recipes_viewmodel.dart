@@ -11,6 +11,12 @@ import 'package:food_ai_thesis/services/api/auth/auth_api_service.dart';
 import 'package:food_ai_thesis/services/feedback_service.dart';
 import 'package:stacked_services/stacked_services.dart';
 
+// Define the enum at the top level
+enum RecipeSection {
+  featured,
+  mostLikedViewed,
+}
+
 class DashboardRecipesViewModel extends AppBaseViewModel {
   final AuthApiService _authApiService = locator<AuthApiService>();
   final SnackbarService _snackbarService = locator<SnackbarService>();
@@ -33,9 +39,13 @@ class DashboardRecipesViewModel extends AppBaseViewModel {
   String? _featuredErrorMessage;
   String? _popularErrorMessage;
 
+  // Track selected recipe section
+  RecipeSection _selectedRecipeSection = RecipeSection.featured;
+  
   bool get isFeaturedLoading => _isFeaturedLoading;
   bool get isPopularLoading => _isPopularLoading;
   bool get isLoading => _isLoading;
+  RecipeSection get selectedRecipeSection => _selectedRecipeSection;
 
   String? _errorMessage;
   String? get featuredErrorMessage => _featuredErrorMessage;
@@ -48,7 +58,7 @@ class DashboardRecipesViewModel extends AppBaseViewModel {
   DashboardRecipesViewModel() {
     getCurrentUser();
     getFeaturedRecipes();
-    // getPopularRecipes();
+    getPopularRecipes(); // Uncommented this so both recipe types load on init
     getAllFoodInfo();
   }
 
@@ -58,9 +68,19 @@ class DashboardRecipesViewModel extends AppBaseViewModel {
     super.dispose();
   }
 
+  // Get a variable number of items based on selected section
   List<FoodInfo> get foodInfos => _foodInfos.take(3).toList();
-  List<FeaturedRecipe> get featuredRecipes => _featuredRecipes.take(3).toList();
-  List<PopularRecipe> get popularRecipes => _popularRecipes.take(3).toList();
+  List<FeaturedRecipe> get featuredRecipes {
+    // Return more items if featured section is selected
+    final count = _selectedRecipeSection == RecipeSection.featured ? 6 : 3;
+    return _featuredRecipes.take(count).toList();
+  }
+  
+  List<PopularRecipe> get popularRecipes {
+    // Return more items if most liked & viewed section is selected
+    final count = _selectedRecipeSection == RecipeSection.mostLikedViewed ? 6 : 3;
+    return _popularRecipes.take(count).toList();
+  }
 
   Future<void> getAllFoodInfo() async {
     _isLoading = true;
@@ -167,5 +187,11 @@ class DashboardRecipesViewModel extends AppBaseViewModel {
     } else {
       debugPrint('ℹ️ visited_DashboardRecipesView was already visited.');
     }
+  }
+
+  // Add this method to change the selected section
+  void setSelectedRecipeSection(RecipeSection section) {
+    _selectedRecipeSection = section;
+    notifyListeners(); // Update the UI when selection changes
   }
 }
