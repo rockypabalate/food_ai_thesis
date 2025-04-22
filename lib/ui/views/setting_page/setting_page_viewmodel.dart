@@ -9,7 +9,6 @@ class SettingPageViewModel extends AppBaseViewModel {
   final SnackbarService _snackbarService = locator<SnackbarService>();
   final NavigationService _navigationService = locator<NavigationService>();
 
-  
   Future<void> logout() async {
     final response = await _authApiService.logoutUser();
 
@@ -25,5 +24,8 @@ class SettingPageViewModel extends AppBaseViewModel {
   Future<void> navigateToEditProfile() async {
     _navigationService.navigateTo(Routes.editProfileView);
   }
-  
+
+  Future<void> navigateToFeedback() async {
+    _navigationService.navigateTo(Routes.feedbackView);
+  }
 }

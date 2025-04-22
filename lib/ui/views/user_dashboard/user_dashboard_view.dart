@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:food_ai_thesis/ui/views/user_dashboard/widgets_my_recipes_tab.dart';
 import 'package:food_ai_thesis/ui/views/user_dashboard/widgets_bookmark_tab.dart';
 import 'package:food_ai_thesis/ui/views/user_dashboard/widgets_profile_header.dart';
@@ -25,7 +24,11 @@ class _UserDashboardViewState extends State<UserDashboardView>
 
     return ViewModelBuilder<UserDashboardViewModel>.reactive(
       viewModelBuilder: () => UserDashboardViewModel(),
-      onViewModelReady: (viewModel) => viewModel.getCurrentUser(),
+      onViewModelReady: (viewModel) {
+        viewModel.getCurrentUser(); // Get current user data
+        viewModel
+            .markVisitedForFeedback(); // Mark the page as visited for feedback
+      },
       builder: (context, viewModel, child) {
         return WillPopScope(
           onWillPop: () async {
@@ -34,63 +37,28 @@ class _UserDashboardViewState extends State<UserDashboardView>
           },
           child: Scaffold(
             backgroundColor: Colors.white,
-            body: viewModel.isBusy
-                ? _buildLoadingIndicator()
-                : viewModel.user == null
-                    ? _buildNoUserData()
-                    : Column(
-                        children: [
-                          const ProfileHeader(),
-                          _buildTabBar(viewModel),
-                          Expanded(
-                            child: IndexedStack(
-                              index: viewModel.selectedTab,
-                              children: const [
-                                MyRecipesTab(),
-                                BookmarkedRecipesTab(),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
+            body: Column(
+              children: [
+                const ProfileHeader(), // Should handle null data gracefully
+                _buildTabBar(viewModel),
+                Expanded(
+                  child: IndexedStack(
+                    index: viewModel.selectedTab,
+                    children: const [
+                      MyRecipesTab(),
+                      BookmarkedRecipesTab(),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         );
       },
     );
   }
 
-  /// 🟠 Optimized: Extracted into a separate method
-  Widget _buildLoadingIndicator() {
-    return const Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          SpinKitThreeBounce(
-            color: Colors.orange,
-            size: 30.0,
-          ),
-          SizedBox(height: 12),
-          Text(
-            'Fetching user data...',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: Colors.orange,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  /// 🔴 Optimized: Extracted into a separate method
-  Widget _buildNoUserData() {
-    return const Center(
-      child: Text('No user data available'),
-    );
-  }
-
-  /// 🟢 Optimized: Extracted into a separate method
+  /// Tab Bar with "My Recipes" and "Bookmarked Recipes"
   Widget _buildTabBar(UserDashboardViewModel viewModel) {
     return Container(
       width: double.infinity,
@@ -104,7 +72,7 @@ class _UserDashboardViewState extends State<UserDashboardView>
     );
   }
 
-  /// 🔵 Optimized: Uses `viewModel.notifyListeners()` instead of `setState`
+  /// Tab Button
   Widget _buildTab(UserDashboardViewModel viewModel, int index, String title) {
     bool isSelected = viewModel.selectedTab == index;
     return Expanded(

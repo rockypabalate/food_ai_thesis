@@ -18,6 +18,7 @@ import '../services/api/auth/auth_api_service.dart';
 import '../services/api/auth/auth_service_impl.dart';
 import '../services/api/shared_preferences/shared_preference_impl.dart';
 import '../services/api/shared_preferences/shared_preference_service.dart';
+import '../services/feedback_service.dart';
 
 final locator = StackedLocator.instance;
 
@@ -38,4 +39,5 @@ Future<void> setupLocator({
   locator.registerLazySingleton<AuthApiService>(() => AuthServiceImpl());
   locator.registerLazySingleton<SharedPreferenceService>(
       () => SharedPreferenceServiceImpl());
+  locator.registerLazySingleton(() => FeedbackService());
 }

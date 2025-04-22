@@ -109,7 +109,7 @@ class DashboardHeader extends StatelessWidget {
                 children: [
                   Expanded(
                     child: SizedBox(
-                      height: 40,
+                      height: 47,
                       child: TextFormField(
                         readOnly: true,
                         decoration: InputDecoration(

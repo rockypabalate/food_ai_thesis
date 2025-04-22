@@ -18,9 +18,15 @@ class SingleViewPageRecipeViewModel extends AppBaseViewModel {
   bool isDeleting = false;
 
   void navigateToUploadImage(String recipeId) {
-    int parsedRecipeId =
-        int.tryParse(recipeId) ?? 0; // Convert String to int safely
-    if (parsedRecipeId == 0) {
+    if (recipeId.isEmpty) {
+      _snackbarService.showSnackbar(
+        message: 'Recipe ID is empty.',
+      );
+      return;
+    }
+
+    int? parsedRecipeId = int.tryParse(recipeId);
+    if (parsedRecipeId == null || parsedRecipeId <= 0) {
       _snackbarService.showSnackbar(
         message: 'Invalid recipe ID. Please try again.',
       );
@@ -88,7 +94,7 @@ class SingleViewPageRecipeViewModel extends AppBaseViewModel {
     notifyListeners();
   }
 
-   // Method to export recipe as PDF
+  // Method to export recipe as PDF
   Future<void> exportRecipeAsPDF() async {
     if (singleRecipe == null) return;
 

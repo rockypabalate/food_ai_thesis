@@ -16,208 +16,80 @@ class DisplaySingleRecipeView
   Widget builder(BuildContext context, DisplaySingleRecipeViewModel viewModel,
       Widget? child) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: viewModel.isBusy
-          ? const Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  SpinKitThreeBounce(
-                    color: Colors.orange,
-                    size: 40.0,
-                  ),
-                  SizedBox(height: 10),
-                  Text(
-                    'Fetching recipes...',
-                    style: TextStyle(
-                      fontSize: 18.0,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black54,
-                    ),
-                  ),
-                ],
-              ),
-            )
-          : viewModel.foodInfoById != null
-              ? CustomScrollView(
-                  slivers: [
-                    RecipeWidgets.buildSliverAppBar(viewModel, context),
-                    SliverList(
-                      delegate: SliverChildListDelegate([
-                        Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              /// 📌 Icons aligned to the right above the food title
-                              DelayedFadeIn(
-                                delay: 100,
-                                child: Align(
-                                  alignment: Alignment.centerRight,
-                                  child: RecipeWidgets
-                                      .buildFavoriteAndBookmarkIcons(context,
-                                          viewModel), // Pass context here
-                                ),
-                              ),
-
-                              const SizedBox(height: 5),
-
-                              /// 🥘 Food Title
-                              if (viewModel.foodInfoById!.images.isNotEmpty)
-                                DelayedFadeIn(
-                                  delay: 150,
-                                  child: RecipeWidgets.buildFoodTitle(
-                                    viewModel.foodInfoById!.foodName,
-                                  ),
-                                ),
-
-                              /// 👤 Author
-                              DelayedFadeIn(
-                                delay: 200,
-                                child: RecipeWidgets.buildAuthor(
-                                  viewModel.foodInfoById!.author,
-                                ),
-                              ),
-                              const SizedBox(height: 15),
-
-                              /// ❤️ Views & Likes Box
-                              DelayedFadeIn(
-                                delay: 250,
-                                child: Padding(
-                                  padding: const EdgeInsets.only(top: 8.0),
-                                  child: RecipeWidgets.buildViewsAndLikes(
-                                    viewModel.foodInfoById!.views,
-                                    viewModel.foodInfoById!.likes,
-                                  ),
-                                ),
-                              ),
-
-                              const SizedBox(height: 10),
-
-                              /// 🖼️ Food Images
-                              DelayedFadeIn(
-                                delay: 300,
-                                child: RecipeWidgets.buildFoodImagesSection(
-                                    viewModel),
-                              ),
-                              const SizedBox(height: 20),
-
-                              /// 📝 Details
-                              DelayedFadeIn(
-                                delay: 400,
-                                child: RecipeWidgets.buildFoodDetails(
-                                  servingSize:
-                                      viewModel.foodInfoById!.servingSize,
-                                  totalCookTime:
-                                      viewModel.foodInfoById!.totalCookTime,
-                                  difficulty:
-                                      viewModel.foodInfoById!.difficulty,
-                                  category: viewModel.foodInfoById!.category,
-                                ),
-                              ),
-
-                              const DelayedFadeIn(
-                                delay: 450,
-                                child: SizedBox(height: 20),
-                              ),
-
-                              /// 📃 Description
-                              DelayedFadeIn(
-                                delay: 500,
-                                child: RecipeWidgets.buildFoodDescription(
-                                  viewModel.foodInfoById!.description,
-                                ),
-                              ),
-
-                              const DelayedFadeIn(
-                                delay: 600,
-                                child: SizedBox(height: 20),
-                              ),
-
-                              /// 💡 Tips
-                              DelayedFadeIn(
-                                delay: 700,
-                                child: RecipeWidgets.buildPreparationTips(
-                                  viewModel.foodInfoById!.preparationTips,
-                                ),
-                              ),
-
-                              const SizedBox(height: 15),
-                              DelayedFadeIn(
-                                delay: 800,
-                                child: RecipeWidgets.buildSectionTitle(''),
-                              ),
-
-                              /// 🧂 Ingredients
-                              DelayedFadeIn(
-                                delay: 900,
-                                child: RecipeWidgets.buildCardContent(
-                                  viewModel.foodInfoById!.ingredients,
-                                ),
-                              ),
-
-                              const DelayedFadeIn(
-                                delay: 1000,
-                                child: SizedBox(height: 20),
-                              ),
-
-                              DelayedFadeIn(
-                                delay: 1100,
-                                child: RecipeWidgets.buildSectionTitle(''),
-                              ),
-                              const DelayedFadeIn(
-                                delay: 1200,
-                                child: SizedBox(height: 10),
-                              ),
-
-                              /// 🔪 Instructions
-                              DelayedFadeIn(
-                                delay: 1300,
-                                child: RecipeWidgets.buildCardInstructions(
-                                  viewModel.foodInfoById!.instructions,
-                                ),
-                              ),
-
-                              const DelayedFadeIn(
-                                delay: 1400,
-                                child: SizedBox(height: 20),
-                              ),
-
-                              DelayedFadeIn(
-                                delay: 1500,
-                                child: RecipeWidgets.buildSectionTitle(''),
-                              ),
-                              const DelayedFadeIn(
-                                delay: 1600,
-                                child: SizedBox(height: 10),
-                              ),
-
-                              /// 🔬 Nutritional Info
-                              DelayedFadeIn(
-                                delay: 1700,
-                                child: RecipeWidgets.buildCardNutrients(
-                                  viewModel.foodInfoById!.nutritionalContent,
-                                  viewModel.foodInfoById!.nutritionalParagraph,
-                                ),
-                              ),
-                              const SizedBox(height: 20),
-                              DelayedFadeIn(
-                                delay: 1800,
-                                child: RecipeWidgets.buildPlayVideoButton(
-                                    viewModel, context),
-                              ),
-                              const SizedBox(height: 10),
-                            ],
-                          ),
-                        ),
-                      ]),
-                    ),
-                  ],
-                )
-              : const Center(child: Text('No food information found')),
+      backgroundColor:
+          const Color(0xFFF9F9F9), // Light background color for modern look
+      body: _buildBody(context, viewModel),
     );
+  }
+
+  Widget _buildBody(
+      BuildContext context, DisplaySingleRecipeViewModel viewModel) {
+    if (viewModel.isBusy) {
+      return _buildLoadingState();
+    } else if (viewModel.foodInfoById != null) {
+      return _buildRecipeContent(context, viewModel);
+    } else {
+      return _buildErrorState();
+    }
+  }
+
+  Widget _buildLoadingState() {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          const SpinKitThreeBounce(
+            color: Colors.orange,
+            size: 40.0,
+          ),
+          const SizedBox(height: 15),
+          Text(
+            'Loading your recipe...',
+            style: TextStyle(
+              fontSize: 18.0,
+              fontWeight: FontWeight.w600,
+              color: Colors.grey[600],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildErrorState() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.error_outline, size: 60, color: Colors.grey[400]),
+          const SizedBox(height: 16),
+          Text(
+            'Recipe not found',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: Colors.grey[800],
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'We couldn\'t find the recipe you\'re looking for.',
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.grey[600],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRecipeContent(
+      BuildContext context, DisplaySingleRecipeViewModel viewModel) {
+    return ModernRecipeWidgets.buildRecipeScreen(viewModel, context);
+
   }
 
   @override
@@ -227,10 +99,11 @@ class DisplaySingleRecipeView
   @override
   void onViewModelReady(DisplaySingleRecipeViewModel viewModel) {
     super.onViewModelReady(viewModel);
-    someFunction(viewModel);
+    fetchRecipeData(viewModel);
+      viewModel.markVisitedForFeedback();
   }
 
-  void someFunction(DisplaySingleRecipeViewModel viewModel) async {
+  void fetchRecipeData(DisplaySingleRecipeViewModel viewModel) async {
     viewModel.fetchFoodInfoById(foodId);
   }
 }

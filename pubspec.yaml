@@ -36,6 +36,8 @@ dependencies:
   printing: ^5.12.0
   permission_handler: ^11.4.0
   youtube_player_iframe: ^5.2.1
+  supabase_flutter: ^2.0.0
+  confetti: ^0.7.0
 
 
 
@@ -51,7 +53,7 @@ dev_dependencies:
 flutter_icons:
    android: true
    ios: true
-   image_path: "assets/foodlogo.png"
+   image_path: "lib/assets/logologo.png"
 
 
 

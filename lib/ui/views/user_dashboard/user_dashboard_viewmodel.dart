@@ -11,6 +11,7 @@ import 'package:food_ai_thesis/models/saved_recipe_by_user/saved_recipe_by_user.
 import 'package:food_ai_thesis/models/user/user_auth.dart';
 import 'package:food_ai_thesis/services/api/api_services/api_service_service.dart';
 import 'package:food_ai_thesis/services/api/auth/auth_api_service.dart';
+import 'package:food_ai_thesis/services/feedback_service.dart';
 
 import 'package:stacked_services/stacked_services.dart';
 
@@ -19,6 +20,8 @@ class UserDashboardViewModel extends AppBaseViewModel {
   final SnackbarService _snackbarService = locator<SnackbarService>();
   final ApiServiceService _apiService = locator<ApiServiceService>();
   final NavigationService _navigationService = locator<NavigationService>();
+
+  final _feedbackService = locator<FeedbackService>();
 
   FocusNode searchFieldFocusNode = FocusNode();
 
@@ -203,7 +206,20 @@ class UserDashboardViewModel extends AppBaseViewModel {
         .navigateTo(Routes.dashboardRecipesView); // Change to the desired route
   }
 
-   Future<void> navigateToSettingsPage() async {
+  Future<void> navigateToSettingsPage() async {
     _navigationService.navigateTo(Routes.settingPageView);
+  }
+
+  void markVisitedForFeedback() async {
+    const pageKey = 'visited_UserDashboardView';
+
+    final alreadyVisited = await _feedbackService.isPageVisited(pageKey);
+
+    if (!alreadyVisited) {
+      await _feedbackService.markPageVisited(pageKey);
+      debugPrint('✅ visited_UserDashboardView visited for the first time.');
+    } else {
+      debugPrint('ℹ️ visited_UserDashboardView was already visited.');
+    }
   }
 }

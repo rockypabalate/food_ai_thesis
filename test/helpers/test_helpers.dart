@@ -2,6 +2,7 @@ import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:food_ai_thesis/app/app.locator.dart';
 import 'package:stacked_services/stacked_services.dart';
+import 'package:food_ai_thesis/services/feedback_service.dart';
 // @stacked-import
 
 import 'test_helpers.mocks.dart';
@@ -10,13 +11,15 @@ import 'test_helpers.mocks.dart';
   MockSpec<NavigationService>(onMissingStub: OnMissingStub.returnDefault),
   MockSpec<BottomSheetService>(onMissingStub: OnMissingStub.returnDefault),
   MockSpec<DialogService>(onMissingStub: OnMissingStub.returnDefault),
-  // @stacked-mock-spec
+  MockSpec<FeedbackService>(onMissingStub: OnMissingStub.returnDefault),
+// @stacked-mock-spec
 ])
 void registerServices() {
   getAndRegisterNavigationService();
   getAndRegisterBottomSheetService();
   getAndRegisterDialogService();
-  // @stacked-mock-register
+  getAndRegisterFeedbackService();
+// @stacked-mock-register
 }
 
 MockNavigationService getAndRegisterNavigationService() {
@@ -69,6 +72,12 @@ MockDialogService getAndRegisterDialogService() {
   return service;
 }
 
+MockFeedbackService getAndRegisterFeedbackService() {
+  _removeRegistrationIfExists<FeedbackService>();
+  final service = MockFeedbackService();
+  locator.registerSingleton<FeedbackService>(service);
+  return service;
+}
 // @stacked-mock-create
 
 void _removeRegistrationIfExists<T extends Object>() {

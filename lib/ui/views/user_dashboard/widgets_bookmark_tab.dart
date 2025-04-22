@@ -123,7 +123,7 @@ class _BookmarkedRecipesTabState extends State<BookmarkedRecipesTab> {
                                       },
                                       style: ElevatedButton.styleFrom(
                                         foregroundColor: Colors.white,
-                                        backgroundColor: Colors.green,
+                                        backgroundColor: Colors.orange,
                                       ),
                                       child: const Text('Search Recipes'),
                                     ),

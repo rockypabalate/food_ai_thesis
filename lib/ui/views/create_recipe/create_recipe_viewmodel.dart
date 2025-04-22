@@ -22,6 +22,12 @@ class CreateRecipeViewModel extends AppBaseViewModel {
   final TextEditingController nutritionalParagraphController =
       TextEditingController(); // Added
 
+  List<TextEditingController> ingredientControllers = [TextEditingController()];
+  List<TextEditingController> quantityControllers = [TextEditingController()];
+  List<TextEditingController> unitControllers = [
+    TextEditingController(text: '')
+  ];
+
   bool _isLoading = false;
 
   bool get isLoading => _isLoading;
@@ -49,8 +55,13 @@ class CreateRecipeViewModel extends AppBaseViewModel {
 
   void addIngredient() {
     ingredients.add("");
-    quantities.add(""); // Ensure a corresponding quantity is added
-    units.add("kg"); // Default unit
+    quantities.add("");
+    units.add("kg");
+
+    ingredientControllers.add(TextEditingController());
+    quantityControllers.add(TextEditingController());
+    unitControllers.add(TextEditingController(text: 'g'));
+
     notifyListeners();
   }
 
@@ -80,6 +91,15 @@ class CreateRecipeViewModel extends AppBaseViewModel {
       ingredients.removeAt(index);
       quantities.removeAt(index);
       units.removeAt(index);
+
+      ingredientControllers[index].dispose();
+      quantityControllers[index].dispose();
+      unitControllers[index].dispose();
+
+      ingredientControllers.removeAt(index);
+      quantityControllers.removeAt(index);
+      unitControllers.removeAt(index);
+
       notifyListeners();
     }
   }
@@ -121,69 +141,69 @@ class CreateRecipeViewModel extends AppBaseViewModel {
     return true;
   }
 
-Future<void> createRecipe() async {
-  if (!validateInputs()) return;
+  Future<void> createRecipe() async {
+    if (!validateInputs()) return;
 
-  // Set the loading state to true
-  setLoading(true);
+    // Set the loading state to true
+    setLoading(true);
 
-  // Combine quantities and units manually
-  List<String> formattedQuantities = List.generate(
-    quantities.length,
-    (index) => "${quantities[index]} ${units[index]}", // Combine quantity and unit
-  );
-
-  final recipe = Recipe(
-    id: 0, // Temporary ID
-    foodName: foodNameController.text,
-    description: descriptionController.text,
-    servings: int.tryParse(servingsController.text) ?? 1,
-    category: categoryController.text,
-    ingredients: ingredients,
-    quantities: formattedQuantities, // Use formatted quantities with units
-    instructions: instructions,
-    totalCookTime: totalCookTimeController.text,
-    difficulty: difficultyLevel,
-    preparationTips: preparationTipsController.text,
-    nutritionalParagraph: nutritionalParagraphController.text.isNotEmpty
-        ? nutritionalParagraphController.text
-        : null, // Optional
-  );
-
-  try {
-    final recipeResponse = await _apiService.createRecipe(recipe);
-
-    if (recipeResponse != null) {
-      final createdRecipeId = recipeResponse.recipe.id;
-
-      _snackbarService.showSnackbar(
-        message: 'Recipe created successfully! Recipe ID: $createdRecipeId',
-        duration: const Duration(seconds: 3),
-      );
-
-      _navigationService.navigateTo(
-        Routes.uploadRecipeImageView,
-        arguments: UploadRecipeImageViewArguments(recipeId: createdRecipeId),
-      );
-
-      resetForm();
-    } else {
-      _snackbarService.showSnackbar(
-        message: 'Failed to create recipe. Please try again.',
-        duration: const Duration(seconds: 3),
-      );
-    }
-  } catch (e) {
-    _snackbarService.showSnackbar(
-      message: 'An error occurred: $e',
-      duration: const Duration(seconds: 3),
+    // Combine quantities and units manually
+    List<String> formattedQuantities = List.generate(
+      quantities.length,
+      (index) =>
+          "${quantities[index]} ${units[index]}", // Combine quantity and unit
     );
-  } finally {
-    // Set the loading state to false after the recipe creation attempt
-    setLoading(false);
-  }
-}
 
+    final recipe = Recipe(
+      id: 0, // Temporary ID
+      foodName: foodNameController.text,
+      description: descriptionController.text,
+      servings: int.tryParse(servingsController.text) ?? 1,
+      category: categoryController.text,
+      ingredients: ingredients,
+      quantities: formattedQuantities, // Use formatted quantities with units
+      instructions: instructions,
+      totalCookTime: totalCookTimeController.text,
+      difficulty: difficultyLevel,
+      preparationTips: preparationTipsController.text,
+      nutritionalParagraph: nutritionalParagraphController.text.isNotEmpty
+          ? nutritionalParagraphController.text
+          : null, // Optional
+    );
+
+    try {
+      final recipeResponse = await _apiService.createRecipe(recipe);
+
+      if (recipeResponse != null) {
+        final createdRecipeId = recipeResponse.recipe.id;
+
+        _snackbarService.showSnackbar(
+          message: 'Recipe created successfully! Recipe ID: $createdRecipeId',
+          duration: const Duration(seconds: 3),
+        );
+
+        _navigationService.navigateTo(
+          Routes.uploadRecipeImageView,
+          arguments: UploadRecipeImageViewArguments(recipeId: createdRecipeId),
+        );
+
+        resetForm();
+      } else {
+        _snackbarService.showSnackbar(
+          message: 'Failed to create recipe. Please try again.',
+          duration: const Duration(seconds: 3),
+        );
+      }
+    } catch (e) {
+      _snackbarService.showSnackbar(
+        message: 'An error occurred: $e',
+        duration: const Duration(seconds: 3),
+      );
+    } finally {
+      // Set the loading state to false after the recipe creation attempt
+      setLoading(false);
+    }
+  }
 
   void resetForm() {
     foodNameController.clear();
@@ -194,9 +214,26 @@ Future<void> createRecipe() async {
     preparationTipsController.clear();
     nutritionalParagraphController.clear();
 
+    // Dispose existing ingredient controllers
+    for (var controller in ingredientControllers) {
+      controller.dispose();
+    }
+    for (var controller in quantityControllers) {
+      controller.dispose();
+    }
+    for (var controller in unitControllers) {
+      controller.dispose();
+    }
+
+    // Reset ingredients and controllers
     ingredients = [""];
     quantities = [""];
     instructions = [""];
+    units = [""];
+
+    ingredientControllers = [TextEditingController()];
+    quantityControllers = [TextEditingController()];
+    unitControllers = [TextEditingController(text: 'kg')];
 
     difficultyLevel = "Easy";
 
@@ -212,6 +249,17 @@ Future<void> createRecipe() async {
     totalCookTimeController.dispose();
     preparationTipsController.dispose();
     nutritionalParagraphController.dispose();
+
+    for (var controller in ingredientControllers) {
+      controller.dispose();
+    }
+    for (var controller in quantityControllers) {
+      controller.dispose();
+    }
+    for (var controller in unitControllers) {
+      controller.dispose();
+    }
+
     super.dispose();
   }
 }

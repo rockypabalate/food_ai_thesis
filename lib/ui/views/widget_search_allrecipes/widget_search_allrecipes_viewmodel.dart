@@ -22,9 +22,12 @@ class WidgetSearchAllrecipesViewModel extends AppBaseViewModel {
   Timer? _debounce;
   bool _isTyping = false;
   bool get isTyping => _isTyping;
+  bool _showCategories = true;
+  bool get showCategories => _showCategories;
 
   bool _isLoading = false;
   bool get isLoading => _isLoading;
+  bool isSearching = false;
 
   String? _errorMessage;
   String? get errorMessage => _errorMessage;
@@ -40,15 +43,41 @@ class WidgetSearchAllrecipesViewModel extends AppBaseViewModel {
     super.dispose();
   }
 
-  /// Filter recipes based on the selected category
-  void filterByCategory(String category) {
-  _selectedCategory = category; // ✅ Add this line!
-  _filteredFoodInfos = _foodInfos
-      .where((foodInfo) => foodInfo.category == category)
-      .toList();
+  void onSearchChanged(String query) {
+    filterRecipes(query);
+  }
+
+  void toggleSearch() {
+  isSearching = !isSearching;
+  if (!isSearching) {
+    // Reset search results when search bar is closed
+    onSearchChanged('');
+  }
   notifyListeners();
 }
 
+  void showCategoryList() {
+    _showCategories = true;
+    searchController.clear(); //  clear search
+    _filteredFoodInfos = _foodInfos; // reset to full list
+    notifyListeners();
+  }
+
+  void selectCategory(String category) {
+    _selectedCategory = category;
+    _filteredFoodInfos =
+        _foodInfos.where((foodInfo) => foodInfo.category == category).toList();
+    _showCategories = false;
+    notifyListeners();
+  }
+
+  /// Filter recipes based on the selected category
+  void filterByCategory(String category) {
+    _selectedCategory = category; // ✅ Add this line!
+    _filteredFoodInfos =
+        _foodInfos.where((foodInfo) => foodInfo.category == category).toList();
+    notifyListeners();
+  }
 
   /// Retrieve unique categories from the food list
   Set<String> get uniqueCategories {
@@ -122,5 +151,15 @@ class WidgetSearchAllrecipesViewModel extends AppBaseViewModel {
       _isTyping = false;
       notifyListeners();
     });
+  }
+
+  Map<String, List<FoodInfo>> get categoryRecipesMap {
+    final Map<String, List<FoodInfo>> map = {};
+    for (final food in _foodInfos) {
+      if (food.category != null) {
+        map.putIfAbsent(food.category!, () => []).add(food);
+      }
+    }
+    return map;
   }
 }

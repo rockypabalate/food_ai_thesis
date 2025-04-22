@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:food_ai_thesis/ui/views/widget_search_allrecipes/category_modal.dart';
+import 'package:food_ai_thesis/models/list_recipes/list_recipes.dart';
+import 'package:food_ai_thesis/ui/views/widget_search_allrecipes/animated_category_tile.dart';
 import 'package:food_ai_thesis/ui/views/widget_search_allrecipes/wg_all_recipes.dart';
 import 'package:food_ai_thesis/utils/shimmer_loading_widget.dart';
 import 'package:food_ai_thesis/utils/widgets_fade_effect.dart';
@@ -16,154 +18,113 @@ class WidgetSearchAllrecipesView
     WidgetSearchAllrecipesViewModel viewModel,
     Widget? child,
   ) {
-    final searchController = viewModel.searchController;
+    final screenSize = MediaQuery.of(context).size;
+    final contentPadding = screenSize.width * 0.02;
 
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            padding: const EdgeInsets.symmetric(vertical: 8.0),
-            decoration: BoxDecoration(
-              color: Colors.orange,
-              borderRadius: const BorderRadius.only(
-                bottomLeft: Radius.circular(12.0),
-                bottomRight: Radius.circular(12.0),
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  blurRadius: 8.0,
-                  offset: const Offset(0, 4),
+      appBar: AppBar(
+        backgroundColor: Colors.orange,
+        elevation: 4,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () {
+            if (!viewModel.showCategories) {
+              viewModel.showCategoryList();
+            } else {
+              Navigator.pop(context);
+            }
+          },
+        ),
+        title: viewModel.isSearching
+            ? TextField(
+                autofocus: true,
+                onChanged: viewModel.onSearchChanged,
+                style: const TextStyle(color: Colors.white),
+                decoration: const InputDecoration(
+                  hintText: 'Search recipes...',
+                  hintStyle: TextStyle(color: Colors.white70),
+                  border: InputBorder.none,
                 ),
-              ],
+              )
+            : Text(
+                viewModel.showCategories
+                    ? 'Search Recipes'
+                    : viewModel.selectedCategory ?? '',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: screenSize.width * 0.055,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+        actions: [
+          if (!viewModel.showCategories)
+            IconButton(
+              icon: Icon(
+                viewModel.isSearching ? Icons.close : Icons.search,
+                color: Colors.white,
+              ),
+              onPressed: () => viewModel.toggleSearch(),
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 35.0),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
+        ],
+      ),
+      body: Padding(
+        padding: EdgeInsets.symmetric(horizontal: contentPadding),
+        child: viewModel.isLoading
+            ? ListView.builder(
+                itemCount: 5,
+                itemBuilder: (_, __) => const ShimmerLoadingWidget(),
+              )
+            : viewModel.showCategories
+                ? SingleChildScrollView(
+                    child: Column(
                       children: [
-                        IconButton(
-                          icon:
-                              const Icon(Icons.arrow_back, color: Colors.white),
-                          onPressed: () {
-                            viewModel.searchFocusNode.unfocus();
-                            Navigator.pop(context);
+                        GridView.builder(
+                          padding: const EdgeInsets.only(top: 14),
+                          itemCount: viewModel.categoryRecipesMap.length,
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            crossAxisSpacing: 10,
+                            mainAxisSpacing: 10,
+                            childAspectRatio: 1.55,
+                          ),
+                          itemBuilder: (context, index) {
+                            final category = viewModel.categoryRecipesMap.keys
+                                .elementAt(index);
+                            final recipes =
+                                viewModel.categoryRecipesMap[category]!;
+
+                            return AnimatedCategoryTile(
+                              category: category,
+                              recipes: recipes,
+                              onTap: () => viewModel.selectCategory(category),
+                            );
                           },
                         ),
-                        const Text(
-                          'Search Recipes',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20.0,
-                            fontWeight: FontWeight.bold,
+                        const SizedBox(height: 16),
+                      ],
+                    ),
+                  )
+                : SingleChildScrollView(
+                    padding: EdgeInsets.all(contentPadding),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Removed TextField from here
+                        const SizedBox(height: 12),
+                        FadeEffectRecipe(
+                          delay: 200,
+                          child: AllRecipesWidget(
+                            foodInfos: viewModel.filteredFoodInfos,
+                            isLoading: viewModel.isTyping,
                           ),
                         ),
                       ],
                     ),
-                    IconButton(
-                      icon: const Icon(Icons.filter_list, color: Colors.white),
-                      onPressed: () {
-                        // Hide keyboard before opening modal
-                        FocusScope.of(context).unfocus();
-
-                        showCategoryFilterModal(
-                          context: context,
-                          categories: viewModel.uniqueCategories.toList(),
-                          selectedCategory: viewModel.selectedCategory,
-                          onCategorySelected: viewModel.filterByCategory,
-                          onClearFilter: viewModel.clearCategoryFilter,
-                        );
-                      },
-                    ),
-                  ],
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: TextField(
-                          controller: searchController,
-                          focusNode: viewModel.searchFocusNode,
-                          style: const TextStyle(fontSize: 14.0),
-                          decoration: InputDecoration(
-                            hintText: 'Search recipes...',
-                            hintStyle: const TextStyle(fontSize: 14.0),
-                            contentPadding: const EdgeInsets.symmetric(
-                                vertical: 8.0, horizontal: 12.0),
-                            prefixIcon:
-                                const Icon(Icons.search, color: Colors.grey),
-                            suffixIcon:
-                                ValueListenableBuilder<TextEditingValue>(
-                              valueListenable: searchController,
-                              builder: (context, value, child) {
-                                return value.text.isNotEmpty
-                                    ? IconButton(
-                                        icon: const Icon(Icons.clear,
-                                            color: Colors.grey),
-                                        onPressed: () {
-                                          searchController.clear();
-                                          viewModel.filterRecipes('');
-                                          FocusScope.of(context).unfocus();
-                                        },
-                                      )
-                                    : const SizedBox.shrink();
-                              },
-                            ),
-                            filled: true,
-                            fillColor: Colors.white,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12.0),
-                              borderSide: BorderSide.none,
-                            ),
-                          ),
-                          onChanged: viewModel.filterRecipes,
-                        ),
-                      ),
-                    ],
                   ),
-                ),
-                const SizedBox(height: 1.0),
-              ],
-            ),
-          ),
-          Expanded(
-            child: SingleChildScrollView(
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
-                child: viewModel.isLoading
-                    ? Column(
-                        children: List.generate(
-                            5, (_) => const ShimmerLoadingWidget()),
-                      )
-                    : viewModel.filteredFoodInfos.isEmpty
-                        ? const Center(
-                            child: Text(
-                              'No recipes found.',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  fontSize: 16.0, fontWeight: FontWeight.w600),
-                            ),
-                          )
-                        : FadeEffectRecipe(
-                            delay: 200,
-                            child: AllRecipesWidget(
-                              foodInfos: viewModel.filteredFoodInfos,
-                              isLoading: viewModel.isTyping,
-                            ),
-                          ),
-              ),
-            ),
-          ),
-          const SizedBox(height: 8.0),
-        ],
       ),
     );
   }
